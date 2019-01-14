@@ -1,0 +1,22 @@
+---
+benchmark.title: Web Server Security Requirements Guide
+benchmark.id: Web_Server_SRG
+benchmark.description: 'The Web Server SRG is published as a tool to improve the security
+  of Department of Defense (DoD) information systems. The requirements are derived
+  from the NIST 800-53 and related documents. Comments or proposed revisions to this
+  document should be sent via e-mail to the following address: disa.letterkenny.FSO.mbx.stig-customer-support-mailbox@mail.mil.'
+benchmark.version: '2'
+benchmark.status: accepted
+benchmark.status.date: '2015-08-28'
+benchmark.notice.id: terms-of-use
+benchmark.plaintext: 'Release: 2 Benchmark Date: 23 Oct 2015'
+benchmark.plaintext.id: release-info
+reference.href: http://iase.disa.mil
+reference.dc.publisher: DISA
+reference.dc.source: STIG.DOD.MIL
+reference.dc.title: DPMS Target SRG-APP-WSR
+reference.dc.subject: SRG-APP-WSR
+reference.dc.type: DPMS Target
+reference.dc.identifier: '2557'
+content_ref.name: M
+content_ref.href: DPMS_XCCDF_Benchmark_Web_Server_SRG.xml

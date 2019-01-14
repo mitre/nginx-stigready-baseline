@@ -1,0 +1,8 @@
+name: Web Server Security Requirements Guide
+        title: Web Server Security Requirements Guide
+        maintainer: The Authors
+        copyright: The Authors
+        copyright_email: you@example.com
+        license: Apache-2.0
+        summary: "The Web Server SRG is published as a tool to improve the security of Department of Defense (DoD) information systems. The requirements are derived from the NIST 800-53 and related documents. Comments or proposed revisions to this document should be sent via e-mail to the following address: disa.letterkenny.FSO.mbx.stig-customer-support-mailbox@mail.mil."
+        version: 0.1.0
