@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-41809" do
   title "The web server must generate a session ID using as much of the
 character set as possible to reduce the risk of brute force."
@@ -12,7 +20,18 @@ session has already been authenticated.
 possible, i.e., A-Z, a-z, and 0-9, the session ID becomes exponentially harder
 to guess.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to determine
+what characters are used in generating session IDs.
+
+    If the web server is not configured to use at least A-Z, a-z, and 0-9 to
+generate session identifiers, this is a finding.
+  "
+  desc  "fix", "Configure the web server to use at least A-Z, a-z, and 0-9 to
+generate session IDs."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000224-WSR-000138"
   tag "gid": "V-41809"
   tag "rid": "SV-54386r3_rule"
@@ -20,22 +39,13 @@ to guess.
   tag "fix_id": "F-47268r2_fix"
   tag "cci": ["CCI-001188"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine what characters are used in generating session IDs.
 
-If the web server is not configured to use at least A-Z, a-z, and 0-9 to
-generate session identifiers, this is a finding."
-  tag "fix": "Configure the web server to use at least A-Z, a-z, and 0-9 to
-generate session IDs."
+# Nginx versions after 1.11.0 have the $request_id embedded variable by default
+# This variable is a unique request identifier generated from 16 random bytes, in hexadecimal
+
+  describe nginx do
+    its('version') { should cmp > '1.11.0' }
+  end
+  
 end
 

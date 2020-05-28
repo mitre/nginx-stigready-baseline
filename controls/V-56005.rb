@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-56005" do
   title "Web server cookies, such as session cookies, sent to the client using
 SSL/TLS must not be compressed."
@@ -19,7 +27,21 @@ Ratio Info-leak Made Easy (CRIME).
     Cookies shared between the web server and the client when encrypted should
 not also be compressed.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to determine
+whether cookies are being sent to the client using SSL/TLS.
+
+    If the transmission is through a SSL/TLS connection, but the cookie is not
+being compressed, this finding is NA.
+
+    If the web server is using SSL/TLS for cookie transmission and the cookie
+is also being compressed, this is a finding.
+  "
+  desc  "fix", "Configure the web server to send the cookie to the client via
+SSL/TLS without using cookie compression."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000439-WSR-000153"
   tag "gid": "V-56005"
   tag "rid": "SV-70259r2_rule"
@@ -27,25 +49,10 @@ not also be compressed.
   tag "fix_id": "F-60883r1_fix"
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine whether cookies are being sent to the client using SSL/TLS.
 
-If the transmission is through a SSL/TLS connection, but the cookie is not
-being compressed, this finding is NA.
-
-If the web server is using SSL/TLS for cookie transmission and the cookie is
-also being compressed, this is a finding."
-  tag "fix": "Configure the web server to send the cookie to the client via
-SSL/TLS without using cookie compression."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

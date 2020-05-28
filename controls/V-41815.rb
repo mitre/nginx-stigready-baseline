@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-41815" do
   title "Information at rest must be encrypted using a DoD-accepted algorithm
 to protect the confidentiality and integrity of the information."
@@ -17,7 +25,21 @@ web server.
 The web server must use an accepted encryption method, such as SHA1, to protect
 the confidentiality and integrity of the information.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to locate
+where potential data at rest is stored.
+
+    Verify that the data is encrypted using a DoD-accepted algorithm to protect
+the confidentiality and integrity of the information.
+
+    If the data is not encrypted using a DoD-accepted algorithm, this is a
+finding.
+  "
+  desc  "fix", "Use a DoD-accepted algorithm to encrypt data at rest to protect
+the information's confidentiality and integrity."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000231-WSR-000144"
   tag "gid": "V-41815"
   tag "rid": "SV-54392r3_rule"
@@ -25,24 +47,10 @@ the confidentiality and integrity of the information.
   tag "fix_id": "F-47274r2_fix"
   tag "cci": ["CCI-001199"]
   tag "nist": ["SC-28", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to locate where potential data at rest is stored.
 
-Verify that the data is encrypted using a DoD-accepted algorithm to protect the
-confidentiality and integrity of the information.
-
-If the data is not encrypted using a DoD-accepted algorithm, this is a finding."
-  tag "fix": "Use a DoD-accepted algorithm to encrypt data at rest to protect
-the information's confidentiality and integrity."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

@@ -20,3 +20,20 @@ reference.dc.type: DPMS Target
 reference.dc.identifier: '2557'
 content_ref.name: M
 content_ref.href: DPMS_XCCDF_Benchmark_Web_Server_SRG.xml
+
+
+conf_path: '/etc/nginx/nginx.conf'
+mime_type_path: '/etc/nginx/mime.types'
+access_log_path: '/var/log/nginx/access.log'
+error_log_path: '/var/log/nginx/error.log'
+password_path: '/etc/passwd'
+key_file_path: '/etc/ssl/key.pem'
+
+root_document_mount_path: '/mnt'
+charset_required: 'utf-8'
+
+nginx_owner: 'nginx'
+nginx_group: 'nginx'
+sys_admin : ['root']
+sys_admin_group: ['root']
+

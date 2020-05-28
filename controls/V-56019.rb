@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-56019" do
   title "A web server utilizing mobile code must meet DoD-defined mobile code
 requirements."
@@ -19,7 +27,19 @@ therefore, must meet the DoD-defined requirements regarding the deployment
 and/or use of mobile code. This includes digitally signing applets in order to
 provide a means for the client to establish application authenticity.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to determine
+whether mobile code used by hosted applications follows the DoD policies on the
+acquisition, development, and/or use of mobile code.
+
+    If the web server is not configured to follow the DoD policies on mobile
+code, this is a finding.
+  "
+  desc  "fix", "Configure the web server to follow the DoD policies on mobile
+code."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000206-WSR-000128"
   tag "gid": "V-56019"
   tag "rid": "SV-70273r2_rule"
@@ -27,23 +47,10 @@ provide a means for the client to establish application authenticity.
   tag "fix_id": "F-60897r1_fix"
   tag "cci": ["CCI-001166"]
   tag "nist": ["SC-18 (1)", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine whether mobile code used by hosted applications follows the DoD
-policies on the acquisition, development, and/or use of mobile code.
 
-If the web server is not configured to follow the DoD policies on mobile code,
-this is a finding."
-  tag "fix": "Configure the web server to follow the DoD policies on mobile
-code."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

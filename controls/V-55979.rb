@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-55979" do
   title "The web server must generate log records that can be mapped to
 Coordinated Universal Time (UTC) or Greenwich Mean Time (GMT)."
@@ -9,7 +17,17 @@ devices and log records.
 commonly expressed in Coordinated Universal Time (UTC), a modern continuation
 of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and configuration to determine the time
+stamp format for log data.
+
+    If the time stamp is not mapped to UTC or GMT time, this is a finding.
+  "
+  desc  "fix", "Configure the web server to store log data time stamps in a
+format that is mapped to UTC or GMT time."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000374-WSR-000172"
   tag "gid": "V-55979"
   tag "rid": "SV-70233r2_rule"
@@ -17,21 +35,26 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   tag "fix_id": "F-60857r1_fix"
   tag "cci": ["CCI-001890"]
   tag "nist": ["AU-8 b", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and configuration to
-determine the time stamp format for log data.
 
-If the time stamp is not mapped to UTC or GMT time, this is a finding."
-  tag "fix": "Configure the web server to store log data time stamps in a
-format that is mapped to UTC or GMT time."
+  found_utc = false;
+  describe "" do
+    it 'In the nginx.conf file env TZ should be set.' do
+      expect(nginx_conf(conf_path).params['env']).to_not(cmp nil)
+    end
+  end
+
+  Array(nginx_conf(conf_path).params['env']).each do |env|
+    found_utc = false
+    Array(env).each do |value|
+      if (value == "TZ=UTC")
+        found_utc = true
+      end
+    end
+    describe "" do
+      it 'The TZ variable should be set to UTC time.' do
+        expect(found_utc).to(cmp true)
+      end
+    end
+  end
 end
 

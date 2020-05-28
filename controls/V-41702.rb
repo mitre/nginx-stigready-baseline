@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-41702" do
   title "The web server must have Web Distributed Authoring (WebDAV) disabled."
   desc  "A web server can be installed with functionality that, just by its
@@ -10,7 +18,16 @@ authors.
     WebDAV is not widely used and has serious security concerns because it may
 allow clients to modify unauthorized files on the web server.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployment configuration to
+determine if Web Distributed Authoring (WebDAV) is enabled.
+
+    If WebDAV is enabled, this is a finding.
+  "
+  desc  "fix", "Configure the web server to disable Web Distributed Authoring."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000141-WSR-000085"
   tag "gid": "V-41702"
   tag "rid": "SV-54279r3_rule"
@@ -18,20 +35,35 @@ allow clients to modify unauthorized files on the web server.
   tag "fix_id": "F-47161r2_fix"
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployment
-configuration to determine if Web Distributed Authoring (WebDAV) is enabled.
-
-If WebDAV is enabled, this is a finding."
-  tag "fix": "Configure the web server to disable Web Distributed Authoring."
+  
+  # dav_methods can exist in http, server, or location
+  Array(nginx_conf(conf_path).params['http']).each do |http|
+    # Within http
+    describe 'The http context' do
+      it 'should not include dav_methods.' do
+        expect(http["dav_methods"]).to(be_nil)
+      end
+    end
+    # Within server
+    describe 'The server context' do
+      it 'should not include dav_methods.' do
+        Array(nginx_conf(conf_path).servers).each do |server|
+          Array(server.params["dav_methods"]).each do |dav|       
+            expect(dav).to(be_nil)
+          end 
+        end
+      end
+    end
+    # Within location
+    describe 'The location context' do
+      it 'should not include dav_methods.' do
+        Array(nginx_conf(conf_path).locations).each do |location|
+          Array(location.params["dav_methods"]).each do |dav|       
+            expect(dav).to(be_nil)
+          end 
+        end
+      end
+    end
+  end
 end
 

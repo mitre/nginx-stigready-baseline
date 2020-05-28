@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-40792" do
   title "The web server must perform server-side session management."
   desc  "Session management is the practice of protecting the bulk of the user
@@ -18,7 +26,17 @@ then retrieve user credentials for the session when needed. If, during
 transmission, the session were to be hijacked, the user's credentials would not
 be compromised.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and configuration to determine if
+server-side session management is configured.
+
+    If it is not configured, this is a finding.
+  "
+  desc  "fix", "Configure the web server to perform server-side session
+management."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000001-WSR-000002"
   tag "gid": "V-40792"
   tag "rid": "SV-53023r3_rule"
@@ -26,21 +44,9 @@ be compromised.
   tag "fix_id": "F-45949r2_fix"
   tag "cci": ["CCI-000054"]
   tag "nist": ["AC-10", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and configuration to
-determine if server-side session management is configured.
 
-If it is not configured, this is a finding."
-  tag "fix": "Configure the web server to perform server-side session
-management."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
 end
 

@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-41818" do
   title "The web server must accept only system-generated session identifiers."
   desc  "Communication between a client and the web server is done using the
@@ -14,7 +22,18 @@ session IDs that have already been authenticated. Forcing the web server to
 only accept web server-generated session IDs and to create new session IDs once
 a user is authenticated will limit session hijacking.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to determine
+whether the web server accepts session IDs that are not system-generated.
+
+    If the web server does accept non-system-generated session IDs, this is a
+finding.
+  "
+  desc  "fix", "Configure the web server to only accept session IDs that are
+created by the web server."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000223-WSR-000145"
   tag "gid": "V-41818"
   tag "rid": "SV-54395r3_rule"
@@ -22,23 +41,10 @@ a user is authenticated will limit session hijacking.
   tag "fix_id": "F-47277r3_fix"
   tag "cci": ["CCI-001664"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine whether the web server accepts session IDs that are not
-system-generated.
 
-If the web server does accept non-system-generated session IDs, this is a
-finding."
-  tag "fix": "Configure the web server to only accept session IDs that are
-created by the web server."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

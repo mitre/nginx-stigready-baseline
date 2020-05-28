@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-56017" do
   title "The web server must implement required cryptographic protections using
 cryptographic modules complying with applicable federal laws, Executive Orders,
@@ -25,7 +33,22 @@ question. The web server must employ NSA-approved cryptography to protect
 classified information from those individuals who have no \"need-to-know\" or
 when encryption of compartmentalized data is required by data classification.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review policy documents to identify data that is compartmentalized (i.e.
+classified, sensitive, need-to-know, etc.) and requires cryptographic
+protection.
+
+    Review the web server documentation and deployed configuration to identify
+the encryption modules utilized to protect the compartmentalized data.
+
+    If the encryption modules used to protect the compartmentalized data are
+not compliant with the data, this is a finding.
+  "
+  desc  "fix", "Configure the web server to utilize cryptography when
+protecting compartmentalized data."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000416-WSR-000118"
   tag "gid": "V-56017"
   tag "rid": "SV-70271r2_rule"
@@ -33,26 +56,10 @@ when encryption of compartmentalized data is required by data classification.
   tag "fix_id": "F-60895r1_fix"
   tag "cci": ["CCI-002450"]
   tag "nist": ["SC-13", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review policy documents to identify data that is
-compartmentalized (i.e. classified, sensitive, need-to-know, etc.) and requires
-cryptographic protection.
 
-Review the web server documentation and deployed configuration to identify the
-encryption modules utilized to protect the compartmentalized data.
-
-If the encryption modules used to protect the compartmentalized data are not
-compliant with the data, this is a finding."
-  tag "fix": "Configure the web server to utilize cryptography when protecting
-compartmentalized data."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

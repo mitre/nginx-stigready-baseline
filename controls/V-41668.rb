@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-41668" do
   title "The web server must use the internal system clock to generate time
 stamps for log records."
@@ -16,7 +24,22 @@ The time may be expressed in Coordinated Universal Time (UTC), a modern
 continuation of Greenwich Mean Time (GMT), or local time with an offset from
 UTC.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployment configuration to
+determine if the internal system clock is used for date and time stamps. If
+this is not feasible, an alternative workaround is to take an action that
+generates an entry in the log and then immediately query the operating system
+for the current time. A reasonable match between the two times will suffice as
+evidence that the system is using the internal clock for date and time stamps.
+
+    If the web server does not use the internal system clock to generate time
+stamps, this is a finding.
+  "
+  desc  "fix", "Configure the web server to use internal system clocks to
+generate date and time stamps for log records."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000116-WSR-000066"
   tag "gid": "V-41668"
   tag "rid": "SV-54245r3_rule"
@@ -24,27 +47,15 @@ UTC.
   tag "fix_id": "F-47127r2_fix"
   tag "cci": ["CCI-000159"]
   tag "nist": ["AU-8 a", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployment
-configuration to determine if the internal system clock is used for date and
-time stamps. If this is not feasible, an alternative workaround is to take an
-action that generates an entry in the log and then immediately query the
-operating system for the current time. A reasonable match between the two times
-will suffice as evidence that the system is using the internal clock for date
-and time stamps.
 
-If the web server does not use the internal system clock to generate time
-stamps, this is a finding."
-  tag "fix": "Configure the web server to use internal system clocks to
-generate date and time stamps for log records."
+  Array(nginx_conf(conf_path).params['http']).each do |http|
+    Array(http["log_format"]).each do |log_format|
+      describe 'time_local' do
+        it 'should be part of every log format in http.' do
+          expect(log_format.to_s).to(match /.*?\$time_local.*?/)
+        end
+      end
+    end
+  end
 end
 

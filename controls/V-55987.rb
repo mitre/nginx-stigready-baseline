@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-55987" do
   title "All accounts installed with the web server software and tools must
 have passwords assigned and default passwords changed."
@@ -17,7 +25,23 @@ until change, reuse policy, etc.
     Service accounts or system accounts that have no login capability do not
 need to have passwords set or changed.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployment configuration to
+determine what non-service/system accounts were installed by the web server
+installation process.
+
+    Verify the passwords for these accounts have been set and/or changed from
+the default passwords.
+
+    If these accounts still have no password or default passwords, this is a
+finding.
+  "
+  desc  "fix", "Set passwords for non-service/system accounts containing no
+passwords and change the passwords for accounts which still have default
+passwords."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000516-WSR-000079"
   tag "gid": "V-55987"
   tag "rid": "SV-70241r2_rule"
@@ -25,27 +49,10 @@ need to have passwords set or changed.
   tag "fix_id": "F-60865r1_fix"
   tag "cci": ["CCI-000366"]
   tag "nist": ["CM-6 b", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployment
-configuration to determine what non-service/system accounts were installed by
-the web server installation process.
 
-Verify the passwords for these accounts have been set and/or changed from the
-default passwords.
-
-If these accounts still have no password or default passwords, this is a
-finding."
-  tag "fix": "Set passwords for non-service/system accounts containing no
-passwords and change the passwords for accounts which still have default
-passwords."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

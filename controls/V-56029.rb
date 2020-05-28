@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-56029" do
   title "The web server must augment re-creation to a stable and known
 baseline."
@@ -13,7 +21,21 @@ add functionality or expose security risks.
 baseline, external methods, such as a baseline snapshot or virtualizing the web
 server, can be used.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to determine
+if the web server offers the capability to reinstall from a known state.
+
+    If the web server does not offer this capability, determine if the web
+server, in any manner, prohibits the reinstallation of a known state.
+
+    If the web server does prohibit the reinstallation to a known state, this
+is a finding.
+  "
+  desc  "fix", "Configure the web server to augment and not hinder the
+reinstallation of a known and stable baseline."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000225-WSR-000074"
   tag "gid": "V-56029"
   tag "rid": "SV-70283r2_rule"
@@ -21,26 +43,10 @@ server, can be used.
   tag "fix_id": "F-60907r1_fix"
   tag "cci": ["CCI-001190"]
   tag "nist": ["SC-24", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine if the web server offers the capability to reinstall from a known
-state.
 
-If the web server does not offer this capability, determine if the web server,
-in any manner, prohibits the reinstallation of a known state.
-
-If the web server does prohibit the reinstallation to a known state, this is a
-finding."
-  tag "fix": "Configure the web server to augment and not hinder the
-reinstallation of a known and stable baseline."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

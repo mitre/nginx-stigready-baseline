@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-55971" do
   title "The web server must be configurable to integrate with an organizations
 security infrastructure."
@@ -17,7 +25,21 @@ each event logged is open to interpretation by a reviewer. By integrating the
 web server into an overall or organization-wide log review, a larger picture of
 events can be viewed, and analysis can be done in a timely and reliable manner.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to determine
+whether the web server is logging security-relevant events.
+
+    Determine whether there is a security tool in place that allows review and
+alert capabilities and whether the web server is sending events to this system.
+
+    If the web server is not, this is a finding.
+  "
+  desc  "fix", "Configure the web server to send logged events to the
+organization's security infrastructure tool that offers review and alert
+capabilities."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000358-WSR-000163"
   tag "gid": "V-55971"
   tag "rid": "SV-70225r2_rule"
@@ -25,25 +47,18 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   tag "fix_id": "F-60849r1_fix"
   tag "cci": ["CCI-001851"]
   tag "nist": ["AU-4 (1)", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine whether the web server is logging security-relevant events.
 
-Determine whether there is a security tool in place that allows review and
-alert capabilities and whether the web server is sending events to this system.
 
-If the web server is not, this is a finding."
-  tag "fix": "Configure the web server to send logged events to the
-organization's security infrastructure tool that offers review and alert
-capabilities."
+  # Ensure access log is linked to stdout
+  describe command('readlink ' + access_log_path) do
+    its('stdout') { should eq "/dev/stdout\n" }
+    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  end
+  # Ensure error log is linked to stderror
+  describe command('readlink ' + error_log_path)do
+    its('stdout') { should eq "/dev/stderr\n" }
+    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  end
+  
 end
 

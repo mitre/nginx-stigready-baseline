@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-41671" do
   title "The log information from the web server must be protected from
 unauthorized modification."
@@ -13,7 +21,22 @@ This can be done by the web server if the web server is also doing the logging
 function. The web server may also use an external log system. In either case,
 the logs must be protected from modification by non-privileged users.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration settings to
+determine if the web server logging features protect log information from
+unauthorized modification.
+
+    Review file system settings to verify the log files have secure file
+permissions.
+
+    If the web server log files are not protected from unauthorized
+modification, this is a finding.
+  "
+  desc  "fix", "Configure the web server log files so unauthorized modification
+of log information is not possible."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000119-WSR-000069"
   tag "gid": "V-41671"
   tag "rid": "SV-54248r3_rule"
@@ -21,26 +44,17 @@ the logs must be protected from modification by non-privileged users.
   tag "fix_id": "F-47130r3_fix"
   tag "cci": ["CCI-000163"]
   tag "nist": ["AU-9", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-settings to determine if the web server logging features protect log
-information from unauthorized modification.
 
-Review file system settings to verify the log files have secure file
-permissions.
-
-If the web server log files are not protected from unauthorized modification,
-this is a finding."
-  tag "fix": "Configure the web server log files so unauthorized modification
-of log information is not possible."
+  # Ensure access log is linked to stdout
+  describe command('readlink ' + access_log_path) do
+    its('stdout') { should eq "/dev/stdout\n" }
+    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  end
+  # Ensure error log is linked to stderror
+  describe command('readlink ' + error_log_path)do
+    its('stdout') { should eq "/dev/stderr\n" }
+    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  end
+  
 end
 

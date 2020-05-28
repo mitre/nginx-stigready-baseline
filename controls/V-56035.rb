@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-56035" do
   title "The web server must display a default hosted application web page, not
 a directory listing, when a requested web page cannot be found."
@@ -14,7 +22,21 @@ accessed. By having a default hosted application web page, the anonymous web
 user will not obtain directory browsing information or an error message that
 reveals the server type and version.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to locate
+all the web document directories.
+
+    Verify that each web document directory contains a default hosted
+application web page that can be used by the web server in the event a web page
+cannot be found.
+
+    If a document directory does not contain a default web page, this is a
+finding.
+  "
+  desc  "fix", "Place a default web page in every web document directory."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000266-WSR-000142"
   tag "gid": "V-56035"
   tag "rid": "SV-70289r2_rule"
@@ -22,24 +44,10 @@ reveals the server type and version.
   tag "fix_id": "F-60913r1_fix"
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to locate all the web document directories.
 
-Verify that each web document directory contains a default hosted application
-web page that can be used by the web server in the event a web page cannot be
-found.
-
-If a document directory does not contain a default web page, this is a finding."
-  tag "fix": "Place a default web page in every web document directory."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-41794" do
   title "The web server must separate the hosted applications from hosted web
 server management functionality."
@@ -10,7 +18,18 @@ and certificates should be used.
 discovery of the management functions by non-privileged users during hosted
 application use is minimized.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to determine
+whether hosted application functionality is separated from web server
+management functions.
+
+    If the functions are not separated, this is a finding.
+  "
+  desc  "fix", "Configure the web server to separate the hosted applications
+from web server management functionality."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000211-WSR-000129"
   tag "gid": "V-41794"
   tag "rid": "SV-54371r3_rule"
@@ -18,22 +37,10 @@ application use is minimized.
   tag "fix_id": "F-47253r2_fix"
   tag "cci": ["CCI-001082"]
   tag "nist": ["SC-2", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine whether hosted application functionality is separated from web
-server management functions.
 
-If the functions are not separated, this is a finding."
-  tag "fix": "Configure the web server to separate the hosted applications from
-web server management functionality."
+  describe "Skip Test" do
+    skip "This is a manual check"
+  end
+  
 end
 

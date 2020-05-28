@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-41810" do
   title "The web server must generate unique session identifiers with definable
 entropy."
@@ -25,7 +33,19 @@ otherwise manipulating valid sessions.
     At least half of a session ID must be created using a definable source of
 entropy (PRNG).
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployed configuration to verify
+that the web server is generating random session IDs with entropy equal to at
+least half the session ID length.
+
+    If the web server is not configured to generate random session IDs with the
+proper amount of entropy, this is a finding.
+  "
+  desc  "fix", "Configure the web server to generate random session IDs with
+minimum entropy equal to half the session ID length."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000224-WSR-000139"
   tag "gid": "V-41810"
   tag "rid": "SV-54387r3_rule"
@@ -33,23 +53,13 @@ entropy (PRNG).
   tag "fix_id": "F-47269r2_fix"
   tag "cci": ["CCI-001188"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to verify that the web server is generating random session IDs with entropy
-equal to at least half the session ID length.
 
-If the web server is not configured to generate random session IDs with the
-proper amount of entropy, this is a finding."
-  tag "fix": "Configure the web server to generate random session IDs with
-minimum entropy equal to half the session ID length."
+# Nginx versions after 1.11.0 have the $request_id embedded variable by default
+# This variable is a unique request identifier generated from 16 random bytes, in hexadecimal
+
+  describe nginx do
+    its('version') { should cmp > '1.11.0' }
+  end
+  
 end
 

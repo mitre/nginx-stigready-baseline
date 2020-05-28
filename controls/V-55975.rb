@@ -1,3 +1,11 @@
+# encoding: UTF-8
+conf_path = input('conf_path')
+mime_type_path = input('mime_type_path')
+access_log_path = input('access_log_path')
+error_log_path = input('error_log_path')
+password_path = input('password_path')
+key_file_path = input('key_file_path')
+
 control "V-55975" do
   title "The web server must use a logging mechanism that is configured to
 provide a warning to the ISSO and SA when allocated record storage volume
@@ -17,7 +25,21 @@ warning to the ISSO and SA at a minimum.
     This requirement can be met by configuring the web server to utilize a
 dedicated log tool that meets this requirement.
   "
+  desc  "rationale", ""
+  desc  "check", "
+    Review the web server documentation and deployment configuration settings
+to determine if the web server log system provides a warning to the ISSO and SA
+when allocated record storage volume reaches 75% of maximum record storage
+capacity.
+
+    If designated alerts are not sent or the web server is not configured to
+use a dedicated log tool that meets this requirement, this is a finding.
+  "
+  desc  "fix", "Configure the web server to provide a warning to the ISSO and
+SA when allocated log record storage volume reaches 75% of maximum record
+storage capacity."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000359-WSR-000065"
   tag "gid": "V-55975"
   tag "rid": "SV-70229r2_rule"
@@ -25,25 +47,17 @@ dedicated log tool that meets this requirement.
   tag "fix_id": "F-60853r1_fix"
   tag "cci": ["CCI-001855"]
   tag "nist": ["AU-5 (1)", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployment
-configuration settings to determine if the web server log system provides a
-warning to the ISSO and SA when allocated record storage volume reaches 75% of
-maximum record storage capacity.
 
-If designated alerts are not sent or the web server is not configured to use a
-dedicated log tool that meets this requirement, this is a finding."
-  tag "fix": "Configure the web server to provide a warning to the ISSO and SA
-when allocated log record storage volume reaches 75% of maximum record storage
-capacity."
+  # Ensure access log is linked to stdout
+  describe command('readlink ' + access_log_path) do
+    its('stdout') { should eq "/dev/stdout\n" }
+    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  end
+  # Ensure error log is linked to stderror
+  describe command('readlink ' + error_log_path)do
+    its('stdout') { should eq "/dev/stderr\n" }
+    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  end
+  
 end
 
