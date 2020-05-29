@@ -36,9 +36,9 @@ the web server in a DoS attack."
   tag "cci": ["CCI-001094"]
   tag "nist": ["SC-5 (1)", "Rev_4"]
   # Check:
-    # grep 'server_tokens' in the nginx configuration
+    # grep 'server_tokens' in the nginx.conf and any separated include configuration files
       # If directive is found and not set to 'off', this is a finding
-    # grep 'limit_conn_zone', 'limit_conn', and 'limit_rate'
+    # grep 'limit_conn_zone', 'limit_conn', and 'limit_rate' in the nginx.conf and any separated include configuration files
       # If directives are not found, this is a finding.
   # Fix:
     # Mask server details setting server_tokens to off in the nginx configuration file.

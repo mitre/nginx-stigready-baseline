@@ -42,35 +42,47 @@ minutes for high-risk applications, 10 minutes for medium-risk applications, or
   tag "cci": ["CCI-002361"]
   tag "nist": ["AC-12", "Rev_4"]
 
+  # Check:
+    # Verify the "http_upstream_module" is loaded with the following command:
+
+      # nginx -V
+
+    # If the "http_upstream_module" is not loaded, this is a finding.
+
+    # Verify the "keepalive_timeout" directive is configured:
+      # grep 'keepalive_timeout' in the nginx.conf and any separated include configuration files
+
+    # If the "http_upstream_module" is loaded and the "keepalive_timeout" directive is not configured, this is a finding.
+
+  # Fix: 
+    # Include the the "http_upstream_module".
+
+    # Configure the "keepalive_timeout" directive.
+
+  describe nginx do
+    its('modules') { should include "http_upstream_module" }
+  end
+
   Array(nginx_conf(conf_path).params['http']).each do |http|
     # Within http
-    describe 'The http context keep-alive value' do
-      it 'should be from 10 to 99 seconds.' do
-        Array(http["keepalive_timeout"]).each do |http_alive|
-          expect(http_alive[0].to_i).to(be > 9)
-          expect(http_alive[0].to_i).to(be < 100)
-        end
+    describe 'The HTTP context' do
+      it 'should include a keepalive_timeout directive.' do
+        expect(http).to(include "keepalive_timeout")
       end
     end
     # Within server
-    describe 'The server context keep-alive value' do
-      it 'should be from 10 to 99 seconds.' do
+    describe 'The server context' do
+      it 'should include a keepalive_timeout directive.' do
         Array(nginx_conf(conf_path).servers).each do |server|
-          Array(server.params["keepalive_timeout"]).each do |server_alive|
-            expect(server_alive[0].to_i).to(be > 9)
-            expect(server_alive[0].to_i).to(be < 100)
-          end
+          expect(server).to(include "keepalive_timeout")
         end
       end
     end
     # Within location
-    describe 'The  location context keep-alive value' do
-      it 'should be from 10 to 99 seconds.' do
+    describe 'The location context keep-alive value' do
+      it 'should include a keepalive_timeout directive.' do
         Array(nginx_conf(conf_path).locations).each do |location|
-          Array(location.params["keepalive_timeout"]).each do |location_alive|
-            expect(location_alive[0].to_i).to(be > 9)
-            expect(location_alive[0].to_i).to(be < 100)
-          end
+          expect(location).to(include "keepalive_timeout")
         end
       end
     end

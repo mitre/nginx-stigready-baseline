@@ -44,7 +44,7 @@ authorization to access requested content prior to granting access."
   tag "nist": ["AC-3", "Rev_4"]
 # Check:
   # Execute the following commands:
-    # grep 'auth_request' in the nginx configuration
+    # grep 'auth_request' on the nginx.conf and any separated include configuration files
       # If the auth_request directive does not exist inside the location context, this is a finding.
  
 # Fix:

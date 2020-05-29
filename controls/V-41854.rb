@@ -47,7 +47,7 @@ to the client in warning and error messages."
   tag "nist": ["SI-11 a", "Rev_4"]
 
 # Check:
-  # grep 'server_tokens' in the nginx configuration
+  # grep 'server_tokens' in the nginx.conf and any separated include configuration files
     # If directive is found and not set to 'off', this is a finding
 # Fix:
     # Mask server details by setting server_tokens directive to off in the nginx configuration file.

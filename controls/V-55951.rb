@@ -36,10 +36,47 @@ period of time."
   tag "fix_id": "F-60829r1_fix"
   tag "cci": ["CCI-002361"]
   tag "nist": ["AC-12", "Rev_4"]
+  # Check:
+    # View the keepalive_timeout directive:
+      # grep "keepalive_timeout" in the nginx configuration file and any separated include configuration file.
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+    #   If the value of ""keepalive_timeout"" is not set to 5 (seconds) or less, thisis a finding.
+
+  # Fix: 
+    # Edit the Nginx configuration file and set the value of "keepalive_timeout" to the value of 5 or less.
+
+  Array(nginx_conf(conf_path).params['http']).each do |http|
+    # Within http
+    describe 'The http context keep-alive value' do
+      it 'should be from 10 to 99 seconds.' do
+        expect(http).to(include "keepalive_timeout")
+        Array(http["keepalive_timeout"]).each do |http_alive|
+          expect(http_alive[0].to_i).to(be <= 5)
+        end
+      end
+    end
+    # Within server
+    describe 'The server context keep-alive value' do
+      it 'should be from 10 to 99 seconds.' do
+        Array(nginx_conf(conf_path).servers).each do |server|
+          expect(server).to(include "keepalive_timeout")
+          Array(server.params["keepalive_timeout"]).each do |server_alive|
+            expect(server_alive[0].to_i).to(be <= 5)
+          end
+        end
+      end
+    end
+    # Within location
+    describe 'The location context keep-alive value' do
+      it 'should be from 10 to 99 seconds.' do
+        Array(nginx_conf(conf_path).locations).each do |location|
+          expect(location).to(include "keepalive_timeout")
+          Array(location.params["keepalive_timeout"]).each do |location_alive|
+            expect(location_alive[0].to_i).to(be <= 5)
+          end
+        end
+      end
+    end
   end
-  
 end
 

@@ -45,7 +45,7 @@ expected by the hosted applications."
 
   
   # Check:
-    # grep 'charset' in the nginx configuration
+    # grep 'charset' in the nginx.conf and any separated include configuration files
       # Compare the charset set with the charsets expected and if they do not match, this is a finding.
   # Fix:
     # In the nginx configuration file, set charset to the character sets the application expects.
@@ -56,8 +56,8 @@ expected by the hosted applications."
     # Within http
     describe 'charset' do
       it 'should be set if found in the http context.' do
-        Array(http["charset"]).each do |tokens|
-          expect(tokens).to(cmp charset_required)
+        Array(http["charset"]).each do |charset|
+          expect(charset).to(cmp charset_required)
         end
       end
     end

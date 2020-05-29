@@ -39,7 +39,7 @@ clients on error conditions by disabling debugging and trace information."
   tag "nist": ["SI-11 a", "Rev_4"]
 
 # Check:
-  # grep 'error_log' in the nginx configuration
+  # grep 'error_log' in the nginx.conf and any separated include configuration files
     # If directive error log level is set to 'debug', this is a finding.
 # Fix:
     # In the Nginx configuration, the error log level should not be set to 'debug'.
