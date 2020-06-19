@@ -43,9 +43,14 @@ security configuration guidance."
   tag "cci": ["CCI-000366"]
   tag "nist": ["CM-6 b", "Rev_4"]
   
-  describe "Skip Test" do
-    skip "This is a manual check"
-  end
-
+# check for port
+# If not 80 or 443, it fails.
+  nginx_conf(conf_path).servers.entries.each do |server|
+    server.params['listen'].each do |listen|
+      describe listen.join do
+        it { should match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) }
+      end
+    end unless server.params['listen'].nil?
+  end 
 end
 

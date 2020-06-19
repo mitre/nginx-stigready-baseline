@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41612" do
-  title "The web server must produce log records containing sufficient
+  title "The NGINX web server must produce log records containing sufficient
 information to establish what type of events occurred."
   desc  "Web server logging capability is critical for accurate forensic
 analysis. Without sufficient and accurate information, a correct replay of the
@@ -27,17 +22,31 @@ control rules invoked.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-if the web server contains sufficient information to establish what type of
-event occurred.
+  Review the NGINX web server documentation and deployed configuration to determine 
+  if the Nginx web server contains sufficient information to establish what type of event occurred
 
-    Request a user access the hosted applications, and verify sufficient
-information is recorded.
+  Check for the following:
+    # grep the 'log_format' directive in the http context of the nginx.conf. 
 
-    If sufficient information is not logged, this is a finding.
+  The logs will not include sufficient information if the 'log_format' directive does not exist.
+
+  If the the 'log_format' directive does not exist, this is a finding.
+
+  Example configuration:
+  log_format  main  '$remote_addr - $remote_user [$time_local] ""$request""'
+  '$status $body_bytes_sent ""$http_referer""'
+  '""$http_user_agent"" ""$http_x_forwarded_for""';
   "
-  desc  "fix", "Configure the web server to record sufficient information to
-establish what type of events occurred."
+  desc  "fix", "
+  Configure the 'log_format' directive in the nginx.conf file to look like the following:
+
+  log_format  main  '$remote_addr - $remote_user [$time_local] ""$request""'
+  '$status $body_bytes_sent ""$http_referer""'
+  '""$http_user_agent"" ""$http_x_forwarded_for""';
+
+  NOTE: Your log format may be using different variables based on the determination of 
+  what information is sufficient in order to establish what type of events occured."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000095-WSR-000056"
@@ -48,19 +57,19 @@ establish what type of events occurred."
   tag "cci": ["CCI-000130"]
   tag "nist": ["AU-3", "Rev_4"]
 
-  # Is including the request information sufficient enough?
+  nginx_conf_handle = nginx_conf(conf_path)
 
-    # log_format - Context:	http
-    Array(nginx_conf(conf_path).params['http']).each do |http|
-      Array(http["log_format"]).each do |log_format|
-        describe 'request' do
-          # it { should match /.*?\$request.*?/ }
-          it 'should be part of every log format in the http context.' do
-            expect(log_format.to_s).to(match /.*?\$request.*?/)
-          end
-        end
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  # Verify that the log_format directive exists
+  Array(nginx_conf_handle.params['http']).each do |http|
+    describe 'Each http context' do
+      it 'should include a log_format directive for logging sufficient information.' do
+        expect(http).to(include "log_format")
       end
-    end  
-  
+    end      
+  end
 end
 

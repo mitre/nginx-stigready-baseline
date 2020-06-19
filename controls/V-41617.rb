@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41617" do
-  title "The web server must produce log records that contain sufficient
+  title "The NGINX web server must produce log records that contain sufficient
 information to establish the outcome (success or failure) of events."
   desc  "Web server logging capability is critical for accurate forensic
 analysis. Without sufficient and accurate information, a correct replay of the
@@ -32,18 +27,20 @@ control rules invoked.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine if the web server is configured to generate the outcome (success or
-failure) of the event.
+  Review the NGINX web server documentation and deployment configuration to
+  determine if the web server is configured to generate the outcome (success or
+  failure) of the event.
 
-    Request a user access the hosted application and generate logable events,
-and then review the logs to determine if the outcome of the event can be
-established.
+  Check for the following:
+      # grep for a 'log_format' directive in the http context of the nginx.conf.
 
-    If the outcome of the event cannot be determined, this is a finding.
+  If the 'log_format' directive is not configured to contain the '$status' variable, 
+  this is a finding. 
   "
-  desc  "fix", "Configure the web server to generate the outcome, success or
-failure, as part of each logable event."
+  desc  "fix", "Configure the 'log_format' directive in the nginx.conf to use the 
+  '$status' variable to generate the outcome, success or failure, as part of each 
+  logable event."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000099-WSR-000061"
@@ -54,7 +51,13 @@ failure, as part of each logable event."
   tag "cci": ["CCI-000134"]
   tag "nist": ["AU-3", "Rev_4"]
 
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.params['http']).each do |http|
     Array(http["log_format"]).each do |log_format|
       describe 'status' do
         it 'should be part of every log format in http.' do

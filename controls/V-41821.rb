@@ -8,7 +8,7 @@ key_file_path = input('key_file_path')
 root_document_mount_path = input('root_document_mount_path')
 
 control "V-41821" do
-  title "The web server document directory must be in a separate partition from
+  title "The NGINX web server document directory must be in a separate partition from
 the web servers system files."
   desc  "A web server is used to deliver content on the request of a client.
 The content delivered to a client must be controlled, allowing only hosted
@@ -21,14 +21,20 @@ drive as the system folder compounds potential attacks such as drive space
 exhaustion."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-where the document directory is located for each hosted application.
+  Review the NGINX web server documentation and deployed configuration to determine
+  where the document directory is located for each hosted application.
 
-    If the document directory is not in a separate partition from the web
-server's system files, this is a finding.
+  Check for the following:
+
+    #grep the 'root' directive in the http, server, and location context of the nginx.conf and any separated include configuration file.
+
+  If the path for any of the directives is on the same partition as the web server operating system files, this is a finding.
   "
-  desc  "fix", "Configure the web server to place the document directories in a
-separate partition from the web server system files."
+  desc  "fix", "Create and mount a new partition. 
+  Once partition is created, the directory needs to be copied over using the following command:
+    # sudo rsync -av <DOCUMENT HOME DIRECTORY> <NEW MOUNTED PARTITION>.
+  
+  Update the 'root' directives in the Nginx configuration file(s) with the new location."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000233-WSR-000146"
@@ -65,8 +71,8 @@ separate partition from the web server system files."
     
     webserver_roots.each do |root|
       puts root;
-      describe "Each document root defined needs to be on a separate partition from the OS." do
-        it { should match /\/mnt/ }
+      describe "The root directory #{root}" do
+        it { should_not cmp '/'}
       end
     end
 end

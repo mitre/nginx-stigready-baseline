@@ -46,7 +46,7 @@ format that is mapped to UTC or GMT time."
   Array(nginx_conf(conf_path).params['env']).each do |env|
     found_utc = false
     Array(env).each do |value|
-      if (value == "TZ=UTC")
+      if (value == "TZ=UTC" || value == "TZ=GMT")
         found_utc = true
       end
     end

@@ -1,13 +1,11 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
 access_log_path = input('access_log_path')
 error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+
 
 control "V-40799" do
-  title "The web server must generate information to be used by external
+  title "The NGINX web server must generate information to be used by external
 applications or entities to monitor and control remote access."
   desc  "Remote access to the web server is any access that communicates
 through an external, non-organization-controlled network. Remote access can be
@@ -25,15 +23,33 @@ monitoring systems.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if the
-web server is configured to generate information for external applications
-monitoring remote access.
+  Review the NGINX web server documentation and configuration to determine if the
+  web server is configured to generate information for external applications
+  monitoring remote access.
 
-    If a mechanism is not in place providing information to an external
-application used to monitor and control access, this is a finding.
+  Check for the following: 
+   # grep for 'access_log' and 'error_log' directives in the nginx.conf and any separated include configuration file.
+
+  Execute the following commands:
+   # file <path to access_log>/access.log
+   # file <path to error_log>/error.log
+
+  If the access_log and error_log directives do not exist and the access.log and error.log files do not exist, this is a finding.
+
+  Execute the following commands to verify that the Nginx web server is producing logs and linking them to stdout and stderr:
+
+    # readlink <access_log_path>/access.log
+    # readlink <error_log_path>/error.log
+
+  If the access.log and error.log files are not linked to stdout and stderr, this is a finding.
   "
-  desc  "fix", "Configure the web server to provide remote connection
-information to external monitoring and access control applications."
+  desc  "fix", "
+  Enable loggin on the Nginx web server by configuring the 'access_log' and 'error_log' directives in the Nginx configuration file(s).
+
+  Execute the following command on the Nginx web server to link logs to stdout and stderr:
+  # ln -sf /dev/stdout <access_log_path>/access.log
+  # ln -sf /dev/stderr <access_log_path>/access.log"
+  
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000016-WSR-000005"
@@ -43,6 +59,45 @@ information to external monitoring and access control applications."
   tag "fix_id": "F-45961r2_fix"
   tag "cci": ["CCI-000067"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
+
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  # Verify that access_log and error_log is enabled
+  Array(nginx_conf_handle.params['http']).each do |http|
+    describe 'Each http context' do
+      it 'should include an access_log directive.' do
+        expect(http).to(include "access_log")
+      end
+    end
+    Array(http["access_log"]).each do |access_log|
+      Array(access_log).each do |access_value|
+        if access_value.include? "access.log"
+          describe file(access_value) do
+            it 'The access log should exist and be a file.' do
+              expect(subject).to(exist)
+              expect(subject).to(be_file)
+            end
+          end
+        end
+      end
+    end
+  end
+  Array(nginx_conf_handle.params['error_log']).each do |error_log|
+    Array(error_log).each do |error_value|
+      if error_value.include? "error.log"
+        describe file(error_value) do
+          it 'The error log should exist and be a file.' do
+            expect(subject).to(exist)
+            expect(subject).to(be_file)
+          end
+        end
+      end
+    end       
+  end
 
   # Ensure access log is linked to stdout
   describe command('readlink ' + access_log_path) do

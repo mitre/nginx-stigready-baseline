@@ -1,13 +1,15 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
+nginx_log_path = input('nginx_log_path')
 access_log_path = input('access_log_path')
 error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+
+nginx_owner = input('nginx_owner')
+nginx_group = input('nginx_group')
+sys_admin = input('sys_admin')
+sys_admin_group = input('sys_admin_group')
 
 control "V-41670" do
-  title "Web server log files must only be accessible by privileged users."
+  title "Web NGINX server log files must only be accessible by privileged users."
   desc  "Log data is essential in the investigation of events. If log data were
 to become compromised, then competent forensic analysis and discovery of the
 true source of potentially malicious system activity would be difficult, if not
@@ -23,18 +25,33 @@ either case, the logs must be protected from access by non-privileged users.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration settings to
-determine if the web server logging features protect log information from
-unauthorized access.
+  Review the NGINX web server documentation and deployed configuration settings to
+  determine if the web server logging features protect log information from
+  unauthorized access.
 
-    Review file system settings to verify the log files have secure file
-permissions.
+  Check for the following: 
+      # grep for 'access_log' and 'error_log' directives in the nginx.conf 
+      and any separated include configuration file.
 
-    If the web server log files are not protected from unauthorized access,
-this is a finding.
+  Execute the following commands:
+      # ls -alH <nginx log directory>
+      # ls -alH <path to access_log>/access.log
+      # ls -alH <path to error_log>/error.log
+  
+  Note the owner and group permissions on these files. Only system administrators 
+  and service accounts running the server should have permissions to the directory and files.
+     - The SA or service account should own the directory and files
+     - Permissions on the directory should be 750 or more restrictive
+     - Permissions on these files should be 640 or more restrictive
+  
+  If any users other than those authorized have read access to the log files, this 
+  is a finding.
   "
-  desc  "fix", "Configure the web server log files so unauthorized access of
-log information is not possible."
+  desc  "fix", "To protect the integrity of the data that is being captured in the 
+  log files, ensure that only the members of the Auditors group, Administrators, 
+  and the user assigned to run the web server software is granted permissions to 
+  read the log files."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000118-WSR-000068"
@@ -45,16 +62,28 @@ log information is not possible."
   tag "cci": ["CCI-000162"]
   tag "nist": ["AU-9", "Rev_4"]
 
-  # Ensure access log is linked to stdout
-  describe command('readlink ' + access_log_path) do
-    its('stdout') { should eq "/dev/stdout\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  authorized_sa_user_list = sys_admin.clone << nginx_owner
+  authorized_sa_group_list = sys_admin_group.clone << nginx_group
+
+  # nginx log directory should have 750 permissions
+  describe file(nginx_log_path) do
+    its('owner') { should be_in authorized_sa_user_list }
+    its('group') { should be_in authorized_sa_group_list }
+    its('mode')  { should cmp '0750'}
   end
-  # Ensure error log is linked to stderror
-  describe command('readlink ' + error_log_path)do
-    its('stdout') { should eq "/dev/stderr\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+
+  # nginx access log file should have 640 permissions
+  describe file(access_log_path) do
+    its('owner') { should be_in authorized_sa_user_list }
+    its('group') { should cmp nginx_group }
+    its('mode')  { should cmp '0640'}
   end
-  
+
+  # nginx error log file should have 640 permissions
+  describe file(error_log_path) do
+    its('owner') { should be_in authorized_sa_user_list }
+    its('group') { should cmp nginx_group }
+    its('mode')  { should cmp '0640'} 
+  end
 end
 

@@ -20,14 +20,17 @@ and general messages during normal operation of the web server, an attacker
 does not need to cause an error condition to gain this information."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-if debugging and trace information are enabled.
+  Review the web server documentation and deployed configuration to determine
+  if debugging and trace information are enabled.
 
-    If the web server is configured with debugging and trace information
-enabled, this is a finding.
+  Check for the following:
+  # grep the 'error_log' directive the nginx.conf
+
+  If the 'error_log' directive is set to error log level 'debug', this is a finding. 
   "
-  desc  "fix", "Configure the web server to minimize the information given to
-clients on error conditions by disabling debugging and trace information."
+  desc  "fix", "The 'error_log' directive should not have the error log level set to
+  'debug' to minimize the information given to clients on error conditions."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000266-WSR-000160"
@@ -37,12 +40,6 @@ clients on error conditions by disabling debugging and trace information."
   tag "fix_id": "F-47314r2_fix"
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
-
-# Check:
-  # grep 'error_log' in the nginx.conf and any separated include configuration files
-    # If directive error log level is set to 'debug', this is a finding.
-# Fix:
-    # In the Nginx configuration, the error log level should not be set to 'debug'.
 
   Array(nginx_conf(conf_path).params['error_log']).each do |error_log|
     Array(error_log).each do |error_value|

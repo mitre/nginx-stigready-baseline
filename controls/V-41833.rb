@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-41833" do
-  title "The web server must restrict the ability of users to launch Denial of
+  title "The NGINX web server must restrict the ability of users to launch Denial of
 Service (DoS) attacks against other information systems or networks."
   desc  "A web server can limit the ability of the web server being used in a
 DoS attack through several methods. The methods employed will depend upon the
@@ -18,14 +18,26 @@ server being used in a DoS attack is bandwidth throttling.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether the web server has been configured to limit the ability of the web
-server to be used in a DoS attack.
+  Review the NGINX web server documentation and deployed configuration to determine
+  whether the web server has been configured to limit the ability of the web
+  server to be used in a DoS attack.
 
-    If not, this is a finding.
+  Check if there's a limit on the number of connections allowed and the bandwith allowed:
+    #grep the 'limit_conn_zone' directive in the http context of the nginx.conf and any 
+    separated include configuration file.
+
+    #grep the 'limit_conn' directive in the location context of the nginx.conf and any 
+    separated include configuration file.
+
+    #grep the 'limit_rate' directive in the location context of the nginx.conf and any 
+    separated include configuration file.
+
+  If the 'limit_conn_zone', 'limit_conn', 'limit_rate' directives do not exist, are not 
+  configured, or is unlimited, this is a finding. 
   "
-  desc  "fix", "Configure the web server to limit the ability of users to use
-the web server in a DoS attack."
+  desc  "fix", "Configure the Nginx web server to include the 'limit_conn_zone', 'limit_conn', 
+  'limit_rate' directives to limit the number of concurrent sessions and the bandwidth allowed."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000246-WSR-000149"
@@ -35,47 +47,7 @@ the web server in a DoS attack."
   tag "fix_id": "F-47292r2_fix"
   tag "cci": ["CCI-001094"]
   tag "nist": ["SC-5 (1)", "Rev_4"]
-  # Check:
-    # grep 'server_tokens' in the nginx.conf and any separated include configuration files
-      # If directive is found and not set to 'off', this is a finding
-    # grep 'limit_conn_zone', 'limit_conn', and 'limit_rate' in the nginx.conf and any separated include configuration files
-      # If directives are not found, this is a finding.
-  # Fix:
-    # Mask server details setting server_tokens to off in the nginx configuration file.
-    # Set a limit on bandwith and number of connections allowed in the nginx configuration file.
 
-  # server_tokens can exist in http, server, or location
-  Array(nginx_conf(conf_path).params['http']).each do |http|
-    # Within http
-    describe 'server_tokens' do
-      it 'should be off if found in the http context.' do
-        Array(http["server_tokens"]).each do |tokens|
-          expect(tokens).to(cmp 'off')
-        end
-      end
-    end
-    # Within server
-    describe 'server_tokens' do
-      it 'should be off if found in the server context.' do
-        Array(nginx_conf(conf_path).servers).each do |server|
-          Array(server.params["server_tokens"]).each do |server_token|       
-            expect(server_token).to(cmp 'off')
-          end 
-        end
-      end
-    end
-    # Within location
-    describe 'server_tokens' do
-      it 'should be off if found in the location context.' do
-        Array(nginx_conf(conf_path).locations).each do |location|
-          Array(location.params["server_tokens"]).each do |server_token|       
-            expect(server_token).to(cmp 'off')
-          end 
-        end
-      end
-    end
-  end
-  
 # limit_conn_zone - Context:	http
   Array(nginx_conf(conf_path).params['http']).each do |http|
     describe 'The HTTP context' do

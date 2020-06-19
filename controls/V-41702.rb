@@ -20,12 +20,18 @@ allow clients to modify unauthorized files on the web server.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine if Web Distributed Authoring (WebDAV) is enabled.
+  Review the web server documentation and deployment configuration to
+  determine if Web Distributed Authoring (WebDAV) is enabled.
 
-    If WebDAV is enabled, this is a finding.
+  Check for the following: 
+    # grep 'dav_methods' directive in the http, server, and location context of 
+      the nginx.conf and any separated include configuration file.
+
+  If the 'dav_methods' directive is enabled in any of these, this is a finding. 
   "
-  desc  "fix", "Configure the web server to disable Web Distributed Authoring."
+  desc  "fix", "Ensure the 'dav_methods' directive does not exist in the Nginx 
+  configuration file(s). If it does, set the directive to 'off'."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000141-WSR-000085"
@@ -36,32 +42,40 @@ determine if Web Distributed Authoring (WebDAV) is enabled.
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
   
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
   # dav_methods can exist in http, server, or location
-  Array(nginx_conf(conf_path).params['http']).each do |http|
-    # Within http
+  # Within http
+  Array(nginx_conf_handle.params['http']).each do |http|
     describe 'The http context' do
       it 'should not include dav_methods.' do
-        expect(http["dav_methods"]).to(be_nil)
+        expect(http["dav_methods"]).to (be_nil).or (cmp "off")
       end
     end
-    # Within server
+  end
+
+  # Within server
+  Array(nginx_conf_handle.servers).each do |server|
     describe 'The server context' do
       it 'should not include dav_methods.' do
-        Array(nginx_conf(conf_path).servers).each do |server|
-          Array(server.params["dav_methods"]).each do |dav|       
-            expect(dav).to(be_nil)
-          end 
-        end
+        Array(server.params["dav_methods"]).each do |dav|       
+          expect(dav).to (be_nil).or (cmp "off")
+        end 
       end
     end
-    # Within location
+  end 
+
+  # Within location
+  Array(nginx_conf_handle.locations).each do |location|
     describe 'The location context' do
       it 'should not include dav_methods.' do
-        Array(nginx_conf(conf_path).locations).each do |location|
-          Array(location.params["dav_methods"]).each do |dav|       
-            expect(dav).to(be_nil)
-          end 
-        end
+        Array(location.params["dav_methods"]).each do |dav|       
+          expect(dav).to (be_nil).or (cmp "off")
+        end 
       end
     end
   end

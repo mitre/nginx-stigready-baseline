@@ -1,10 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41615" do
   title "The web server must produce log records containing sufficient
@@ -29,18 +24,21 @@ rules invoked.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine if the web server is configured to generate sufficient information to
-resolve the source, e.g. source IP, of the log event.
+  Review the Nginx web server documentation and deployment configuration to determine 
+  if the Nginx web server is configured to generate sufficient information to resolve 
+  the source, e.g. source IP, of the log event.
 
-    Request a user access the hosted application and generate logable events,
-and then review the logs to determine if the source of the event can be
-established.
 
-    If the source of the event cannot be determined, this is a finding.
+  Check for the following:
+      # grep for a 'log_format' directive in the http context of the nginx.conf.
+  
+  If the 'log_format' directive is not configured to contain the '$remote_addr', 
+  '$remote_user', and '$http_user_agent' variables, this is a finding. 
   "
-  desc  "fix", "Configure the web server to generate the source of each logable
-event."
+  desc  "fix", "Configure the 'log_format' directive in the nginx.conf to use the 
+  '$remote_user', '$remote_addr', and '$http_user_agent' variables to generate 
+  the source of each logable event."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000098-WSR-000059"
@@ -51,8 +49,14 @@ event."
   tag "cci": ["CCI-000133"]
   tag "nist": ["AU-3", "Rev_4"]
 
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
   # log_format - Context:	http
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  Array(nginx_conf_handle.params['http']).each do |http|
     Array(http["log_format"]).each do |log_format|
       describe 'remote_addr' do
         it 'should be part of every log format in http.' do

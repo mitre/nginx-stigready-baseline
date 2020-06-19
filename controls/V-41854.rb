@@ -8,7 +8,7 @@ key_file_path = input('key_file_path')
 
 control "V-41854" do
   title "Warning and error messages displayed to clients must be modified to
-minimize the identity of the web server, patches, loaded modules, and directory
+minimize the identity of the NGINX web server, patches, loaded modules, and directory
 paths."
   desc  "Information needed by an attacker to begin looking for possible
 vulnerabilities in a web server includes any information about the web server,
@@ -26,16 +26,22 @@ to not aid in the blueprinting of the web server.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether the web server offers different modes of operation that will minimize
-the identity of the web server, patches, loaded modules, and directory paths
-given to clients on error conditions.
+  Review the NGINX web server documentation and deployed configuration to determine
+  whether the web server offers different modes of operation that will minimize
+  the identity of the web server, patches, loaded modules, and directory paths
+  given to clients on error conditions.
 
-    If the web server is not configured to minimize the information given to
-clients, this is a finding.
+  Check for the following:
+      # grep the 'server_tokens' directive in the http, server, and location context 
+      of the nginx.conf and any separated include configuration file.
+
+  The default value for the 'server_tokens' directive is set to 'on'. If the 'server_tokens' 
+  directive does not exist or is not set to 'off', this is a finding
   "
-  desc  "fix", "Configure the web server to minimize the information provided
-to the client in warning and error messages."
+  desc  "fix", "Configure the Nginx web server to include the 'server_tokens' directive 
+  and set to 'off' in the Nginx configuration file(s) to mask server details and minimize 
+  the information provided to the client in warning and error messages."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000266-WSR-000159"
@@ -46,40 +52,36 @@ to the client in warning and error messages."
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-# Check:
-  # grep 'server_tokens' in the nginx.conf and any separated include configuration files
-    # If directive is found and not set to 'off', this is a finding
-# Fix:
-    # Mask server details by setting server_tokens directive to off in the nginx configuration file.
-
-  # server_tokens can exist in http, server, or location
+  # Within http
   Array(nginx_conf(conf_path).params['http']).each do |http|
-    # Within http
-    describe 'server_tokens' do
-      it 'should be off if found in the http context.' do
+    describe 'server_tokens directive' do
+      it 'should exist and be off in the http context.' do
+        expect(http).to(include "server_tokens")
         Array(http["server_tokens"]).each do |tokens|
           expect(tokens).to(cmp 'off')
         end
       end
     end
-    # Within server
+  end 
+    
+  # Within server
+  Array(nginx_conf(conf_path).servers).each do |server|
     describe 'server_tokens' do
       it 'should be off if found in the server context.' do
-        Array(nginx_conf(conf_path).servers).each do |server|
-          Array(server.params["server_tokens"]).each do |server_token|       
-            expect(server_token).to(cmp 'off')
-          end 
-        end
+        Array(server.params["server_tokens"]).each do |server_token|       
+          expect(server_token).to (cmp 'off').or (be nil)
+        end 
       end
     end
-    # Within location
+  end
+
+  # Within location
+  Array(nginx_conf(conf_path).locations).each do |location|
     describe 'server_tokens' do
       it 'should be off if found in the location context.' do
-        Array(nginx_conf(conf_path).locations).each do |location|
           Array(location.params["server_tokens"]).each do |server_token|       
-            expect(server_token).to(cmp 'off')
-          end 
-        end
+            expect(server_token).to (cmp 'off').or (be nil)
+        end 
       end
     end
   end

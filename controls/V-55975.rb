@@ -58,6 +58,5 @@ storage capacity."
     its('stdout') { should eq "/dev/stderr\n" }
     # its('stdout') { should cmp '/proc/1/fd/pipe' }
   end
-  
 end
 

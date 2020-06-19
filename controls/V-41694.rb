@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41694" do
-  title "The web server must not be a proxy server."
+  title "The NGINX web server must not be a proxy server."
   desc  "A web server should be primarily a web server or a proxy server but
 not both, for the same reasons that other multi-use servers are not
 recommended.  Scanning for web servers that will also proxy requests into an
@@ -15,17 +10,25 @@ otherwise protected network is a very common attack making the attack
 anonymous."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-if the web server is also a proxy server.
+  Review the NGINX web server documentation and deployed configuration to determine
+  if the web server is also a proxy server.
 
-    If the web server is also acting as a proxy server, this is a finding.
+  If the Nginx server is a proxy server and not a web server, this check is Not Applicable.
+
+  Execute the following command: 
+
+  # nginx -V
+
+  Verify the ‘nginx_http_proxy_module’ module is not installed.
+
+    # grep the 'proxy_pass' directive in the location context of the  nginx.conf and any separated include configuration file.
+
+  If the 'nginx_http_proxy_module' module is installed and the 'proxy_pass' directive exists, this is a finding. 
   "
   desc  "fix", "
-    Uninstall any proxy services, modules, and libraries that are used by the
-web server to act as a proxy server.
+  Use the configure script (available in the nginx download package) to exclude the 'nginx_http_proxy_module' module by using the --without {module_name} option. 
 
-    Verify all configuration changes are made to assure the web server is no
-longer acting as a proxy server in any manner.
+  Ensure the 'proxy_pass' directive is not enabled in the Nginx configuration file(s).   
   "
   impact 0.5
   tag "severity": "medium"
@@ -38,7 +41,7 @@ longer acting as a proxy server in any manner.
   tag "nist": ["CM-7 a", "Rev_4"]
 
   describe nginx do
-    its('modules') { should_not include 'ngx_http_proxy_module' }
+    its('modules') { should_not include 'http_proxy' }
   end
 
   Array(nginx_conf(conf_path).locations).each do |location|

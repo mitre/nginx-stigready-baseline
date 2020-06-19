@@ -1,13 +1,7 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41807" do
-  title "The web server must generate unique session identifiers that cannot be
+  title "The NGINX web server must generate unique session identifiers that cannot be
 reliably reproduced."
   desc  "Communication between a client and the web server is done using the
 HTTP protocol, but HTTP is a stateless protocol. In order to maintain a
@@ -25,18 +19,23 @@ the same input criteria, must generate an unrelated random ID.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to verify
-that random and unique session identifiers are generated.
+  Review the NGINX web server documentation and deployed configuration to verify
+  that random and unique session identifiers are generated.
 
-    Access the web server ID generator function and generate two IDs using the
-same input.
+  If it is determined that the web server is not required to perform session management, 
+  this check is Not Applicable. 
 
-    If the web server is not configured to generate random and unique session
-identifiers, or the ID generator generates the same ID for the same input, this
-is a finding.
+  Nginx web server versions after 1.11.0 have the $request_id embedded variable by default. 
+  This variable is a unique request identifier generated from 16 random bytes, in hexadecimal. 
+
+  Execute the following command to get the current version of Nginx running:
+    # nginx -v
+
+  If the current version of Nginx running is 1.11.0 or earlier, this is a finding. 
   "
-  desc  "fix", "Configure the web server to generate random and unique session
-identifiers that cannot be reliably reproduced."
+  desc  "fix", "Upgrade to the lastest stable version of Nginx web server to use the '$request_id' 
+  embedded variable for generating an unique identifier that cannot be reliably reproduced."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000224-WSR-000136"

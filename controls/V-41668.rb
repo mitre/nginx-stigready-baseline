@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41668" do
-  title "The web server must use the internal system clock to generate time
+  title "The NGINX web server must use the internal system clock to generate time
 stamps for log records."
   desc  "Without an internal clock used as the reference for the time stored on
 each event to provide a trusted common reference for the time, forensic
@@ -26,18 +21,24 @@ UTC.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine if the internal system clock is used for date and time stamps. If
-this is not feasible, an alternative workaround is to take an action that
-generates an entry in the log and then immediately query the operating system
-for the current time. A reasonable match between the two times will suffice as
-evidence that the system is using the internal clock for date and time stamps.
+  Review the NGINX web server documentation and deployment configuration to
+  determine if the internal system clock is used for date and time stamps. If
+  this is not feasible, an alternative workaround is to take an action that
+  generates an entry in the log and then immediately query the operating system
+  for the current time. A reasonable match between the two times will suffice as
+  evidence that the system is using the internal clock for date and time stamps.
 
-    If the web server does not use the internal system clock to generate time
-stamps, this is a finding.
+  Check for the following:
+      # grep for a 'log_format' directive in the http context of the nginx.conf.
+
+  If the 'log_format' directive is not configured to contain the '$time_local' 
+  variable, this is a finding. 
   "
-  desc  "fix", "Configure the web server to use internal system clocks to
-generate date and time stamps for log records."
+  desc  "fix", "
+  Configure the 'log_format' directive in the nginx.conf to use the '$time_local' 
+  variable to use internal system clocks to generate date and time stamps for 
+  log records."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000116-WSR-000066"
@@ -48,7 +49,13 @@ generate date and time stamps for log records."
   tag "cci": ["CCI-000159"]
   tag "nist": ["AU-8 a", "Rev_4"]
 
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+  
+  Array(nginx_conf_handle.params['http']).each do |http|
     Array(http["log_format"]).each do |log_format|
       describe 'time_local' do
         it 'should be part of every log format in http.' do

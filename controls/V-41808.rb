@@ -1,13 +1,7 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41808" do
-  title "The web server must generate a session ID long enough that it cannot
+  title "The NGINX web server must generate a session ID long enough that it cannot
 be guessed through brute force."
   desc  "Generating a session identifier (ID) that is not easily guessed
 through brute force is essential to deter several types of session attacks.  By
@@ -22,14 +16,25 @@ reducing the likelihood of an attacker guessing a session ID.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to see how
-long the generated session identifiers are.
+  Review the NGINX web server documentation and deployed configuration to see how
+  long the generated session identifiers are.
 
-    If the web server is not configured to generate session identifiers that
-are at least 128 bits (16 bytes) in length, this is a finding.
+  If it is determined that the web server is not required to perform session 
+  management, this check is Not Applicable. 
+
+  Nginx web server versions after 1.11.0 have the $request_id embedded variable 
+  by default. This variable is a unique request identifier generated from 16 random bytes, 
+  in hexadecimal. 
+
+  Execute the following command to get the current version of Nginx running:
+    # nginx -v
+
+  If the current version of Nginx running is 1.11.0 or earlier, this is a finding. 
   "
-  desc  "fix", "Configure the web server to generate session identifiers that
-are at least 128 bits in length."
+  desc  "fix", "Upgrade to the lastest stable version of Nginx web server to use the 
+  '$request_id' embedded variable for generating unique identifiers that are at least 
+  128 bits in length."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000224-WSR-000137"

@@ -50,8 +50,8 @@ SSL/TLS without using cookie compression."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe nginx do
+    its('version') { should cmp > '1.3.2' }
   end
   
 end

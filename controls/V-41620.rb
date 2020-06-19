@@ -1,10 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41620" do
   title "The web server must produce log records containing sufficient
@@ -26,17 +21,20 @@ and access control or flow control rules invoked.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine if the web server can generate log data containing the user/subject
-identity.
+  Review the NGINX web server documentation and deployment configuration to
+  determine if the web server can generate log data containing the user/subject
+  identity.
 
-    Request a user access the hosted application and generate logable events,
-and verify the events contain the user/subject or process identity.
+  Check for the following:
+      # grep for a 'log_format' directive in the http context of the nginx.conf.
 
-    If the identity is not part of the log record, this is a finding.
+  If the 'log_format' directive is not configured to contain the '$remote_user' 
+  variable, this is a finding. 
   "
-  desc  "fix", "Configure the web server to include the user/subject identity
-or process as part of each log record."
+  desc  "fix", "
+  Configure the 'log_format' directive in the nginx.conf to use the '$remote_user' 
+  variable to to include the user/subject identity or process as part of each log record."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000100-WSR-000064"
@@ -47,7 +45,13 @@ or process as part of each log record."
   tag "cci": ["CCI-001487"]
   tag "nist": ["AU-3", "Rev_4"]
 
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.params['http']).each do |http|
     Array(http["log_format"]).each do |log_format|
       describe 'remote_user' do
         it 'should be part of every log format in http.' do

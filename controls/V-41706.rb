@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41706" do
-  title "The web server must be configured to use a specified IP address and
+  title "The NGINX web server must be configured to use a specified IP address and
 port."
   desc  "The web server must be configured to listen on a specified IP address
 and port.  Without specifying an IP address and port for the web server to
@@ -23,19 +18,24 @@ application IP address.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine whether the web server is configured to listen on a specified IP
-address and port.
+  Review the NGINX web server documentation and deployment configuration to
+  determine whether the web server is configured to listen on a specified IP
+  address and port.
 
-    Request a client user try to access the web server on any other available
-IP addresses on the hosting hardware.
+  Check for the following:
+    # grep the 'listen' directive in the server context of the nginx.conf and any separated include configuration file.
 
-    If an IP address is not configured on the web server or a client can reach
-the web server on other IP addresses assigned to the hosting hardware, this is
-a finding.
+  Verify that any enabled 'listen' directives specify both an IP address and port number.
+
+  If the 'listen' directive is found with only an IP address or only a port number specified, this is finding.
+
+  If the IP address is all zeros (i.e., 0.0.0.0:80 or [::ffff:0.0.0.0]:80), this is a finding.
+
+  If the 'listen' directive does not exist, this is a finding.
   "
-  desc  "fix", "Configure the web server to only listen on a specified IP
-address and port."
+  desc  "fix", "Configure the 'listen' directive in the server context of the Nginx configuration file(s) to listen on a 
+  specific IP address and port."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000142-WSR-000089"
@@ -46,24 +46,27 @@ address and port."
   tag "cci": ["CCI-000382"]
   tag "nist": ["CM-7 b", "Rev_4"]
 
-  # Review the results for the followingdirective: listen
-  # For any enabled Listen directives ensure they specify both an IP address and
-  # port number.
-  # If the Listen directive is found with only an IP address, or only a port
-  # number specified, this is finding. If the IP address is all zeros (i.e.
-  # 0.0.0.0:80 or [::ffff:0.0.0.0]:80, this is a finding. If the Listen
-  # directive does not exist, this is a finding.
+  nginx_conf_handle = nginx_conf(conf_path)
 
-  nginx_conf(conf_path).servers.entries.each do |server|
-    server.params['listen'].each do |listen|
-      describe listen.join do
-        it { should match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) }
-      end
-      describe listen.join.split(':').first do
-        it { should_not cmp '0.0.0.0' }
-        it { should_not cmp '[::ffff:0.0.0.0]' }
-      end
-    end unless server.params['listen'].nil?
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
+
+  Array(nginx_conf_handle.servers).each do |server|
+    describe 'The listen directive' do
+      it 'should exist.' do
+        expect(server.params).to(include "listen")
+      end
+      Array(server.params["listen"]).each do |listen|
+        it 'should include both the IP and port number.' do
+          expect(listen.join).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
+        end
+        it 'should not be 0.0.0.0:80 or [::ffff:0.0.0.0]:80.' do
+          expect(listen.join.split(':').first).not_to(cmp '0.0.0.0')
+          expect(listen.join.split(':').first).not_to(cmp '[::ffff:0.0.0.0]')
+        end
+      end 
+    end
+  end 
 end
 

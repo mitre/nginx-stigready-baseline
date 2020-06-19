@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41616" do
-  title "A web server, behind a load balancer or proxy server, must produce log
+  title "A NGINX web server, behind a load balancer or proxy server, must produce log
 records containing the client IP information as the source and destination and
 not the load balancer or proxy IP information with each event."
   desc  "Web server logging capability is critical for accurate forensic
@@ -29,23 +24,25 @@ each event the client source of the event.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the deployment configuration to determine if the web server is
-sitting behind a proxy server. If the web server is not sitting behind a proxy
-server, this finding is NA.
+  Review the deployment configuration to determine if the web server is
+  sitting behind a proxy server.
 
-    If the web server is behind a proxy server, review the documentation and
-deployment configuration to determine if the web server is configured to
-generate sufficient information to resolve the source, e.g. source IP, of the
-logged event and not the proxy server.
+  If the web server is not sitting behind a proxy server, this finding is Not Applicable. 
 
-    Request a user access the hosted application through the proxy server and
-generate logable events, and then review the logs to determine if the source of
-the event can be established.
+  If the Nginx web server is behind a proxy server, review the documentation and deployment
+  configuration to determine if the web server is configured to generate sufficient 
+  information to resolve the source, e.g. source IP, of the logged event and not the 
+  proxy server.
 
-    If the source of the event cannot be determined, this is a finding.
+  Check for the following:
+      # grep for a 'log_format' directive in the http context of the nginx.conf.
+
+  If the 'log_format' directive is not configured to contain the '$realip_remote_addr' 
+  variable, this is a finding. 
   "
-  desc  "fix", "Configure the web server to generate the client source, not the
-load balancer or proxy server, of each logable event."
+  desc  "fix", "Configure the 'log_format' directive in the nginx.conf to use the '$realip_remote_addr' 
+  variable to generate the client source, not the load balancer or proxy server, of each logable event."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000098-WSR-000060"
@@ -56,8 +53,15 @@ load balancer or proxy server, of each logable event."
   tag "cci": ["CCI-000133"]
   tag "nist": ["AU-3", "Rev_4"]
 
+
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
 # $realip_remote_addr keeps the original client address
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  Array(nginx_conf_handle.params['http']).each do |http|
     Array(http["log_format"]).each do |log_format|
       describe "" do
         it 'realip_remote_addr should be part of every log format in http.' do

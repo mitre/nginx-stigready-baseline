@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-41693" do
-  title "The web server must only contain services and functions necessary for
+  title "The NGINX web server must only contain services and functions necessary for
 operation."
   desc  "A web server can provide many features, services, and processes. Some
 of these may be deemed unnecessary or too unsecure to run on a production DoD
@@ -19,7 +19,7 @@ the web server mission or can adversely impact server performance.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
+    Review the NGINX web server documentation and deployed configuration to determine
 if web server features, services, and processes are installed that are not
 needed for hosted application deployment.
 

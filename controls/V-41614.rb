@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41614" do
-  title "The web server must produce log records containing sufficient
+  title "The NGINX web server must produce log records containing sufficient
 information to establish where within the web server the events occurred."
   desc  "Web server logging capability is critical for accurate forensic
 analysis. Without sufficient and accurate information, a correct replay of the
@@ -30,18 +25,32 @@ access control, or flow control rules invoked.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine if the web server is configured to generate sufficient information to
-resolve in which process within the web server the log event occurred.
+  Review the Nginx web server documentation and deployment configuration to determine 
+  if the web server is configured to generate sufficient information to resolve in which 
+  process within the web server the log event occurred.
 
-    Request a user access the hosted application and generate logable events,
-and then review the logs to determine if the process of the event within the
-web server can be established.
+  Check for the following:
+    # grep the 'log_format' directive in the http context of the nginx.conf. 
 
-    If it cannot be determined where the event occurred, this is a finding.
+  The logs will not include sufficient information if the 'log_format' directive does not exist.
+
+  If the the 'log_format' directive does not exist, this is a finding.
+
+  Example configuration:
+  log_format  main  '$remote_addr - $remote_user [$time_local] ""$request""'
+  '$status $body_bytes_sent ""$http_referer""'
+  '""$http_user_agent"" ""$http_x_forwarded_for""';
   "
-  desc  "fix", "Configure the web server to generate enough information to
-determine in what process within the web server the log event occurred."
+  desc  "fix", "  
+  Configure the 'log_format' directive in the nginx.conf file to look like the following:
+
+  log_format  main  '$remote_addr - $remote_user [$time_local] ""$request""'
+  '$status $body_bytes_sent ""$http_referer""'
+  '""$http_user_agent"" ""$http_x_forwarded_for""';
+
+  NOTE: Your log format may be using different variables based on the determination of what 
+  information is sufficient in order to establish where the event occured."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000097-WSR-000058"
@@ -52,9 +61,19 @@ determine in what process within the web server the log event occurred."
   tag "cci": ["CCI-000132"]
   tag "nist": ["AU-3", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
-  
+
+  # Verify that the log_format directive exists
+  Array(nginx_conf_handle.params['http']).each do |http|
+    describe 'Each http context' do
+      it 'should include a log_format directive for logging sufficient information.' do
+        expect(http).to(include "log_format")
+      end
+    end      
+  end
 end
 

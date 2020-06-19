@@ -1,13 +1,9 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-40819" do
-  title "The web server must use cryptography to protect the integrity of
+  title "The Nginx web server must use cryptography to protect the integrity of
 remote sessions."
   desc  "Data exchanged between the user and the web server can range from
 static display data to credentials used to log into the hosted application.
@@ -18,15 +14,20 @@ protect the integrity and trust, encryption methods should be used to protect
 the complete communication session."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to make certain that
-the web server is configured to use cryptography to protect the integrity of
-remote access sessions.
+  Review the Nginx web server documentation and configuration to make certain that the 
+  Nginx web server is configured to use cryptography to protect the integrity of remote 
+  access sessions.
 
-    If the web server is not configured to use cryptography to protect the
-integrity of remote access sessions, this is a finding.
+  Check for the following:
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
+    and any separated include configuration file.
+  
+  If the 'ssl_protocols' directive does not exist in the configuration or is not set to 
+  the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Configure the web server to utilize encryption during remote
-access sessions."
+  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
+  and configure it to use the approved TLS protocols to utilize encryption during 
+  remote access sessions."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000015-WSR-000014"
@@ -37,25 +38,22 @@ access sessions."
   tag "cci": ["CCI-001453"]
   tag "nist": ["AC-17 (2)", "Rev_4"]
 
-  required_ssl_protocols= input(
-    'ssl_protocols',
-    description: 'List of protocols required',
-    value: [
-              "TLSv1.1",
-              "TLSv1.2"
-             ]
-  )
+  nginx_conf_handle = nginx_conf(conf_path)
 
-  Array(nginx_conf(conf_path).servers).each do |server|
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.servers).each do |server|
     describe 'Each server context' do
       it 'should include a ssl_protocols directive.' do
         expect(server.params).to(include "ssl_protocols")
       end
     end
-    Array(server.params["ssl_protocols"]).each do |protocols|
+    Array(server.params["ssl_protocols"]).each do |protocol|
       describe 'Each protocol' do
-        it 'should be included in the list of protocols required to encrypt data' do
-          expect(protocols).to(be_in required_ssl_protocols)
+        it 'should be included in the list of protocols approved to encrypt data' do
+          expect(protocol).to(be_in approved_ssl_protocols)
         end
       end
     end

@@ -42,6 +42,14 @@ to work with an enterprise tool designed to enforce the policy."
   tag "cci": ["CCI-002314"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
+# Check:
+  # If Nginx is enforcing the requirements for remote connections, check for the following:
+    # grep for a "deny" directive in the location context of the nginx configuration file and any separated include configuration file.
+      # Verify that there is a "deny all" set in each location to deny all IP addresses by default. If a "deny all" is not set in each location, this is a finding.
+
+# Fix:
+  # Add a "deny all" in each location context in the Nginx configuration file(s). Add "allow" directives to add to allow the expected IP addresses.
+
   describe "Skip Test" do
     skip "This is a manual check"
   end

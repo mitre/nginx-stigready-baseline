@@ -1,13 +1,9 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-41738" do
-  title "The web server must encrypt passwords during transmission."
+  title "The NGINX web server must encrypt passwords during transmission."
   desc  "Data used to authenticate, especially passwords, needs to be protected
 at all times, and encryption is the standard method for protecting
 authentication data during transmission. Data used to authenticate can be
@@ -20,12 +16,19 @@ clustered web server manager for an update.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether passwords are being passed to or from the web server.
+  Review the NGINX web server documentation and deployed configuration to determine
+  whether passwords are being passed to or from the web server.
 
-    If the transmission of passwords is not encrypted, this is a finding.
+  Check for the following:
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
+    and any separated include configuration file.
+
+  If TLS is not enabled, then passwords are not encrypted. If the 'ssl_protocols' 
+  directive does not exist in the configuration or is not set to the approved TLS 
+  versions, this is a finding. 
   "
-  desc  "fix", "Configure the web server to encrypt the transmission passwords."
+  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
+  and configure it to use the approved TLS protocols to encrypt the transmission passwords."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000172-WSR-000104"
@@ -36,28 +39,25 @@ whether passwords are being passed to or from the web server.
   tag "cci": ["CCI-000197"]
   tag "nist": ["IA-5 (1) (c)", "Rev_4"]
 
-  required_ssl_protocols= input(
-    'ssl_protocols',
-    description: 'List of protocols required',
-    value: [
-              "TLSv1.1",
-              "TLSv1.2"
-             ]
-  )
+  nginx_conf_handle = nginx_conf(conf_path)
 
-  Array(nginx_conf(conf_path).servers).each do |server|
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.servers).each do |server|
     describe 'Each server context' do
       it 'should include a ssl_protocols directive.' do
         expect(server.params).to(include "ssl_protocols")
       end
     end
-    Array(server.params["ssl_protocols"]).each do |protocols|
+    Array(server.params["ssl_protocols"]).each do |protocol|
       describe 'Each protocol' do
-        it 'should be included in the list of protocols required to encrypt data' do
-          expect(protocols).to(be_in required_ssl_protocols)
+        it 'should be included in the list of protocols approved to encrypt data' do
+          expect(protocol).to(be_in approved_ssl_protocols)
         end
       end
     end
-  end 
+  end
 end
 

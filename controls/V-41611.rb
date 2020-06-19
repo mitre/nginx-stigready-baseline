@@ -1,13 +1,11 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
 access_log_path = input('access_log_path')
 error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+
 
 control "V-41611" do
-  title "The web server must initiate session logging upon start up."
+  title "The Nginx web server must initiate session logging upon start up."
   desc  "An attacker can compromise a web server during the startup process. If
 logging is not initiated until all the web server processes are started, key
 information may be missed and not available during a forensic investigation. To
@@ -15,14 +13,20 @@ assure all logable events are captured, the web server must begin logging once
 the first web server process is initiated."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-if the web server captures log data as soon as the web server is started.
+  Review the Nginx web server documentation and deployed configuration to determine 
+  if the Nginx web server captures log data as soon as the Nginx web server is started.
 
-    If the web server does not capture logable events upon startup, this is a
-finding.
+  Check for the following:
+      # grep for 'access_log' and 'error_log' directives in the nginx.conf and any separated include configuration file.
+  
+  Execute the following commands:
+      # file <path to access_log>/access.log
+      # file <path to error_log>/error.log
+  
+  If the access_log and error_log directives do not exist and the access.log and error.log files do not exist, this is a finding.  
   "
-  desc  "fix", "Configure the web server to capture logable events upon
-startup."
+  desc  "fix", "Enable loggin on the Nginx web server by configuring the 'access_log' and 'error_log' directives in the Nginx configuration 
+  file(s) to generate log records for system startup."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000092-WSR-000055"
@@ -34,7 +38,13 @@ startup."
   tag "nist": ["AU-14 (1)", "Rev_4"]
 
   # Verify that access_log and error_log is enabled
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.params['http']).each do |http|
     describe 'Each http context' do
       it 'should include an access_log directive.' do
         expect(http).to(include "access_log")
@@ -53,7 +63,7 @@ startup."
       end
     end
   end
-  Array(nginx_conf(conf_path).params['error_log']).each do |error_log|
+  Array(nginx_conf_handle.params['error_log']).each do |error_log|
     Array(error_log).each do |error_value|
       if error_value.include? "error.log"
         describe file(error_value) do

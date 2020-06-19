@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-40791" do
-  title "The web server must limit the number of allowed simultaneous session
+  title "The Nginx web server must limit the number of allowed simultaneous session
 requests."
   desc  "Web server management includes the ability to control the number of
 users and user sessions that utilize a web server. Limiting the number of
@@ -22,13 +17,16 @@ requirement of a given system.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if the
-number of simultaneous sessions is limited.
+  Review the Nginx web server documentation and configuration to determine if the number of simultaneous sessions is limited.
 
-    If the parameter is not configured or is unlimited, this is a finding.
+  Check for the following:
+    # grep the 'limit_conn_zone' directive in the http context of the nginx.conf and any separated include configuration file.
+  
+    # grep the 'limit_conn' directive in the location context of the nginx.conf and any separated include configuration file.
+  
+  If the 'limit_conn_zone' and 'limit_conn' directives do not exist, are not configured, or is unlimited, this is a finding. 
   "
-  desc  "fix", "Configure the web server to limit the number of concurrent
-sessions."
+  desc  "fix", "Configure the Nginx web server to include the 'limit_conn_zone' and 'limit_conn' directives in the Nginx configuration file(s) to limit the number of concurrent sessions."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000001-WSR-000001"
@@ -39,9 +37,14 @@ sessions."
   tag "cci": ["CCI-000054"]
   tag "nist": ["AC-10", "Rev_4"]
 
-  
+nginx_conf_handle = nginx_conf(conf_path)
+
+describe nginx_conf_handle do
+  its ('params') { should_not be_empty }
+end
+
 # limit_conn_zone - Context:	http
-Array(nginx_conf(conf_path).params['http']).each do |http|
+Array(nginx_conf_handle.params['http']).each do |http|
   describe 'The HTTP context' do
     it 'should include a limit_conn_zone.' do
       expect(http).to(include "limit_conn_zone")
@@ -73,7 +76,7 @@ end
 
   # limit_conn - Context:	http, server, location
 
-  Array(nginx_conf(conf_path).locations).each do |location|
+  Array(nginx_conf_handle.locations).each do |location|
     describe 'Each location context' do
       it 'should include a limit_conn directive.' do
         expect(location.params).to(include "limit_conn")

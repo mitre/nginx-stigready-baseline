@@ -38,9 +38,16 @@ to a granularity of one second."
   tag "cci": ["CCI-001889"]
   tag "nist": ["AU-8 b", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
-  end
-  
+    # log_format - Context:	http
+  Array(nginx_conf(conf_path).params['http']).each do |http|
+    Array(http["log_format"]).each do |log_format|
+      describe 'time_local' do
+        # it { should match /.*?\$time_local.*?/ }
+        it 'should be part of every log format in the http context.' do
+          expect(log_format.to_s).to(match /.*?\$time_local.*?/)
+        end
+      end
+    end
+  end  
 end
 

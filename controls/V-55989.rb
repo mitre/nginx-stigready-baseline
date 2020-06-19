@@ -41,7 +41,7 @@ functionality."
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-    # auth_basic - Context:	http, server, location, limit_except
+  # auth_basic - Context:	http, server, location, limit_except
   # ssl_verify_client - Context:	http, server
   # ssl_client_certificate - Context:	http, server
   describe file(conf_path) do
@@ -93,7 +93,7 @@ functionality."
           # Within limit_except
           describe "limit_except context:" do
             it 'There should not be an auth_basic directive.' do
-              expect(limit_except).to_not(include)
+              expect(limit_except).to_not(include "auth_basic")
             end
           end
         end

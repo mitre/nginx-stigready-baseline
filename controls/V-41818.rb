@@ -1,10 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41818" do
   title "The web server must accept only system-generated session identifiers."
@@ -24,14 +18,23 @@ a user is authenticated will limit session hijacking.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether the web server accepts session IDs that are not system-generated.
+  Review the web server documentation and deployed configuration to determine
+  whether the web server accepts session IDs that are not system-generated.
 
-    If the web server does accept non-system-generated session IDs, this is a
-finding.
+  If it is determined that the web server is not required to perform session management, 
+  this check is Not Applicable. 
+
+  Nginx web server versions after 1.11.0 have the $request_id embedded variable by default. 
+  This variable is a unique request identifier generated from 16 random bytes, in hexadecimal. 
+
+  Execute the following command to get the current version of Nginx running:
+    # nginx -v
+
+  If the current version of Nginx running is 1.11.0 or earlier, this is a finding. 
   "
-  desc  "fix", "Configure the web server to only accept session IDs that are
-created by the web server."
+  desc  "fix", "Upgrade to the lastest stable version of Nginx web server to use the '$request_id' 
+  embedded variable for generating unique identifers."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000223-WSR-000145"
@@ -42,8 +45,11 @@ created by the web server."
   tag "cci": ["CCI-001664"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+# Nginx versions after 1.11.0 have the $request_id embedded variable by default
+# This variable is a unique request identifier generated from 16 random bytes, in hexadecimal
+
+  describe nginx do
+    its('version') { should cmp > '1.11.0' }
   end
   
 end

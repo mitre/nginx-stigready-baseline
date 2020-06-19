@@ -40,10 +40,41 @@ the hosted applications.
   tag "cci": ["CCI-002385"]
   tag "nist": ["SC-5", "Rev_4"]
 
-  #https://www.stigviewer.com/stig/apache_server_2.4_unix_server/2019-12-19/finding/V-92597
-  describe "Skip Test" do
-    skip "This is a manual check"
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
-  
+
+  nginx_conf_handle.http.entries.each do |http|
+    describe http.params['client_header_timeout'] do
+      it { should_not be_nil }
+    end
+    describe http.params['client_header_timeout'].flatten do
+      it { should cmp <= 10 }
+    end unless http.params['client_header_timeout'].nil?
+
+    describe http.params['client_body_timeout'] do
+      it { should_not be_nil }
+
+    end
+    describe http.params['client_body_timeout'].flatten do
+      it { should cmp <= 10 }
+    end unless http.params['client_body_timeout'].nil?
+  end
+
+  nginx_conf_handle.servers.entries.each do |server|
+    describe server.params['client_header_timeout'].flatten do
+      it { should cmp <= 10 }
+    end unless server.params['client_header_timeout'].nil?
+    describe server.params['client_body_timeout'].flatten do
+      it { should cmp <= 10 }
+    end unless server.params['client_body_timeout'].nil?
+  end
+
+  rescue Exception => msg
+    describe "Exception: #{msg}" do
+      it { should be_nil }
+    end
 end
 

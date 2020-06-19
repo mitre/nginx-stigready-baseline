@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41812" do
-  title "The web server must provide a clustering capability."
+  title "The NGINX web server must provide a clustering capability."
   desc  "The web server may host applications that display information that
 cannot be disrupted, such as information that is time-critical or
 life-threatening. In these cases, a web server that shuts down or ceases to be
@@ -20,19 +15,25 @@ server must provide clustering or some form of failover functionality.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation, deployed configuration, and risk
-analysis documentation to verify that the web server is configured to provide
-clustering functionality, if the web server is a high-availability web server.
+  Review the NGINX web server documentation, deployed configuration, and risk
+  analysis documentation to verify that the web server is configured to provide
+  clustering functionality, if the web server is a high-availability web server.
 
-    If the web server is not a high-availability web server, this finding is NA.
+  If the Nginx web server is not a high-availability web server, this finding is Not Applicable.
 
-    If the web server is not configured to provide clustering or some form of
-failover functionality and the web server is a high-availability server, this
-is a finding.
+  Enter the following command:
+    # nginx -V
+
+  This will provide a list of all loaded modules.  If the 'http_proxy_module' module is not found, this is a finding. 
+
+  If the 'http_proxy' module is loaded and the 'proxy_pass' directive is not configured, this is a finding.
   "
-  desc  "fix", "Configure the web server to provide application failover, or
-participate in a web cluster that provides failover for high-availability web
-servers."
+  desc  "fix", "Configure the web server to provide application failover, or participate in a web cluster that provides failover for high-availability web
+  servers by doing the following:
+  
+  Use the configure script (available in the nginx download package) to include the 'http_proxy_module' using the --with {module_name} option.
+  Configure the 'proxy_pass' directive in the Nginx configuration file(s). 
+  "
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000225-WSR-000141"
@@ -43,9 +44,16 @@ servers."
   tag "cci": ["CCI-001190"]
   tag "nist": ["SC-24", "Rev_4"]
   
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe nginx do
+    its('modules') { should include 'http_proxy' }
   end
 
+  Array(nginx_conf(conf_path).locations).each do |location|
+    describe 'proxy_pass' do
+      it 'should be configured in the location context.' do
+        expect(location.params).to(include "proxy_pass")
+      end
+    end
+  end
 end
 

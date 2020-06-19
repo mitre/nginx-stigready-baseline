@@ -6,6 +6,18 @@ error_log_path = input('error_log_path')
 password_path = input('password_path')
 key_file_path = input('key_file_path')
 
+sys_admin = input(
+  'sys_admin',
+  description: "The system adminstrator",
+  value: ['root']
+)
+
+nginx_owner = input(
+  'nginx_owner',
+  description: "The Nginx owner",
+  value: 'nginx'
+)
+
 control "V-55995" do
   title "Web server accounts accessing the directory tree, the shell, or other
 operating system functions and utilities must only be administrative accounts."
@@ -38,9 +50,20 @@ non-privileged account access."
   tag "cci": ["CCI-001082"]
   tag "nist": ["SC-2", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  authorized_sa_user_list = sys_admin.clone << nginx_owner
+
+  describe users.shells(/bash/).usernames do
+    it { should be_in authorized_sa_user_list}
   end
-  
+
+  if users.shells(/bash/).usernames.empty?
+    describe "Skip Message" do
+      skip "Skipped: no users found with shell acccess."
+    end
+  end
+rescue Exception => msg
+  describe "Exception: #{msg}" do
+    it { should be_nil }
+  end
 end
 

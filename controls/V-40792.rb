@@ -1,13 +1,7 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-40792" do
-  title "The web server must perform server-side session management."
+  title "The Nginx web server must perform server-side session management."
   desc  "Session management is the practice of protecting the bulk of the user
 authorization and identity information. Storing of this data can occur on the
 client system or on the server.
@@ -28,12 +22,14 @@ be compromised.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if
-server-side session management is configured.
+    Review the Nginx web server documentation and configuration to determine if
+    server-side session management is configured.
+
+    If it is determined that the web server is not required to perform session management, this check is Not Applicable. 
 
     If it is not configured, this is a finding.
   "
-  desc  "fix", "Configure the web server to perform server-side session
+  desc  "fix", "Configure the Nginx web server to perform server-side session
 management."
   impact 0.5
   tag "severity": "medium"
@@ -45,8 +41,11 @@ management."
   tag "cci": ["CCI-000054"]
   tag "nist": ["AC-10", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe "This is a manual check" do
+    skip "Review the Nginx web server documentation and configuration to determine if
+    server-side session management is configured. If it is determined that the web 
+    server is not required to perform session management, this check is Not Applicable.
+    If it is not configured, this is a finding."
   end
 end
 

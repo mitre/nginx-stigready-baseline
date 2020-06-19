@@ -24,12 +24,14 @@ content_ref.href: DPMS_XCCDF_Benchmark_Web_Server_SRG.xml
 
 conf_path: '/etc/nginx/nginx.conf'
 mime_type_path: '/etc/nginx/mime.types'
+
+nginx_log_path: '/var/log/nginx'
 access_log_path: '/var/log/nginx/access.log'
 error_log_path: '/var/log/nginx/error.log'
+
 password_path: '/etc/passwd'
 key_file_path: '/etc/ssl/key.pem'
 
-root_document_mount_path: '/mnt'
 charset_required: 'utf-8'
 
 nginx_owner: 'nginx'
@@ -37,3 +39,89 @@ nginx_group: 'nginx'
 sys_admin : ['root']
 sys_admin_group: ['root']
 
+#description: List of non admin user accounts
+authorized_user_list: [
+  'user'
+]
+
+# NOTE: Some sites show +'s in the cipher names, while others use -'s. 
+approved_ssl_ciphers: [
+  'ECDH-AESGCM', 
+  'DH-AESGCM', 
+  'ECDH-AES256', 
+  'DH-AES256', 
+  'ECDH-AES128', 
+  'DH-AES', 
+  'ECDH-3DES', 
+  'DH-3DES', 
+  'RSA-AESGCM', 
+  'RSA-AES', 
+  'RSA-3DES', 
+  '!aNULL', 
+  '!eNULL', 
+  '!EXPORT', 
+  '!DES', 
+  '!PSK', 
+  '!RC4', 
+  '!MD5'
+]
+
+approved_ssl_protocols: [
+  'TLSv1.2'
+]
+
+nginx_authorized_modules: [
+  'http_addition',
+  'http_auth_request',
+  'http_dav',
+  'http_flv',
+  'http_gunzip',
+  'http_gzip_static',
+  'http_mp4',
+  'http_random_index',
+  'http_realip',
+  'http_secure_link',
+  'http_slice',
+  'http_ssl',
+  'http_stub_status',
+  'http_sub',
+  'http_v2',
+  'mail_ssl',
+  'stream_realip',
+  'stream_ssl',
+  'stream_ssl_preread'
+]
+
+nginx_unauthorized_modules: [
+  'http_proxy'
+]
+
+nginx_disallowed_file_list: [
+  '/usr/share/man/man8/nginx.8.gz'
+]
+
+nginx_disallowed_mime_type: [
+  'text/mathml', 
+  'text/vnd.sun.j2me.app-descriptor', 
+  'text/vnd.wap.wml', 
+  'application/java-archive', 
+  'application/mac-binhex40',
+  'application/postscript',
+  'application/vnd.wap.wmlc',
+  'application/vnd.google-earth.kml+xml',
+  'application/vnd.google-earth.kmz',
+  'application/x-7z-compressed',
+  'application/x-cocoa',
+  'application/x-java-archive-diff',
+  'application/x-java-jnlp-file',  
+  'application/x-makeself',
+  'application/x-perl',
+  'application/x-pilot',  
+  'application/x-redhat-package-manager',
+  'application/x-sea',
+  'application/x-shockwave-flash',  
+  'application/x-stuffit',
+  'application/x-sit',
+  'application/x-xpinstall',  
+  'application/octet-stream'
+]

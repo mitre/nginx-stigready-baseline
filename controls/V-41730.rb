@@ -14,7 +14,7 @@ DOD_APPROVED_PKIS= input(
 )
 
 control "V-41730" do
-  title "The web server must perform RFC 5280-compliant certification path
+  title "The NGINX web server must perform RFC 5280-compliant certification path
 validation."
   desc  "A certificate's certification path is the path from the end entity
 certificate to a trusted root certification authority (CA). Certification path
@@ -27,15 +27,31 @@ commonly provided via certificate revocation lists (CRLs) or online certificate
 status protocol (OCSP) responses."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether the web server provides PKI functionality that validates certification
-paths in accordance with RFC 5280. If PKI is not being used, this is NA.
+  Review the NGINX web server documentation and deployed configuration to determine
+  whether the web server provides PKI functionality that validates certification
+  paths in accordance with RFC 5280.
 
-    If the web server is using PKI, but it does not perform this requirement,
-this is a finding.
+  If PKI is not being used, this is check is Not Applicable.
+
+  Check for the following:
+    # grep the 'ssl_verify_client' and 'ssl_verify_depth' directives in the server 
+    context of the nginx.conf and any separated include configuration file.
+
+  If the 'ssl_verify_client' directive does not exist or is not set to 'on', 
+  this is a finding. 
+
+  A 'ssl_very_depth' setting of '0' would allow self-signed CAs to validate client 
+  certificates. If 'ssl_verify_depth' does not exist or is set to '0', this is a finding.
   "
-  desc  "fix", "Configure the web server to validate certificates in accordance
-with RFC 5280."
+  desc  "fix", "Ensure that client verification is enabled. For each enabled hosted application 
+  on the server, enable and set 'ssl_verify_client' to 'on' and and ensure that the server is 
+  configured to verify the client certificate by enabling 'ssl_verify_depth'.
+
+  Example:
+  
+  ssl_verify_client on;
+  ssl_verify_depth 1;  "
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000175-WSR-000095"
@@ -46,51 +62,30 @@ with RFC 5280."
   tag "cci": ["CCI-000185"]
   tag "nist": ["IA-5 (2) (a)", "Rev_4"]
 
-  # find / -name ssl.conf  note the path of the file.
-  # grep ""ssl_client_certificate"" in conf files in context http,server
-  # Review the results to determine the path of the ssl_client_certificate.
-  # more /path/of/ca-bundle.crt
-  # Examine the contents of this file to determine if the trusted CAs are DoD
-  # approved. If the trusted CA that is used to authenticate users to the web site
-  # does not lead to an approved DoD CA, this is a finding.
-  # NOTE: There are non DoD roots that must be on the server in order for it to
-  # function. Some applications, such as anti-virus programs, require root CAs to
-  # function. DoD approved certificate can include the External Certificate
-  # Authorities (ECA), if approved by the DAA. The PKE InstallRoot 3.06 System
-  # Administrator Guide (SAG), dated 8 Jul 2008, contains a complete list of DoD,
-  # ECA, and IECA CAs.
-
-
   nginx_conf_handle = nginx_conf(conf_path)
 
-  nginx_conf_handle.http.entries.each do |http|
-    describe http.params['ssl_client_certificate'] do
-      it { should_not be_nil}
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.servers).each do |server|
+    describe 'The directive' do
+      it 'ssl_verify_client should exist in the server context.' do
+        expect(server.params).to(include "ssl_verify_client")
+      end 
+      it 'ssl_verify_depth should exist in the server context.' do
+        expect(server.params).to(include "ssl_verify_depth")
+      end 
+      server.params["ssl_verify_client"].each do |ssl_verify_client|
+        it "ssl_verify_client should be set to 'on'." do
+          expect(ssl_verify_client).to(cmp 'on')
+        end
+      end 
+      server.params["ssl_verify_depth"].each do |ssl_verify_client|
+        it "ssl_verify_depth should not equal '0'." do
+          expect(ssl_verify_client).not_to(cmp '0')
+        end
+      end 
     end
-    http.params['ssl_client_certificate'].each do |cert|
-      describe x509_certificate(cert.join) do
-        it { should_not be_nil}
-        its('subject.C') { should cmp 'US'}
-        its('subject.O') { should cmp 'U.S. Government'}
-      end
-      describe x509_certificate(cert.join).subject.CN[0..2] do
-        it { should be_in DOD_APPROVED_PKIS}
-      end
-    end unless http.params['ssl_client_certificate'].nil?
-  end
-
-  nginx_conf_handle.servers.entries.each do |server|
-    server.params['ssl_client_certificate'].each do |cert|
-      describe x509_certificate(cert.join) do
-        it { should_not be_nil}
-        its('subject.C') { should cmp 'US'}
-        its('subject.O') { should cmp 'U.S. Government'}
-      end
-      describe x509_certificate(cert.join).subject.CN[0..2] do
-        it { should be_in DOD_APPROVED_PKIS}
-      end
-    end unless server.params['ssl_client_certificate'].nil?
-  end
-  
+  end 
 end
-

@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41600" do
-  title "The web server must generate, at a minimum, log records for system
+  title "The Nginx web server must generate, at a minimum, log records for system
 startup and shutdown, system access, and system authentication events."
   desc  "Log records can be generated from various components within the web
 server (e.g., httpd, plug-ins to external backends, etc.). From a web server
@@ -23,14 +18,31 @@ missing pertinent information needed to replay what occurred.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and the deployed system configuration
-to determine if, at a minimum, system startup and shutdown, system access, and
-system authentication events are logged.
+  Review the Nginx web server documentation and the deployed system configuration to determine 
+  if, at a minimum, system startup and shutdown, system access, and system authentication events are logged.
+    
+  Check for the following:
+  # grep the 'log_format' directive in the http context of the nginx.conf. 
 
-    If the logs do not include the minimum logable events, this is a finding.
+  The logs will not include the minimum logable events if the 'log_format' directive does not exist.
+
+  If the the 'log_format' directive does not exist, this is a finding.
+
+  Example configuration:
+  log_format  main  '$remote_addr - $remote_user [$time_local] ""$request""'
+  '$status $body_bytes_sent ""$http_referer""'
+  '""$http_user_agent"" ""$http_x_forwarded_for""';
+
   "
-  desc  "fix", "Configure the web server to generate log records for system
-startup and shutdown, system access, and system authentication events."
+  desc  "fix", "Configure the 'log_format' directive in the nginx.conf file to look like the following:
+
+  log_format  main  '$remote_addr - $remote_user [$time_local] ""$request""'
+  '$status $body_bytes_sent ""$http_referer""'
+  '""$http_user_agent"" ""$http_x_forwarded_for""';
+  
+  NOTE: Your log format may be using different variables based on your environment, 
+  however it should be verified to be producing the same end result of logged elements."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000089-WSR-000047"
@@ -41,37 +53,19 @@ startup and shutdown, system access, and system authentication events."
   tag "cci": ["CCI-000169"]
   tag "nist": ["AU-12 a", "Rev_4"]
 
-  # Verify that access_log and error_log is enabled
-  Array(nginx_conf(conf_path).params['http']).each do |http|
-    describe 'Each http context' do
-      it 'should include an access_log directive.' do
-        expect(http).to(include "access_log")
-      end
-    end
-    Array(http["access_log"]).each do |access_log|
-      Array(access_log).each do |access_value|
-        if access_value.include? "access.log"
-          describe file(access_value) do
-            it 'The access log should exist and be a file.' do
-              expect(subject).to(exist)
-              expect(subject).to(be_file)
-            end
-          end
-        end
-      end
-    end
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
-  Array(nginx_conf(conf_path).params['error_log']).each do |error_log|
-    Array(error_log).each do |error_value|
-      if error_value.include? "error.log"
-        describe file(error_value) do
-          it 'The error log should exist and be a file.' do
-            expect(subject).to(exist)
-            expect(subject).to(be_file)
-          end
-        end
+
+  # Verify that the log_format directive exists
+  Array(nginx_conf_handle.params['http']).each do |http|
+    describe 'Each http context' do
+      it 'should include a log_format directive for logging minimum logable events.' do
+        expect(http).to(include "log_format")
       end
-    end       
+    end      
   end
 end
 

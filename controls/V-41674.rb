@@ -16,15 +16,26 @@ that, in the event of a catastrophic system failure, the log records will be
 retained."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-if the web server log records are backed up onto an unrelated system or media
-than the system being logged.
+  Review the NGINX web server documentation and deployed configuration to determine
+  if the web server log records are backed up onto an unrelated system or media
+  than the system being logged.
 
-    If the web server logs are not backed up onto a different system or media
-than the system being logged, this is a finding.
+  Interview the Information System Security Officer, System Administrator, Web Manager, 
+  Webmaster, or developers as necessary to determine whether a tested and verifiable 
+  backup strategy has been implemented for web server software and all web server 
+  data files.
+
+  Proposed questions:
+  - Who maintains the backup and recovery procedures?
+  - Do you have a copy of the backup and recovery procedures?
+  - Where is the off-site backup location?
+  - Is the contingency plan documented?
+  - When was the last time the contingency plan was tested?
+  - Are the test dates and results documented?
+  
+  If there is not a backup and recovery process for the web server, this is a finding.
   "
-  desc  "fix", "Configure the web server logs to be backed up onto a different
-system or media other than the system being logged."
+  desc  "fix", "Document the Nginx web server backup procedures."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000125-WSR-000071"
@@ -35,16 +46,11 @@ system or media other than the system being logged."
   tag "cci": ["CCI-001348"]
   tag "nist": ["AU-9 (2)", "Rev_4"]
 
-  # Ensure access log is linked to stdout
-  describe command('readlink ' + access_log_path) do
-    its('stdout') { should eq "/dev/stdout\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  describe "This is a manual check" do
+    skip "Interview the Information System Security Officer, System Administrator, Web Manager, 
+    Webmaster, or developers as necessary to determine whether a tested and verifiable 
+    backup strategy has been implemented for web server software and all web server 
+    data files. If there is not a backup and recovery process for the web server, this is a finding."
   end
-  # Ensure error log is linked to stderror
-  describe command('readlink ' + error_log_path)do
-    its('stdout') { should eq "/dev/stderr\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
-  end
-  
 end
 

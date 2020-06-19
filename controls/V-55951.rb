@@ -40,7 +40,7 @@ period of time."
     # View the keepalive_timeout directive:
       # grep "keepalive_timeout" in the nginx configuration file and any separated include configuration file.
 
-    #   If the value of ""keepalive_timeout"" is not set to 5 (seconds) or less, thisis a finding.
+    #   If the value of ""keepalive_timeout"" is not set to 5 (seconds) or less, this is a finding.
 
   # Fix: 
     # Edit the Nginx configuration file and set the value of "keepalive_timeout" to the value of 5 or less.
