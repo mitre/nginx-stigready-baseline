@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-55977" do
-  title "The web server must record time stamps for log records to a minimum
+  title "The NGINX web server must record time stamps for log records to a minimum
 granularity of one second."
   desc  "Without sufficient granularity of time stamps, it is not possible to
 adequately determine the chronological order of records.
@@ -17,17 +17,19 @@ to a granularity of one second.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if log
-records are time stamped to a minimum granularity of one second.
+  Review the NGINX web server documentation and configuration to determine if log
+  records are time stamped to a minimum granularity of one second.
 
-    Have a user generate a logable event and review the log data to determine
-if the web server is configured correctly.
+  Check for the following:
+      # grep for a 'log_format' directive in the http context of the nginx.conf.
 
-    If the log data does not contain a time stamp to a minimum granularity of
-one second, this is a finding.
+  If the 'log_format' directive is not configured to contain the '$time_local' 
+  variable, this is a finding. 
   "
-  desc  "fix", "Configure the web server to record log events with a time stamp
-to a granularity of one second."
+  desc  "fix", "Configure the 'log_format' directive in the nginx.conf to use the 
+  '$time_local' variable to record log events with a time stamp to a granularity 
+  of one second."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000375-WSR-000171"
@@ -38,11 +40,10 @@ to a granularity of one second."
   tag "cci": ["CCI-001889"]
   tag "nist": ["AU-8 b", "Rev_4"]
 
-    # log_format - Context:	http
+  # log_format - Context:	http
   Array(nginx_conf(conf_path).params['http']).each do |http|
     Array(http["log_format"]).each do |log_format|
       describe 'time_local' do
-        # it { should match /.*?\$time_local.*?/ }
         it 'should be part of every log format in the http context.' do
           expect(log_format.to_s).to(match /.*?\$time_local.*?/)
         end

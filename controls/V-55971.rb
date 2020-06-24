@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-55971" do
-  title "The web server must be configurable to integrate with an organizations
+  title "The NGINX web server must be configurable to integrate with an organizations
 security infrastructure."
   desc  "A web server will typically utilize logging mechanisms for maintaining
 a historical log of activity that occurs within a hosted application. This
@@ -27,17 +27,29 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether the web server is logging security-relevant events.
+  Review the NGINX web server documentation and deployed configuration to determine
+  whether the web server is logging security-relevant events.
 
-    Determine whether there is a security tool in place that allows review and
-alert capabilities and whether the web server is sending events to this system.
+  Execute the following commands to verify that the Nginx web server is producing 
+  logs and linking them to stdout and stderr:
+  # readlink <access_log_path>/access.log
+  # readlink <error_log_path>/error.log
 
-    If the web server is not, this is a finding.
+  If the access.log and error.log files are not linked to stdout and stderr, 
+  this is a finding.
+
+  Work with the SIEM administrator to determine current security integrations.
+
+  If the SIEM is not integrated with security, this is a finding.
   "
-  desc  "fix", "Configure the web server to send logged events to the
-organization's security infrastructure tool that offers review and alert
-capabilities."
+  desc  "fix", "Execute the following command on the Nginx web server to link logs 
+  to stdout and stderr:
+  # ln -sf /dev/stdout <access_log_path>/access.log
+  # ln -sf /dev/stderr <access_log_path>/access.log
+  
+  Work with the SIEM administrator to integrate with an organizations security 
+  infrastructure."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000358-WSR-000163"
@@ -60,5 +72,9 @@ capabilities."
     # its('stdout') { should cmp '/proc/1/fd/pipe' }
   end
   
+  describe "Manual Step" do
+    skip "Work with the SIEM administrator to determine current security integrations.
+    If the SIEM is not integrated with security, this is a finding."
+  end
 end
 

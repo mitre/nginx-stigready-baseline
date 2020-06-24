@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-55961" do
-  title "The web server must restrict inbound connections from nonsecure zones."
+  title "The NGINX web server must restrict inbound connections from nonsecure zones."
   desc  "Remote access to the web server is any access that communicates
 through an external, non-organization-controlled network. Remote access can be
 used to access hosted applications or to perform management functions.
@@ -23,14 +23,27 @@ service (DoS) attacks on the web server.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server configuration to verify that the web server is
-restricting access from nonsecure zones.
+  Review the NGINX web server configuration to verify that the web server is
+  restricting access from nonsecure zones.
 
-    If the web server is not configured to restrict access from nonsecure
-zones, then this is a finding.
+  If external controls such as host-based firewalls are used to restrict 
+  this access, this check is Not Applicable.
+
+  Check for the following:
+      # grep for a 'deny' directive in the location context of the nginx.conf 
+      and any separated include configuration file.
+
+  Verify that there is a 'deny all' set in each location context to deny all IP 
+  addresses by default and only allow addresses in secure zones. If a 'deny all' 
+  is not set in each location, this is a finding.
   "
-  desc  "fix", "Configure the web server to block access from DoD-defined
-nonsecure zones."
+  desc  "fix", "Add a 'deny all' in each location context in the Nginx configuration 
+  file(s) to deny access to all IP addresses by default, including addresses in 
+  nonsecure zones. 
+  
+  Then add 'allow' directive(s) in each location context in the Nginx configuration file(s)
+  and configure it to only allow addresses in secure zones."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000315-WSR-000004"
@@ -41,9 +54,14 @@ nonsecure zones."
   tag "cci": ["CCI-002314"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  Array(nginx_conf(conf_path).locations).each do |location|
+    deny_values = []
+    deny_values.push(location.params['deny']) unless location.params['deny'].nil?
+    describe "Each location context" do
+      it 'should include an deny all directive.' do
+        expect(deny_values.to_s).to(include "all")
+      end
+    end
   end
-  
 end
 

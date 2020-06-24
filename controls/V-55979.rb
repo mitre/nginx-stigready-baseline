@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-55979" do
-  title "The web server must generate log records that can be mapped to
+  title "The NGINX web server must generate log records that can be mapped to
 Coordinated Universal Time (UTC) or Greenwich Mean Time (GMT)."
   desc  "If time stamps are not consistently applied and there is no common
 time reference, it is difficult to perform forensic analysis across multiple
@@ -19,13 +19,22 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine the time
-stamp format for log data.
+  Review the NGINX web server documentation and configuration to determine the time
+  stamp format for log data.
 
-    If the time stamp is not mapped to UTC or GMT time, this is a finding.
+  Check for the following:
+      # grep for all 'env' directives in the main context of the nginx.conf.
+
+  If neither 'env TZ=UTC' or 'env TZ=GMT' exists, this is a finding.
   "
-  desc  "fix", "Configure the web server to store log data time stamps in a
-format that is mapped to UTC or GMT time."
+  desc  "fix", "Configure the 'TZ' environment variable in the nginx.conf to store 
+  log data time stamps in a format that is mappted to UTC or GMT time.
+
+  Example configuration:
+  'env TZ=UTC;' 
+  or
+  'env TZ=GMT;'"
+  
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000374-WSR-000172"

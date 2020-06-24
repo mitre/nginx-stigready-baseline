@@ -1,38 +1,14 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+access_control_files = input('access_control_files')
 
-
-nginx_owner = input(
-  'nginx_owner',
-  description: "The Nginx owner",
-  value: 'nginx'
-)
-
-sys_admin = input(
-  'sys_admin',
-  description: "The system adminstrator",
-  value: ['root']
-)
-
-nginx_group = input(
-  'nginx_group',
-  description: "The Nginx group",
-  value: 'nginx'
-)
-
-sys_admin_group = input(
-  'sys_admin_group',
-  description: "The system adminstrator group",
-  value: ['root']
-)
+nginx_owner = input('nginx_owner')
+nginx_group = input('nginx_owner')
+sys_admin = input('sys_admin')
+sys_admin_group = input('sys_admin_group')
 
 control "V-55981" do
-  title "The web server application, libraries, and configuration files must
+  title "The NGINX web server application, libraries, and configuration files must
 only be accessible to privileged users."
   desc  "A web server can be modified through parameter modification, patch
 installation, upgrades to the web server or modules, and security parameter
@@ -46,22 +22,47 @@ properly to only allow privileged users access.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if the
-web server provides unique account roles specifically for the purposes of
-segmenting the responsibilities for managing the web server.
+  Review the NGINX web server documentation and configuration to determine if the
+  web server provides unique account roles specifically for the purposes of
+  segmenting the responsibilities for managing the web server.
 
-    Log into the hosting server using a web server role with limited
-permissions (e.g., Auditor, Developer, etc.) and verify the account is not able
-to perform configuration changes that are not related to that role.
+  This check verifies that the SA or Web Manager controlled account owns the key 
+  web server files. These same files, which control the configuration of the web 
+  server, and thus its behavior, must also be accessible by the account that runs 
+  the web service process.
 
-    If roles are not defined with limited permissions and restrictions, this is
-a finding.
+  If it exists, the following file need to be owned by a privileged account:
+    - .htaccess  
+    - .htpasswd 
+    - nginx.conf and its included configuration files
+    
+  Use the following commands: 
+    #  find / -name nginx.conf to find the file.  
+    #  grep 'include' on the nginx.conf file to identify included configuration files. 
+    
+  Change to the directories that contain the nginx.conf and included configuration files. 
+  Use the following command:
+    #   ls -l on these files to determine ownership of the file
+
+  -The Web Manager or the SA should own all the system files and directories.
+  -The configurable directories can be owned by the WebManager or equivalent user.
+  -Permissions on these files should be 660 or more restrictive.
+
+  If root or an authorized user does not own the web system files and the permission are 
+  not correct, this is a finding.
   "
   desc  "fix", "
-    Define roles and responsibilities to be used when managing the web server.
+  Restrict access to the web servers access control files to only the System Administrator, Web Manager, or the Web Manager designees.
 
-    Configure the hosting system to utilize specific roles that restrict access
-related to web server system and configuration changes.
+  Determine where the key server files are located by running the following command (per file):
+  
+    # find / -name <'key server file'>
+  
+  Run the following commands to set permissions:
+   
+    # cd <'key server file location'>/
+    # chown <'authorized user'>:<'authorized group'>  <'key server file'> 
+    # chmod 660 <'key server file'>  
   "
   impact 0.5
   tag "severity": "medium"
@@ -75,10 +76,6 @@ related to web server system and configuration changes.
 
   authorized_sa_user_list = sys_admin.clone << nginx_owner
   authorized_sa_group_list = sys_admin_group.clone << nginx_group
-  
-  access_control_files = [ '.htaccess',
-                          '.htpasswd', 
-                          'nginx.conf' ]
 
   nginx_conf_handle = nginx_conf(conf_path)
   nginx_conf_handle.params
@@ -100,9 +97,7 @@ related to web server system and configuration changes.
       describe file(file) do
       its('owner') { should be_in authorized_sa_user_list }
       its('group') { should be_in authorized_sa_group_list }
-      it { should_not be_executable }
-      it { should_not be_readable.by('others') }
-      it { should_not be_writable.by('others') }
+      its('mode') { should cmp '0660'}
       end
     end
   end
@@ -111,9 +106,7 @@ related to web server system and configuration changes.
     describe file(file) do
       its('owner') { should be_in authorized_sa_user_list }
       its('group') { should be_in authorized_sa_group_list }
-      it { should_not be_executable }
-      it { should_not be_readable.by('others') }
-      it { should_not be_writable.by('others') }
+      its('mode') { should cmp '0660'}
     end
   end
 
@@ -153,11 +146,5 @@ related to web server system and configuration changes.
       skip "Skipped: no web root directories found."
     end
   end
-
-  rescue Exception => msg
-    describe "Exception: #{msg}" do
-      it { should be_nil }
-    end
-  
 end
 

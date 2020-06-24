@@ -1,13 +1,7 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55983" do
-  title "All web server files must be verified for their integrity (e.g.,
+  title "All NGINX web server files must be verified for their integrity (e.g.,
 checksums and hashes) before becoming part of the production web server."
   desc  "Being able to verify that a patch, upgrade, certificate, etc., being
 added to the web server is unchanged from the producer of the file is essential
@@ -20,7 +14,7 @@ files, before installation, are valid.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
+    Review the NGINX web server documentation and deployment configuration to
 determine if the web server validates files before the files are implemented
 into the running configuration.
 
@@ -40,8 +34,12 @@ to meet this requirement."
   tag "cci": ["CCI-001749"]
   tag "nist": ["CM-5 (3)", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe "Manual Step" do
+    skip "Review the NGINX web server documentation and deployment configuration to
+    determine if the web server validates files before the files are implemented
+    into the running configuration.
+    If the web server does not meet this requirement and an external facility
+    is not available for use, this is a finding."
   end
   
 end

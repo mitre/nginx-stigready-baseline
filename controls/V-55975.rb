@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-55975" do
-  title "The web server must use a logging mechanism that is configured to
+  title "The NGINX web server must use a logging mechanism that is configured to
 provide a warning to the ISSO and SA when allocated record storage volume
 reaches 75% of maximum log record storage capacity."
   desc  "It is critical for the appropriate personnel to be aware if a system
@@ -27,17 +27,18 @@ dedicated log tool that meets this requirement.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration settings
-to determine if the web server log system provides a warning to the ISSO and SA
-when allocated record storage volume reaches 75% of maximum record storage
-capacity.
+  Review the NGINX web server documentation and deployment configuration settings
+  to determine if the web server log system provides a warning to the ISSO and SA
+  when allocated record storage volume reaches 75% of maximum record storage
+  capacity.
 
-    If designated alerts are not sent or the web server is not configured to
-use a dedicated log tool that meets this requirement, this is a finding.
+  Work with the SIEM administrator to determine if an alert is configured when 
+  allocated record storage volume reaches 75% of maximum log record storage capacity.
+
+  If there is no alert configured, this is a finding.
   "
-  desc  "fix", "Configure the web server to provide a warning to the ISSO and
-SA when allocated log record storage volume reaches 75% of maximum record
-storage capacity."
+  desc  "fix", "Work with the SIEM administrator to configure an alert when allocated 
+  record storage volume reaches 75% of maximum log record storage capacity."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000359-WSR-000065"
@@ -48,15 +49,10 @@ storage capacity."
   tag "cci": ["CCI-001855"]
   tag "nist": ["AU-5 (1)", "Rev_4"]
 
-  # Ensure access log is linked to stdout
-  describe command('readlink ' + access_log_path) do
-    its('stdout') { should eq "/dev/stdout\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
-  end
-  # Ensure error log is linked to stderror
-  describe command('readlink ' + error_log_path)do
-    its('stdout') { should eq "/dev/stderr\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
+  describe "Manual Step" do
+    skip "  Work with the SIEM administrator to determine if an alert is configured when 
+    allocated record storage volume reaches 75% of maximum log record storage capacity.
+    If there is no alert configured, this is a finding."
   end
 end
 

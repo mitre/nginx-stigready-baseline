@@ -1,37 +1,16 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+access_control_files = input('access_control_files')
 
-nginx_owner = input(
-  'nginx_owner',
-  description: "The Nginx owner",
-  value: 'nginx'
-)
+nginx_owner = input('nginx_owner')
+nginx_group = input('nginx_owner')
+sys_admin = input('sys_admin')
+sys_admin_group = input('sys_admin_group')
 
-sys_admin = input(
-  'sys_admin',
-  description: "The system adminstrator",
-  value: ['root']
-)
 
-nginx_group = input(
-  'nginx_group',
-  description: "The Nginx group",
-  value: 'nginx'
-)
-
-sys_admin_group = input(
-  'sys_admin_group',
-  description: "The system adminstrator group",
-  value: ['root']
-)
 
 control "V-55947" do
-  title "Non-privileged accounts on the hosting system must only access web
+  title "Non-privileged accounts on the hosting system must only access NGINX web
 server security-relevant information and functions through a distinct
 administrative account."
   desc  "By separating web server security functions from non-privileged users,
@@ -43,16 +22,47 @@ in this manner allows for better logging of changes and better forensic
 information and limits accidental changes to the web server."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if
-accounts used for administrative duties of the web server are separated from
-non-privileged accounts.
+  Review the NGINX web server documentation and configuration to determine if
+  accounts used for administrative duties of the web server are separated from
+  non-privileged accounts.
 
-    If non-privileged accounts can access web server security-relevant
-information, this is a finding.
+  This check verifies that the SA or Web Manager controlled account owns the key 
+  web server files. These same files, which control the configuration of the web 
+  server, and thus its behavior, must also be accessible by the account that runs 
+  the web service process.
+
+  If it exists, the following file need to be owned by a privileged account:
+    - .htaccess  
+    - .htpasswd 
+    - nginx.conf and its included configuration files
+    
+  Use the following commands: 
+    #  find / -name nginx.conf to find the file.  
+    #  grep 'include' on the nginx.conf file to identify included configuration files. 
+    
+  Change to the directories that contain the nginx.conf and included configuration files. 
+  Use the following command:
+    #   ls -l on these files to determine ownership of the file
+  
+  -The Web Manager or the SA should own all the system files and directories.
+  -The configurable directories can be owned by the WebManager or equivalent user.
+  -Permissions on these files should be 660 or more restrictive.
+
+  If root or an authorized user does not own the web system files and the permission are 
+  not correct, this is a finding.
   "
-  desc  "fix", "Set up accounts and roles that can be used to perform web
-server security-relevant tasks and remove or modify non-privileged account
-access to security-relevant tasks."
+  desc  "fix", "Restrict access to the web servers access control files to only the System Administrator, Web Manager, or the Web Manager designees.
+
+  Determine where the key server files are located by running the following command (per file):
+  
+    # find / -name <'key server file'>
+  
+  Run the following commands to set permissions:
+   
+    # cd <'key server file location'>/
+    # chown <'authorized user'>:<'authorized group'>  <'key server file'> 
+    # chmod 660 <'key server file'>  
+  "
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000340-WSR-000029"
@@ -63,49 +73,8 @@ access to security-relevant tasks."
   tag "cci": ["CCI-002235"]
   tag "nist": ["AC-6 (10)", "Rev_4"]
 
-# Check (from Apache 2.4):
-  # Determine which tool or control file is used to control the configuration of the web server.
-
-  # If the control of the web server is done via control files, verify who has update access to them. If tools are being used to configure the web server, determine who has access to execute the tools.
-
-  # If accounts other than the System Administrator (SA), the Web Manager, or the Web Manager designees have access to the web administration tool or control files, this is a finding.
- 
-# Fix (from Apache 2.4):
-  # Restrict access to the web administration tool to only the System Administrator, Web Manager, or the Web Manager designees.
-
-
-# Check:
-  # This check verifies that the SA or Web Manager controlled
-  # account owns the key web server files. These same files, which control the
-  # configuration of the web server, and thus its behavior, must also be
-  # accessible by the account that runs the web service process.
-  # If it exists, the following file need to be owned by a privileged account.
-  # .htaccess .htpasswd nginx.conf and its included configuration files
-  
-  # Use the following commands: 
-  #  find / -name nginx.conf to find the file.  
-  #  grep ""include"" on the nginx.conf file to identify included configuration files. 
-  
-  # Change to the directories that contain the nginx.conf and included configuration files. 
-  # Use the following command:
-  #   ls -l on these files to determine ownership of the file
-  # -The Web Manager or the SA should own all the system files and directories.
-  # -The configurable directories can be owned by the WebManager or equivalent user.
-  # -Permissions on these files should be 660 or more restrictive.
-
-  # If root or an authorized user does not own the web system files and the
-  # permission are not correct, this is a finding.
-
-# Fix:
-  # Restrict access to the web servers access control files to only the System Administrator, Web Manager, or the Web Manager designees.
-
-
     authorized_sa_user_list = sys_admin.clone << nginx_owner
     authorized_sa_group_list = sys_admin_group.clone << nginx_group
-    
-    access_control_files = [ '.htaccess',
-                            '.htpasswd', 
-                            'nginx.conf' ]
 
     nginx_conf_handle = nginx_conf(conf_path)
     nginx_conf_handle.params
@@ -127,9 +96,7 @@ access to security-relevant tasks."
         describe file(file) do
         its('owner') { should be_in authorized_sa_user_list }
         its('group') { should be_in authorized_sa_group_list }
-        it { should_not be_executable }
-        it { should_not be_readable.by('others') }
-        it { should_not be_writable.by('others') }
+        its('mode') { should cmp '0660'}
         end
       end
     end
@@ -138,9 +105,7 @@ access to security-relevant tasks."
       describe file(file) do
         its('owner') { should be_in authorized_sa_user_list }
         its('group') { should be_in authorized_sa_group_list }
-        it { should_not be_executable }
-        it { should_not be_readable.by('others') }
-        it { should_not be_writable.by('others') }
+        its('mode') { should cmp '0660'}
       end
     end
 
@@ -179,11 +144,6 @@ access to security-relevant tasks."
       describe "Skip Message" do
         skip "Skipped: no web root directories found."
       end
-    end
-
-  rescue Exception => msg
-    describe "Exception: #{msg}" do
-      it { should be_nil }
     end
 end
 

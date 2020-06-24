@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-55945" do
-  title "The web server must enforce approved authorizations for logical access
+  title "The NGINX web server must enforce approved authorizations for logical access
 to hosted applications and resources in accordance with applicable access
 control policies."
   desc  "To control access to sensitive information and hosted applications by
@@ -51,11 +51,21 @@ authorization to access requested content prior to granting access."
   # Enable http_auth_request_module in the nginx configuration script the the '--with-http_auth_request_module' configuration parameter, if not aleady enabled.
   # Configure server to use auth_reqest to implement client authorization. 
 
+  auth_uris = []
+  nginx_conf_handle = nginx_conf(conf_path)
 
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  nginx_conf_handle.locations.entries.each do |location|
+    auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
+  end
+  
   Array(nginx_conf(conf_path).locations).each do |location|
     describe 'Each location context' do
       it 'should include an auth_request directive.' do
-        expect(location.params).to(include "auth_request")
+        expect(location.params).to(include "auth_request") unless auth_uris.include? location.params["_"]
       end
     end 
   end

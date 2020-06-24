@@ -1,10 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 charset_required = input('charset_required')
 
 control "V-41852" do
@@ -25,7 +20,7 @@ trap efforts to bypass security checks or to compromise an application.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the web server documentation and deployed configuration to determine
+  Review the NGINX web server documentation and deployed configuration to determine
   what the data set is for data entry.
 
   Check for the following:
@@ -48,8 +43,14 @@ trap efforts to bypass security checks or to compromise an application.
   tag "cci": ["CCI-001310"]
   tag "nist": ["SI-10", "Rev_4"]
 
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
   #  charset - Context:	http, server, location
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  Array(nginx_conf_handle.params['http']).each do |http|
     # Within http
     describe 'Charset directive' do
       it 'should exist and be configured to the expected value in the http context.' do
@@ -62,7 +63,7 @@ trap efforts to bypass security checks or to compromise an application.
   end
 
   # Within server
-  Array(nginx_conf(conf_path).servers).each do |server|
+  Array(nginx_conf_handle.servers).each do |server|
     describe 'Charset' do
       it 'should be configured to the expected value if found in the server context.' do
         Array(server.params["charset"]).each do |charset|       
@@ -73,7 +74,7 @@ trap efforts to bypass security checks or to compromise an application.
   end
 
   # Within location
-  Array(nginx_conf(conf_path).locations).each do |location|
+  Array(nginx_conf_handle.locations).each do |location|
     describe 'Charset' do
       it 'should be configured to the expected value if found in the location context.' do
         Array(location.params["charset"]).each do |charset|       

@@ -1,10 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41833" do
   title "The NGINX web server must restrict the ability of users to launch Denial of
@@ -48,8 +43,15 @@ server being used in a DoS attack is bandwidth throttling.
   tag "cci": ["CCI-001094"]
   tag "nist": ["SC-5 (1)", "Rev_4"]
 
+
+nginx_conf_handle = nginx_conf(conf_path)
+
+describe nginx_conf_handle do
+  its ('params') { should_not be_empty }
+end
+
 # limit_conn_zone - Context:	http
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  Array(nginx_conf_handle.params['http']).each do |http|
     describe 'The HTTP context' do
       it 'should include a limit_conn_zone.' do
         expect(http).to(include "limit_conn_zone")
@@ -81,7 +83,7 @@ server being used in a DoS attack is bandwidth throttling.
 
 # limit_conn - Context:	http, server, location
 # limit_rate - Context: location
-  Array(nginx_conf(conf_path).locations).each do |location|
+  Array(nginx_conf_handle.locations).each do |location|
     describe 'Each location context' do
       it 'should include a limit_conn directive.' do
         expect(location.params).to(include "limit_conn")

@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41855" do
-  title "Debugging and trace information used to diagnose the web server must
+  title "Debugging and trace information used to diagnose the NGINX web server must
 be disabled."
   desc  "Information needed by an attacker to begin looking for possible
 vulnerabilities in a web server includes any information about the web server
@@ -20,7 +15,7 @@ and general messages during normal operation of the web server, an attacker
 does not need to cause an error condition to gain this information."
   desc  "rationale", ""
   desc  "check", "
-  Review the web server documentation and deployed configuration to determine
+  Review the NGINX web server documentation and deployed configuration to determine
   if debugging and trace information are enabled.
 
   Check for the following:
@@ -41,7 +36,13 @@ does not need to cause an error condition to gain this information."
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  Array(nginx_conf(conf_path).params['error_log']).each do |error_log|
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.params['error_log']).each do |error_log|
     Array(error_log).each do |error_value|
       describe "The error log level" do
         it 'should not be set to debug.' do

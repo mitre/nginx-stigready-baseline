@@ -1,11 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
-root_document_mount_path = input('root_document_mount_path')
 
 control "V-41821" do
   title "The NGINX web server document directory must be in a separate partition from
@@ -70,7 +64,6 @@ exhaustion."
     webserver_roots.uniq!
     
     webserver_roots.each do |root|
-      puts root;
       describe "The root directory #{root}" do
         it { should_not cmp '/'}
       end

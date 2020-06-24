@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-55949" do
-  title "The web server must set an inactive timeout for sessions."
+  title "The NGINX web server must set an inactive timeout for sessions."
   desc  "Leaving sessions open indefinitely is a major security risk. An
 attacker can easily use an already authenticated session to access the hosted
 application as the previously authenticated user. By closing sessions after a
@@ -20,18 +20,37 @@ medium-value applications, and 20 minutes for low-value applications.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the hosted applications, web server documentation and deployed
-configuration to verify that the web server will close an open session after a
-configurable time of inactivity.
+  Review the hosted applications, NGINX web server documentation and deployed
+  configuration to verify that the web server will close an open session after a
+  configurable time of inactivity.
 
-    If the web server does not close sessions after a configurable time of
-inactivity or the amount of time is configured higher than 5 minutes for
-high-risk applications, 10 minutes for medium-risk applications, or 20 minutes
-for low-risk applications, this is a finding.
-  "
-  desc  "fix", "Configure the web server to close inactive sessions after 5
-minutes for high-risk applications, 10 minutes for medium-risk applications, or
-20 minutes for low-risk applications."
+  To view the timeout values enter the following commands:
+
+    # grep ''client_body_timeout'' on the nginx.conf file and any separate included 
+    configuration files
+
+    # grep ''client_header_timeout'' on the nginx.conf file and any separate included 
+    configuration files
+
+        # grep 'keepalive_timeout' in the nginx.conf and any separated include 
+        configuration file.
+
+  If the values of the 'client_body_timeout' and 'client_header_timeout' directives are 
+  not set to 10 seconds (10s) or less,  this is a finding.
+
+  If the value of  'keepalive_timeout' directive is not set to 5 (seconds) or less, 
+  this is a finding."
+
+  desc  "fix", "Configure the Nginx web server to include the 'client_body_timeout', 
+  'client_header_timeout', and 'keepalive_timeout' in the Nginx configuration file(s). 
+  Set the value of 'client_body_timeout' and 'client_header_timeout to be 10 seconds or 
+  less. Set the value of 'keep_alive_timeout' to be 5 seconds or less. 
+
+  Example:
+    client_body_timeout   10s;
+    client_header_timeout 10s;
+    keepalive_timout 5s 5s;"
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000295-WSR-000134"
@@ -42,83 +61,78 @@ minutes for high-risk applications, 10 minutes for medium-risk applications, or
   tag "cci": ["CCI-002361"]
   tag "nist": ["AC-12", "Rev_4"]
 
-  # Check:
-    # Verify the "http_upstream_module" is loaded with the following command:
+  nginx_conf_handle = nginx_conf(conf_path)
 
-      # nginx -V
-
-    # If the "http_upstream_module" is not loaded, this is a finding.
-
-    # Verify the "keepalive_timeout" directive is configured:
-      # grep 'keepalive_timeout' in the nginx.conf and any separated include configuration files
-
-    # If the "http_upstream_module" is loaded and the "keepalive_timeout" directive is not configured, this is a finding.
-
-  # Fix: 
-    # Include the the "http_upstream_module".
-
-    # Configure the "keepalive_timeout" directive.
-
-    nginx_conf_handle = nginx_conf(nginx_conf_file)
-
-    describe nginx_conf_handle do
-      its ('params') { should_not be_empty }
-    end
-
-    nginx_conf_handle.http.entries.each do |http|
-      describe http.params['client_header_timeout'] do
-        it { should_not be_nil }
-      end
-      describe http.params['client_header_timeout'].flatten do
-        it { should cmp <= 10 }
-      end unless http.params['client_header_timeout'].nil?
-
-      describe http.params['client_body_timeout'] do
-        it { should_not be_nil }
-
-      end
-      describe http.params['client_body_timeout'].flatten do
-        it { should cmp <= 10 }
-      end unless http.params['client_body_timeout'].nil?
-    end
-
-    nginx_conf_handle.servers.entries.each do |server|
-      describe server.params['client_header_timeout'].flatten do
-        it { should cmp <= 10 }
-      end unless server.params['client_header_timeout'].nil?
-      describe server.params['client_body_timeout'].flatten do
-        it { should cmp <= 10 }
-      end unless server.params['client_body_timeout'].nil?
-    end
-
-
-  rescue Exception => msg
-    describe "Exception: #{msg}" do
-      it { should be_nil }
-    end
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
 
-
-  Array(nginx_conf(conf_path).params['http']).each do |http|
-    # Within http
-    describe 'The HTTP context' do
-      it 'should include a keepalive_timeout directive.' do
-        expect(http).to(include "keepalive_timeout")
-      end
-    end
-    # Within server
-    describe 'The server context' do
-      it 'should include a keepalive_timeout directive.' do
-        Array(nginx_conf(conf_path).servers).each do |server|
-          expect(server).to(include "keepalive_timeout")
+  # Within http
+  Array(nginx_conf_handle.params['http']).each do |http|
+    describe 'The http context client_header_timeout value' do
+      it 'should exist and should be set to 10 (seconds) or less.' do
+        expect(http).to(include "client_header_timeout")
+        Array(http["client_header_timeout"]).each do |http_client_header|
+          expect(http_client_header[0].to_i).to(be <= 10)
         end
       end
     end
-    # Within location
+    describe 'The http context client_body_timeout value' do
+      it 'should exist and should be set to 10 (seconds) or less.' do
+        expect(http).to(include "client_body_timeout")
+        Array(http["client_body_timeout"]).each do |http_client_body|
+          expect(http_client_body[0].to_i).to(be <= 10)
+        end
+      end
+    end
+    describe 'The http context keep-alive value' do
+      it 'should exist and should be set to 5 (seconds) or less.' do
+        expect(http).to(include "keepalive_timeout")
+        Array(http["keepalive_timeout"]).each do |http_alive|
+          expect(http_alive[0].to_i).to(be <= 5)
+          expect(http_alive[1].to_i).to(be <= 5)
+        end
+      end
+    end
+  end
+
+  # Within server
+  Array(nginx_conf_handle.servers).each do |server|
+    describe 'The server context client_header_timeout value' do
+      it 'should exist and should be set to 10 (seconds) or less.' do
+        expect(server.params).to(include "client_header_timeout")
+        Array(server.params["client_header_timeout"]).each do |server_client_header|
+          expect(server_client_header[0].to_i).to(be <= 10)
+        end
+      end
+    end
+    describe 'The server context client_body_timeout value' do
+      it 'should exist and should be set to 10 (seconds) or less.' do
+        expect(server.params).to(include "client_body_timeout")
+        Array(server.params["client_body_timeout"]).each do |server_client_body|
+          expect(server_client_body[0].to_i).to(be <= 10)
+        end
+      end
+    end
+    describe 'The server context keep-alive value' do
+      it 'should exist and should be set to 5 (seconds) or less.' do
+        expect(server.params).to(include "keepalive_timeout")
+        Array(server.params["keepalive_timeout"]).each do |server_alive|
+          expect(server_alive[0].to_i).to(be <= 5)
+          expect(server_alive[1].to_i).to(be <= 5)
+        end
+      end
+    end
+  end
+
+  # Within location
+  Array(nginx_conf_handle.locations).each do |location|
     describe 'The location context keep-alive value' do
-      it 'should include a keepalive_timeout directive.' do
-        Array(nginx_conf(conf_path).locations).each do |location|
-          expect(location).to(include "keepalive_timeout")
+      it 'should exist and should be set to 5 (seconds) or less.' do
+        expect(location.params).to(include "keepalive_timeout")
+        Array(location.params["keepalive_timeout"]).each do |location_alive|
+          expect(location_alive[0].to_i).to(be <= 5)
+          expect(location_alive[1].to_i).to(be <= 5)
         end
       end
     end

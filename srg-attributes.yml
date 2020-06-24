@@ -32,6 +32,12 @@ error_log_path: '/var/log/nginx/error.log'
 password_path: '/etc/passwd'
 key_file_path: '/etc/ssl/key.pem'
 
+access_control_files: [ 
+  '.htaccess',
+  '.htpasswd', 
+  'nginx.conf' 
+]
+
 charset_required: 'utf-8'
 
 nginx_owner: 'nginx'
@@ -42,6 +48,11 @@ sys_admin_group: ['root']
 #description: List of non admin user accounts
 authorized_user_list: [
   'user'
+]
+
+authorized_ports: [
+  '80',
+  '443'
 ]
 
 # NOTE: Some sites show +'s in the cipher names, while others use -'s. 

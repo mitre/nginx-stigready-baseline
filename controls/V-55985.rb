@@ -1,13 +1,9 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+authorized_ports = input('authorized_ports')
 
 control "V-55985" do
-  title "The web server must be configured in accordance with the security
+  title "The NGINX web server must be configured in accordance with the security
 configuration settings based on DoD security configuration or implementation
 guidance, including STIGs, NSA configuration guides, CTOs, and DTMs."
   desc  "Configuring the web server to implement organization-wide security
@@ -24,15 +20,27 @@ control requirements.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-if web server is configured in accordance with the security configuration
-settings based on DoD security configuration or implementation guidance.
+  Review the NGINX web server documentation and deployed configuration to determine
+  if web server is configured in accordance with the security configuration
+  settings based on DoD security configuration or implementation guidance.
 
-    If the web server is not configured according to the guidance, this is a
-finding.
+  Review the website to determine if 'HTTP' and 'HTTPS' are used in accordance 
+  with well-known ports (e.g., 80 and 443) or those ports and services as registered 
+  and approved for use by the DoD Ports, Protocols, and Services Management (PPSM).
+
+  Verify that any variation in PPS is documented, registered, and approved by the PPSM.
+
+  Check for the following:
+    # grep for all 'listen' directives in the server context of the nginx.conf and 
+    any separated include configuration file.
+
+  If the 'listen' directive is not configured to use port 80 (for HTTP) or port 
+  443 (for HTTPS) and port configured is not approved for used by PPSM, this is 
+  a finding.
   "
-  desc  "fix", "Configure the web server to be configured according to DoD
-security configuration guidance."
+  desc  "fix", "Configure the 'listen' directives in the Nginx configuration file(s) 
+  to use IANA well-known ports for 'HTTP' and 'HTTPS'."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000516-WSR-000174"
@@ -42,13 +50,26 @@ security configuration guidance."
   tag "fix_id": "F-60863r1_fix"
   tag "cci": ["CCI-000366"]
   tag "nist": ["CM-6 b", "Rev_4"]
+
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
   
-# check for port
-# If not 80 or 443, it fails.
   nginx_conf(conf_path).servers.entries.each do |server|
     server.params['listen'].each do |listen|
-      describe listen.join do
-        it { should match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) }
+      describe "The listen directive" do
+        listen_address = listen.join
+        it "should include the specific IP address and port" do
+          expect(listen_address).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
+        end 
+      end
+      describe "The listening port" do
+        listen_port = listen.join.split(':')[1]
+        it "should be an approved port." do
+          expect(listen_port).to(be_in authorized_ports)
+        end 
       end
     end unless server.params['listen'].nil?
   end 

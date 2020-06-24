@@ -23,14 +23,14 @@ allow clients to modify unauthorized files on the web server.
   Review the web server documentation and deployment configuration to
   determine if Web Distributed Authoring (WebDAV) is enabled.
 
-  Check for the following: 
-    # grep 'dav_methods' directive in the http, server, and location context of 
-      the nginx.conf and any separated include configuration file.
+  Execute the following command: 
 
-  If the 'dav_methods' directive is enabled in any of these, this is a finding. 
+  # nginx -V
+
+  Verify the ‘ngx_http_dav_module’ module is not installed.
   "
-  desc  "fix", "Ensure the 'dav_methods' directive does not exist in the Nginx 
-  configuration file(s). If it does, set the directive to 'off'."
+  desc  "fix", "Use the configure script (available in the nginx download package) to 
+  exclude the 'ngx_http_dav_module' module by using the --without {module_name} option."
 
   impact 0.5
   tag "severity": "medium"
@@ -41,43 +41,9 @@ allow clients to modify unauthorized files on the web server.
   tag "fix_id": "F-47161r2_fix"
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
-  
-  nginx_conf_handle = nginx_conf(conf_path)
 
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  # dav_methods can exist in http, server, or location
-  # Within http
-  Array(nginx_conf_handle.params['http']).each do |http|
-    describe 'The http context' do
-      it 'should not include dav_methods.' do
-        expect(http["dav_methods"]).to (be_nil).or (cmp "off")
-      end
-    end
-  end
-
-  # Within server
-  Array(nginx_conf_handle.servers).each do |server|
-    describe 'The server context' do
-      it 'should not include dav_methods.' do
-        Array(server.params["dav_methods"]).each do |dav|       
-          expect(dav).to (be_nil).or (cmp "off")
-        end 
-      end
-    end
-  end 
-
-  # Within location
-  Array(nginx_conf_handle.locations).each do |location|
-    describe 'The location context' do
-      it 'should not include dav_methods.' do
-        Array(location.params["dav_methods"]).each do |dav|       
-          expect(dav).to (be_nil).or (cmp "off")
-        end 
-      end
-    end
+  describe nginx do
+    its('modules') { should_not include 'ngx_http_dav' }
   end
 end
 
