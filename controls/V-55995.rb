@@ -1,25 +1,11 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
-
-sys_admin = input(
-  'sys_admin',
-  description: "The system adminstrator",
-  value: ['root']
-)
-
-nginx_owner = input(
-  'nginx_owner',
-  description: "The Nginx owner",
-  value: 'nginx'
-)
+nginx_owner = input('nginx_owner')
+nginx_group = input('nginx_group')
+sys_admin = input('sys_admin')
+sys_admin_group = input('sys_admin_group')
 
 control "V-55995" do
-  title "Web server accounts accessing the directory tree, the shell, or other
+  title "NGINX web server accounts accessing the directory tree, the shell, or other
 operating system functions and utilities must only be administrative accounts."
   desc  "As a rule, accounts on a web server are to be kept to a minimum. Only
 administrators, web managers, developers, auditors, and web authors require
@@ -30,16 +16,21 @@ web administrator and associated staff require access and control of the web
 content and web server configuration files."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine what web
-server accounts are available on the hosting server.
+  Review the NGINX web server documentation and configuration to determine what web
+  server accounts are available on the hosting server.
 
-    If non-privileged web server accounts are available with access to
-functions, directories, or files not needed for the role of the account, this
-is a finding.
+  Obtain a list of the user accounts for the system, noting the priviledges for each account.
+
+  Verify with the system administrator or the ISSO that all privileged accounts are mission essential and documented.
+
+  Verify with the system administrator or the ISSO that all non-administrator access to shell scripts and operating system functions are mission essential and documented.
+
+  If undocumented privileged accounts are found, this is a finding.
+
+  If undocumented access to shell scripts or operating system functions is found, this is a finding.
   "
-  desc  "fix", "Limit the functions, directories, and files that are accessible
-by each account and role to administrative accounts and remove or modify
-non-privileged account access."
+  desc  "fix", "Ensure non-administrators are not allowed access to thedirectory tree, the shell, or other operating system functions and utilities."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000211-WSR-000030"
@@ -52,18 +43,16 @@ non-privileged account access."
 
   authorized_sa_user_list = sys_admin.clone << nginx_owner
 
-  describe users.shells(/bash/).usernames do
-    it { should be_in authorized_sa_user_list}
+  describe "Unauthorized users" do
+    it "should not have shell access." do
+      expect(users.shells(/bash/).usernames).to(be_in authorized_sa_user_list)
+    end
   end
 
   if users.shells(/bash/).usernames.empty?
     describe "Skip Message" do
       skip "Skipped: no users found with shell acccess."
     end
-  end
-rescue Exception => msg
-  describe "Exception: #{msg}" do
-    it { should be_nil }
   end
 end
 

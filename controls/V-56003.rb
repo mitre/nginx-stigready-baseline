@@ -1,13 +1,9 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-56003" do
-  title "Web server session IDs must be sent to the client using SSL/TLS."
+  title "NGINX web server session IDs must be sent to the client using SSL/TLS."
   desc  "The HTTP protocol is a stateless protocol. To maintain a session, a
 session identifier is used. The session identifier is a piece of data that is
 used to identify a session and a user. If the session identifier is compromised
@@ -16,14 +12,37 @@ identifier, the identifier becomes more difficult for an attacker to hijack,
 decrypt, and use before the session has expired."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether the session identifier is being sent to the client encrypted.
+  Review the NGINX web server documentation and deployed configuration to determine
+  whether the session identifier is being sent to the client encrypted.
 
-    If the web server does not encrypt the session identifier, this is a
-finding.
+  If it is determined that the web server is not required to perform session 
+  management, this check is Not Applicable. 
+
+  Check if SSL is enabled on the server:
+    #grep the 'listen' directive in the server context of the nginx.conf and 
+    any separated include configuration file.
+
+  If the 'listen' directive is not configured to use ssl, this is a finding.
+
+  Check for if 'ssl_protocols' is configured:
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
+    and any separated include configuration file.
+
+  If the 'ssl_protocols' directive does not exist in the configuration or is not 
+  set to the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Configure the web server to encrypt the session identifier for
-transmission to the client."
+  desc  "fix", "Configure the 'listen' directive to the Nginx configuration 
+  file(s) to enable the use of SSL to ensure the session IDs are encrypted.
+
+  Add the 'ssl_protocols' directive to the Nginx configuration file(s) and 
+  configure it to use the approved TLS protocols to ensure the session IDs 
+  are encrypted.
+  
+  Example:
+    server {
+            listen 443 ssl;
+            ssl_protocols TLSv1.2;
+    }"
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000439-WSR-000152"
@@ -34,9 +53,33 @@ transmission to the client."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
-  
+
+  Array(nginx_conf_handle.servers).each do |server|
+    describe 'The listen directive' do
+      it 'should be included in the configuration.' do
+        expect(server.params).to(include "listen")
+      end
+      it 'should be configured with SSL enabled.' do
+        expect(server.params["listen"].to_s).to(include "ssl")
+      end
+    end
+    describe 'The ssl_protocols directive' do
+      it 'should be included in the configuration.' do
+        expect(server.params).to(include "ssl_protocols")
+      end
+    end
+    Array(server.params["ssl_protocols"]).each do |protocol|
+      describe 'Each protocol' do
+        it 'should be included in the list of protocols approved to encrypt data' do
+          expect(protocol).to(be_in approved_ssl_protocols)
+        end
+      end
+    end
+  end
 end
 

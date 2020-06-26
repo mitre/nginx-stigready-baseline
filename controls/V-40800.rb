@@ -17,24 +17,31 @@ encryption methods to a database.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and configuration to determine the communication methods that are being used.
+  Review the Nginx web server documentation and configuration to determine the 
+  communication methods that are being used.
 
   Check for the following:
   
-    # grep the 'ssl_prefer_server_cipher' directive in each server context of the nginx.conf and any separated include configuration file.
+    # grep the 'ssl_prefer_server_cipher' directive in each server context of the 
+    nginx.conf and any separated include configuration file.
   
   Verify that the 'ssl_prefer_server_cipher' directive exists and is set to 'on'. 
   
   If the directive does not exist or is not set to 'on', this is a finding.
   
-    # grep the 'ssl_ciphers' directive in each server context of the nginx.conf and any separated include configuration file.
+    # grep the 'ssl_ciphers' directive in each server context of the nginx.conf and 
+    any separated include configuration file.
   
-  Verify the encryption being used is in accordance with the categorization of data being hosted when remote connections are provided.
+  Verify the encryption being used is in accordance with the categorization of data 
+  being hosted when remote connections are provided.
   
   If it is not, then this is a finding.
   "
-  desc  "fix", "Include the 'ssl_prefer_server_cipher' directive in all server context of the Nginx configuration file(s) and set the directive to 'on'.  
-  Configure the nginx web server to use encryption strength equal to the categorization of data hosted when remote connections are provided."
+  desc  "fix", "Include the 'ssl_prefer_server_cipher' directive in all server context 
+  of the Nginx configuration file(s) and set the directive to 'on'.  
+  Configure the nginx web server to use encryption strength equal to the categorization 
+  of data hosted when remote connections are provided."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000014-WSR-000006"
@@ -64,7 +71,6 @@ encryption methods to a database.
           expect(prefer_ciphers).to(cmp 'on')
         end
       end
-      # Test to see if there is an exact match of ciphers.
       # Create an array with all of the ciphers found in the server section of the config file.
       ciphers_found = []
       Array(server.params["ssl_ciphers"]).each do |ciphers|

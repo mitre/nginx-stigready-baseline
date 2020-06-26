@@ -29,17 +29,24 @@ not also be compressed.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether cookies are being sent to the client using SSL/TLS.
+  Review the web server documentation and deployed configuration to determine
+  whether cookies are being sent to the client using SSL/TLS.
 
-    If the transmission is through a SSL/TLS connection, but the cookie is not
-being compressed, this finding is NA.
+  If the transmission is through a SSL/TLS connection, but the cookie is not
+  being compressed, this finding is Not Applicable.
 
-    If the web server is using SSL/TLS for cookie transmission and the cookie
-is also being compressed, this is a finding.
+  If it is determined that the web server is not required to perform session 
+  management, this check is Not Applicable. 
+
+  SSL/TLS compression has been disabled by default since Nginx version 1.3.2.
+  Execute the following command to get the current version of Nginx running:
+    # nginx -v
+
+    If the current version of Nginx running is older than 1.3.2, this is a finding. 
   "
-  desc  "fix", "Configure the web server to send the cookie to the client via
-SSL/TLS without using cookie compression."
+  desc  "fix", "Upgrade to the lastest stable version of Nginx web server to 
+  ensure Web server cookies, such as session cookies, are not compressed."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000439-WSR-000153"
@@ -51,7 +58,7 @@ SSL/TLS without using cookie compression."
   tag "nist": ["SC-8", "Rev_4"]
 
   describe nginx do
-    its('version') { should cmp > '1.3.2' }
+    its('version') { should cmp >= '1.3.2' }
   end
   
 end

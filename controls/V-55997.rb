@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55997" do
-  title "The web server must be tuned to handle the operational requirements of
+  title "The NGINX web server must be tuned to handle the operational requirements of
 the hosted application."
   desc  "A Denial of Service (DoS) can occur when the web server is so
 overwhelmed that it can no longer respond to additional requests. A web server
@@ -16,19 +11,26 @@ expected traffic from users. To avoid a DoS, the web server must be tuned to
 handle the expected traffic for the hosted applications."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-what parameters are set to tune the web server.
+  Review the NGINX web server documentation and deployed configuration to determine
+  what parameters are set to tune the web server.
 
-    Review the hosted applications along with risk analysis documents to
-determine the expected user traffic.
+  To view the timeout values enter the following commands:
+    # grep ''client_body_timeout'' on the nginx.conf file and any separate included 
+    configuration files
+    # grep ''client_header_timeout'' on the nginx.conf file and any separate included 
+    configuration files
 
-    If the web server has not been tuned to avoid a DoS, this is a finding.
+  If the values of each are not set to 10 seconds (10s) or less, this is a finding.'
   "
   desc  "fix", "
-    Analyze the expected user traffic for the hosted applications.
-
-    Tune the web server to avoid a DoS condition under normal user traffic to
-the hosted applications.
+  Configure the Nginx web server to include the 'client_body_timeout' and 
+  'client_header_timeout' directives in the Nginx configuration file(s). 
+  Set the value of 'client_body_timeout' and 'client_header_timeout to be 
+  10 seconds or less to mitigate the effects of several types of denial of 
+  service attacks:
+  
+  client_body_timeout   10s;
+  client_header_timeout 10s;
   "
   impact 0.5
   tag "severity": "medium"
@@ -46,35 +48,44 @@ the hosted applications.
     its ('params') { should_not be_empty }
   end
 
-  nginx_conf_handle.http.entries.each do |http|
-    describe http.params['client_header_timeout'] do
-      it { should_not be_nil }
+  # Within http
+  Array(nginx_conf_handle.params['http']).each do |http|
+    describe 'The http context client_header_timeout value' do
+      it 'should exist and should be set to 10 (seconds) or less.' do
+        expect(http).to(include "client_header_timeout")
+        Array(http["client_header_timeout"]).each do |http_client_header|
+          expect(http_client_header[0].to_i).to(be <= 10)
+        end
+      end
     end
-    describe http.params['client_header_timeout'].flatten do
-      it { should cmp <= 10 }
-    end unless http.params['client_header_timeout'].nil?
-
-    describe http.params['client_body_timeout'] do
-      it { should_not be_nil }
-
+    describe 'The http context client_body_timeout value' do
+      it 'should exist and should be set to 10 (seconds) or less.' do
+        expect(http).to(include "client_body_timeout")
+        Array(http["client_body_timeout"]).each do |http_client_body|
+          expect(http_client_body[0].to_i).to(be <= 10)
+        end
+      end
     end
-    describe http.params['client_body_timeout'].flatten do
-      it { should cmp <= 10 }
-    end unless http.params['client_body_timeout'].nil?
   end
 
-  nginx_conf_handle.servers.entries.each do |server|
-    describe server.params['client_header_timeout'].flatten do
-      it { should cmp <= 10 }
-    end unless server.params['client_header_timeout'].nil?
-    describe server.params['client_body_timeout'].flatten do
-      it { should cmp <= 10 }
-    end unless server.params['client_body_timeout'].nil?
-  end
-
-  rescue Exception => msg
-    describe "Exception: #{msg}" do
-      it { should be_nil }
+  # Within server
+  Array(nginx_conf_handle.servers).each do |server|
+    describe 'The server context client_header_timeout value' do
+      it 'should exist and should be set to 10 (seconds) or less.' do
+        expect(server.params).to(include "client_header_timeout")
+        Array(server.params["client_header_timeout"]).each do |server_client_header|
+          expect(server_client_header[0].to_i).to(be <= 10)
+        end
+      end
     end
+    describe 'The server context client_body_timeout value' do
+      it 'should exist and should be set to 10 (seconds) or less.' do
+        expect(server.params).to(include "client_body_timeout")
+        Array(server.params["client_body_timeout"]).each do |server_client_body|
+          expect(server_client_body[0].to_i).to(be <= 10)
+        end
+      end
+    end
+  end
 end
 

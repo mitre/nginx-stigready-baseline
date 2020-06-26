@@ -1,13 +1,9 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+approved_ssl_ciphers = input('approved_ssl_ciphers')
 
 control "V-56017" do
-  title "The web server must implement required cryptographic protections using
+  title "The NGINX web server must implement required cryptographic protections using
 cryptographic modules complying with applicable federal laws, Executive Orders,
 directives, policies, regulations, standards, and guidance when encrypting data
 that must be compartmentalized."
@@ -35,18 +31,32 @@ when encryption of compartmentalized data is required by data classification.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review policy documents to identify data that is compartmentalized (i.e.
-classified, sensitive, need-to-know, etc.) and requires cryptographic
-protection.
+  Review policy documents to identify data that is compartmentalized (i.e.
+  classified, sensitive, need-to-know, etc.) and requires cryptographic
+  protection.
 
-    Review the web server documentation and deployed configuration to identify
-the encryption modules utilized to protect the compartmentalized data.
+  Review the NGINX web server documentation and deployed configuration to 
+  identify the encryption modules utilized to protect the compartmentalized 
+  data.
 
-    If the encryption modules used to protect the compartmentalized data are
-not compliant with the data, this is a finding.
+  Check for the followng:
+    # grep the 'ssl_prefer_server_cipher' directive in each server context of 
+    the nginx.conf and any separated include configuration file.
+
+  Verify that the 'ssl_prefer_server_cipher' directive exists and is set to 'on'. 
+  If the directive does not exist or is not set to 'on', this is a finding.
+
+    # grep the 'ssl_ciphers' directive in each server context of the nginx.conf 
+    and any separated include configuration file.
+
+  If the 'ssl_ciphers' directive is configured to include any ciphers that are 
+  not compliant with the data, this is a finding. 
   "
-  desc  "fix", "Configure the web server to utilize cryptography when
-protecting compartmentalized data."
+  desc  "fix", "Include the 'ssl_prefer_server_cipher' directive in all server 
+  context of the Nginx configuration file(s) and set the directive to 'on'.  
+  The 'ssl_ciphers' directive should include the required ciphers to protect the 
+  compartmentalized data."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000416-WSR-000118"
@@ -57,8 +67,14 @@ protecting compartmentalized data."
   tag "cci": ["CCI-002450"]
   tag "nist": ["SC-13", "Rev_4"]
 
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
   # ssl_prefer_server_ciphers - Context:	http, server
-  Array(nginx_conf(conf_path).servers).each do |server|
+  Array(nginx_conf_handle.servers).each do |server|
     describe 'Each server context' do
       it 'should include the ssl_prefer_server_ciphers directive.' do
         expect(server.params).to(include "ssl_prefer_server_ciphers")
@@ -70,32 +86,25 @@ protecting compartmentalized data."
           expect(prefer_ciphers).to(cmp 'on')
         end
       end
-      # Test to see if there is an exact match of ciphers.
       # Create an array with all of the ciphers found in the server section of the config file.
-      found = []
+      ciphers_found = []
       Array(server.params["ssl_ciphers"]).each do |ciphers|
         ciphers[0].to_s.split("\:").each do |cipher|
           # puts "Found this cipher: " + cipher
-          found << cipher
+          ciphers_found << cipher
         end
       end
-      # Create an array with the set of required protocol.
-      # NOTE: Some sites show +'s in the cipher names, while others use -'s.  
-      # Not sure which is right.
-      # This required list may need to be updated based on input from the security team
-      required = ["ECDH-AESGCM", "DH-AESGCM", "ECDH-AES256", "DH-AES256", "ECDH-AES128", "DH-AES", "ECDH-3DES", "DH-3DES", "RSA-AESGCM", "RSA-AES", "RSA-3DES", "!aNULL", "!eNULL", "!EXPORT", "!DES", "!PSK", "!RC4", "!MD5"]
+
       # Remove all duplicates
-      found.uniq
-      required.uniq
-      # Compare to make sure the arrays are identical.
-      describe 'The exact number of expected ciphers (' + required.size.to_s + ')' do
-        it 'should exist.' do
-          expect(found.size==required.size).to(cmp true)
-        end
-      end
-      describe 'The correct set of ciphers' do
-        it 'should be found.' do
-          expect(found & required == required).to(cmp true)
+      ciphers_found.uniq
+      approved_ssl_ciphers.uniq
+
+      # Ensure only approved ciphers are enabled in the configuration
+      Array(ciphers_found).each do |cipher|
+        describe 'Each cipher' do
+          it 'found in configuration should be included in the list of ciphers approved to encrypt data' do
+            expect(cipher).to(be_in approved_ssl_ciphers)
+          end
         end
       end
     end

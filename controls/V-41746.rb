@@ -33,7 +33,12 @@ authenticating users and processes.
   set to the FIPS comliant TLS versions, this is a finding. 
   "
   desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
-  and configure it to use the FIPS compliant TLS protocols."
+  and configure it to use the FIPS compliant TLS protocols.
+  Example:
+  server {
+          ssl_protocols TLSv1.2;
+  }
+  "
 
   impact 0.5
   tag "severity": "medium"

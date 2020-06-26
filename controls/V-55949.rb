@@ -32,7 +32,7 @@ medium-value applications, and 20 minutes for low-value applications.
     # grep ''client_header_timeout'' on the nginx.conf file and any separate included 
     configuration files
 
-        # grep 'keepalive_timeout' in the nginx.conf and any separated include 
+    # grep 'keepalive_timeout' in the nginx.conf and any separated include 
         configuration file.
 
   If the values of the 'client_body_timeout' and 'client_header_timeout' directives are 

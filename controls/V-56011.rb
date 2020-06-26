@@ -1,10 +1,6 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-56011" do
   title "A web server must maintain the confidentiality of controlled
@@ -20,14 +16,21 @@ applications.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-which version of TLS is being used.
+  Review the NGINX web server documentation and deployed configuration to determine
+  which version of TLS is being used.
 
-    If the TLS version is not an approved version according to NIST SP 800-52
-or non-FIPS-approved algorithms are enabled, this is a finding.
+  Check for the following:
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf and any separated include configuration file.
+
+  If the 'ssl_protocols' directive does not exist in the configuration or is not set to the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Configure the web server to use an approved TLS version
-according to NIST SP 800-52 and to disable all non-approved versions."
+  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) and configure it to use only the approved TLS protocols. 
+
+  Example:
+    server {
+            ssl_protocols TLSv1.2;
+    }
+  "
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000439-WSR-000156"
@@ -38,27 +41,25 @@ according to NIST SP 800-52 and to disable all non-approved versions."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  fips_compliant_protocols= input(
-    'fips_compliant_protocols',
-    description: 'List of protocols that are FIPS compliant',
-    value: [
-              "TLSv1.2"
-            ]
-  )
+  nginx_conf_handle = nginx_conf(conf_path)
 
-  Array(nginx_conf(conf_path).servers).each do |server|
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.servers).each do |server|
     describe 'Each server context' do
       it 'should include a ssl_protocols directive.' do
         expect(server.params).to(include "ssl_protocols")
       end
     end
-    Array(server.params["ssl_protocols"]).each do |protocols|
+    Array(server.params["ssl_protocols"]).each do |protocol|
       describe 'Each protocol' do
-        it 'should be included in the list of protocols that are FIPS compliant.' do
-          expect(protocols).to(be_in fips_compliant_protocols)
+        it 'should be included in the list of protocols approved to encrypt data' do
+          expect(protocol).to(be_in approved_ssl_protocols)
         end
       end
     end
-  end 
+  end
 end
 

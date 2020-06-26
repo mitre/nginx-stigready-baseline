@@ -1,10 +1,6 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-56015" do
   title "The web server must maintain the confidentiality and integrity of
@@ -26,15 +22,25 @@ data.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review web server configuration to determine if the server is using a
-transmission method that maintains the confidentiality and integrity of
-information during reception.
+  Review web server configuration to determine if the server is using a
+  transmission method that maintains the confidentiality and integrity of
+  information during reception.
 
-    If a transmission method is not being used that maintains the
-confidentiality and integrity of the data during reception, this is a finding.
+  Check for the following:
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
+    and any separated include configuration file.
+
+  If the 'ssl_protocols' directive does not exist in the configuration or is not 
+  set to the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Configure the web server to utilize a transmission method that
-maintains the confidentiality and integrity of information during reception."
+  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration 
+  file(s) and configure it to use only the approved TLS protocols to maintain 
+  the confidentiality and integrity of information during reception.
+
+  Example:
+    server {
+            ssl_protocols TLSv1.2;
+    }"
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000442-WSR-000182  "
@@ -45,28 +51,25 @@ maintains the confidentiality and integrity of information during reception."
   tag "cci": ["CCI-002422"]
   tag "nist": ["SC-8 (2)", "Rev_4"]
 
-  fips_compliant_protocols= input(
-    'fips_compliant_protocols',
-    description: 'List of protocols that are FIPS compliant',
-    value: [
-              "TLSv1.1",
-              "TLSv1.2"
-             ]
-  )
+  nginx_conf_handle = nginx_conf(conf_path)
 
-  Array(nginx_conf(conf_path).servers).each do |server|
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.servers).each do |server|
     describe 'Each server context' do
       it 'should include a ssl_protocols directive.' do
         expect(server.params).to(include "ssl_protocols")
       end
     end
-    Array(server.params["ssl_protocols"]).each do |protocols|
+    Array(server.params["ssl_protocols"]).each do |protocol|
       describe 'Each protocol' do
-        it 'should be included in the list of protocols that are FIPS compliant.' do
-          expect(protocols).to(be_in fips_compliant_protocols)
+        it 'should be included in the list of protocols approved to encrypt data' do
+          expect(protocol).to(be_in approved_ssl_protocols)
         end
       end
     end
-  end 
+  end
 end
 

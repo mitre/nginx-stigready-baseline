@@ -35,6 +35,7 @@ properly to only allow privileged users access.
     - .htaccess  
     - .htpasswd 
     - nginx.conf and its included configuration files
+    - Application directories
     
   Use the following commands: 
     #  find / -name nginx.conf to find the file.  
@@ -43,16 +44,22 @@ properly to only allow privileged users access.
   Change to the directories that contain the nginx.conf and included configuration files. 
   Use the following command:
     #   ls -l on these files to determine ownership of the file
-
+  
+  Use the following commands: 
+    #  grep 'root' on the nginx.conf file and any separate included configuration files 
+    to identify all the document root directories.
+    # ls -l on all document root directories found to determine the ownership of directories
+   
   -The Web Manager or the SA should own all the system files and directories.
   -The configurable directories can be owned by the WebManager or equivalent user.
-  -Permissions on these files should be 660 or more restrictive.
-
-  If root or an authorized user does not own the web system files and the permission are 
-  not correct, this is a finding.
+      -Permissions on these files should be 660 or more restrictive.
+  
+  If root or an authorized user does not own the web system files and directories, and the 
+  permission are not correct, this is a finding.
   "
   desc  "fix", "
-  Restrict access to the web servers access control files to only the System Administrator, Web Manager, or the Web Manager designees.
+  Restrict access to the web servers access control files and application directories to only 
+  the System Administrator, Web Manager, or the Web Manager designees.
 
   Determine where the key server files are located by running the following command (per file):
   
@@ -63,6 +70,13 @@ properly to only allow privileged users access.
     # cd <'key server file location'>/
     # chown <'authorized user'>:<'authorized group'>  <'key server file'> 
     # chmod 660 <'key server file'>  
+  
+  Determine where the application directories are located by running the following command:
+  
+    # grep 'root' on the nginx.conf file and any separate included configuration files
+  
+  Run the following command to set permissions:
+    # chown <'authorized user'>:<'authorized group'>  <'application directory'> 
   "
   impact 0.5
   tag "severity": "medium"

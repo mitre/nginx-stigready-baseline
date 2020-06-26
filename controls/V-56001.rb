@@ -1,13 +1,9 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-56001" do
-  title "The web server must employ cryptographic mechanisms (TLS/DTLS/SSL)
+  title "The NGINX web server must employ cryptographic mechanisms (TLS/DTLS/SSL)
 preventing the unauthorized disclosure of information during transmission."
   desc  "Preventing the disclosure of transmitted information requires that the
 web server take measures to employ some form of cryptographic mechanism in
@@ -25,14 +21,37 @@ website code revealing business logic, or other user personal information.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-whether the transmission of data between the web server and external devices is
-encrypted.
+  Review the NGINX web server documentation and deployed configuration to determine
+  whether the transmission of data between the web server and external devices is
+  encrypted.
 
-    If the web server does not encrypt the transmission, this is a finding.
+  Check if SSL is enabled on the server:
+  #grep the 'listen' directive in the server context of the nginx.conf and any 
+  separated include configuration file.
+
+  If the 'listen' directive is not configured to use ssl, this is a finding.
+
+  Check for if 'ssl_protocols' is configured:
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf and 
+    any separated include configuration file.
+
+  If the 'ssl_protocols' directive does not exist in the configuration or is not set 
+  to the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Configure the web server to encrypt the transmission of data
-between the web server and external devices."
+  desc  "fix", "
+  Configure the 'listen' directive to the Nginx configuration file(s) to enable the 
+  use of SSL to ensure that all information in transmission is being encrypted.
+
+  Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
+  and configure it to use the approved TLS protocols to ensure that all information 
+  in transmission is being encrypted.
+
+  Example:
+    server {
+            listen 443 ssl;
+            ssl_protocols TLSv1.2;
+    }
+  "
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000439-WSR-000151"
@@ -43,18 +62,30 @@ between the web server and external devices."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  # listen - Context:	server
-  Array(nginx_conf(conf_path).servers).each do |server| # solid gold
-    describe 'server context:' do
-      it 'There should be a listen directive.' do
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.servers).each do |server|
+    describe 'The listen directive' do
+      it 'should be included in the configuration.' do
         expect(server.params).to(include "listen")
       end
-      Array(server.params["listen"]).each do |listen|
-        it 'The port (' + listen[0].to_s + ') should match this regex: [0-9]{2,4}' do
-          expect(listen[0].to_s).to(match /[0-9]{2,4}/)
-        end
-        it 'It should include ssl.' do
-          expect(listen[1].to_s).to(match /ssl/)
+      it 'should be configured with SSL enabled.' do
+        expect(server.params["listen"].to_s).to(include "ssl")
+      end
+    end
+    describe 'The ssl_protocols directive' do
+      it 'should be included in the configuration.' do
+        expect(server.params).to(include "ssl_protocols")
+      end
+    end
+    Array(server.params["ssl_protocols"]).each do |protocol|
+      describe 'Each protocol' do
+        it 'should be included in the list of protocols approved to encrypt data' do
+          expect(protocol).to(be_in approved_ssl_protocols)
         end
       end
     end

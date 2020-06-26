@@ -28,7 +28,13 @@ clustered web server manager for an update.
   versions, this is a finding. 
   "
   desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
-  and configure it to use the approved TLS protocols to encrypt the transmission passwords."
+  and configure it to use the approved TLS protocols to encrypt the transmission passwords.
+  
+  Example:
+  server {
+          ssl_protocols TLSv1.2;
+  }
+  "
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000172-WSR-000104"

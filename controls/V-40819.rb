@@ -27,7 +27,13 @@ the complete communication session."
   "
   desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
   and configure it to use the approved TLS protocols to utilize encryption during 
-  remote access sessions."
+  remote access sessions.
+  
+  Example:
+  server {
+          ssl_protocols TLSv1.2;
+  }
+"
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000015-WSR-000014"

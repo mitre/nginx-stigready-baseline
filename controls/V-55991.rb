@@ -1,13 +1,9 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+authorized_ports = input('authorized_ports')
 
 control "V-55991" do
-  title "The web server must prohibit or restrict the use of nonsecure or
+  title "The NGINX web server must prohibit or restrict the use of nonsecure or
 unnecessary ports, protocols, modules, and/or services."
   desc  "Web servers provide numerous processes, features, and functionalities
 that utilize TCP/IP ports. Some of these processes may be deemed unnecessary or
@@ -20,19 +16,24 @@ assessments.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine which ports and protocols are enabled.
+  Review the Nginx web server documentation and deployment configuration to
+  determine which ports and protocols are enabled.
 
-    Verify that the ports and protocols being used are permitted, necessary for
-the operation of the web server and the hosted applications and are secure for
-a production system.
+  Verify that the ports and protocols being used are permitted, necessary for
+  the operation of the web server and the hosted applications and are secure for
+  a production system.
 
-    If any of the ports or protocols are not permitted, are nonsecure or are
-not necessary for web server operation, this is a finding.
+  Check for the following:
+  # grep for all 'listen' directives in the server context of the nginx.conf and 
+  any separated include configuration file.
+
+  If the 'listen' directive is not configured to use port 80 (for HTTP) or port 
+  443 (for HTTPS) and port configured is not approved for used by PPSM, this is 
+  a finding.
   "
-  desc  "fix", "Configure the web server to disable any ports or protocols that
-are not permitted, are nonsecure for a production web server or are not
-necessary for web server operation."
+  desc  "fix", "Configure the 'listen' directives in the Nginx configuration file(s) 
+  to use IANA well-known ports for 'HTTP' and 'HTTPS'."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000383-WSR-000175"
@@ -43,15 +44,27 @@ necessary for web server operation."
   tag "cci": ["CCI-001762"]
   tag "nist": ["CM-7 (1) (b)", "Rev_4"]
 
-# check for port
-# If not 80 or 443, it fails.
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+  
   nginx_conf(conf_path).servers.entries.each do |server|
     server.params['listen'].each do |listen|
-      describe listen.join do
-        it { should match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) }
+      describe "The listen directive" do
+        listen_address = listen.join
+        it "should include the specific IP address and port" do
+          expect(listen_address).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
+        end 
+      end
+      describe "The listening port" do
+        listen_port = listen.join.split(':')[1]
+        it "should be an approved port." do
+          expect(listen_port).to(be_in authorized_ports)
+        end 
       end
     end unless server.params['listen'].nil?
-end 
-  
+  end
 end
 
