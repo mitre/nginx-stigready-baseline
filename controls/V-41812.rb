@@ -19,7 +19,7 @@ server must provide clustering or some form of failover functionality.
   analysis documentation to verify that the web server is configured to provide
   clustering functionality, if the web server is a high-availability web server.
 
-  If the Nginx web server is not a high-availability web server, this finding is Not Applicable.
+  If the NGINX web server is not a high-availability web server, this finding is Not Applicable.
 
   Enter the following command:
     # nginx -V
@@ -32,7 +32,7 @@ server must provide clustering or some form of failover functionality.
   servers by doing the following:
   
   Use the configure script (available in the nginx download package) to include the 'http_proxy_module' using the --with {module_name} option.
-  Configure the 'proxy_pass' directive in the Nginx configuration file(s). 
+  Configure the 'proxy_pass' directive in the NGINX configuration file(s). 
   "
   impact 0.5
   tag "severity": "medium"

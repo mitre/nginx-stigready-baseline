@@ -24,8 +24,8 @@ rules invoked.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and deployment configuration to determine 
-  if the Nginx web server is configured to generate sufficient information to resolve 
+  Review the NGINX web server documentation and deployment configuration to determine 
+  if the NGINX web server is configured to generate sufficient information to resolve 
   the source, e.g. source IP, of the log event.
 
 

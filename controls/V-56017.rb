@@ -53,7 +53,7 @@ when encryption of compartmentalized data is required by data classification.
   not compliant with the data, this is a finding. 
   "
   desc  "fix", "Include the 'ssl_prefer_server_cipher' directive in all server 
-  context of the Nginx configuration file(s) and set the directive to 'on'.  
+  context of the NGINX configuration file(s) and set the directive to 'on'.  
   The 'ssl_ciphers' directive should include the required ciphers to protect the 
   compartmentalized data."
 

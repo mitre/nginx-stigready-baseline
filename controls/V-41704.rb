@@ -1,14 +1,9 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41704" do
   title "Users and scripts running on behalf of users must be contained to the
-document root or home directory tree of the web server."
+document root or home directory tree of the NGINX web server."
   desc  "A web server is designed to deliver content and execute scripts or
 applications on the request of a client or user.  Containing user requests to
 files in the directory tree of the hosted web application and limiting the
@@ -21,18 +16,26 @@ symbolic links or shortcuts, or through search paths for missing files.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine where
-the document root or home directory for each application hosted by the web
-server is located.
+  Review the NGINX web server documentation and configuration to determine where
+  the document root or home directory for each application hosted by the web
+  server is located.
 
-    Verify that users of the web server applications, and any scripts running
-on the user's behalf, are contained to each application's domain.
+  Check for the following: 
+    # grep for a 'deny' directive in the root directoy location context of the 
+    nginx.conf and any separated include configuration file.
 
-    If users of the web server applications, and any scripts running on the
-user's behalf, are not contained, this is a finding.
-  "
-  desc  "fix", "Configure the web server to contain users and scripts to each
-hosted application's domain."
+  Verify that there is a 'deny all' set in each root directory location context 
+  to deny access by default. If a 'deny all' is not set in each location, 
+  this is a finding."
+
+  desc  "fix", "Add a 'deny all' in each location context in the NGINX configuration 
+  file(s) to contain users and scripts to each hosted application's domain.
+
+  Example configuration: 
+
+  'location / { 
+                  deny all; 
+  }'"
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000141-WSR-000087"
@@ -43,9 +46,24 @@ hosted application's domain."
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
-  
+
+  Array(nginx_conf_handle.locations).each do |location|
+    location.params["_"].each do |value|
+      if (value == '/') 
+        deny_values = []
+        deny_values.push(location.params['deny']) unless location.params['deny'].nil?
+        describe "Each root directory location context" do
+          it 'should include an deny all directive.' do
+            expect(deny_values.to_s).to(include "all")
+          end
+        end
+      end
+    end
+  end
 end
 

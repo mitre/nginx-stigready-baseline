@@ -30,7 +30,7 @@ trap efforts to bypass security checks or to compromise an application.
   If the 'charset' directive does not exist or is not configured to use the charsets expected by the 
   host application, this is a finding. 
   "
-  desc  "fix", "Configure the Nginx web server to include the 'charset' directive 
+  desc  "fix", "Configure the NGINX web server to include the 'charset' directive 
   and use the character sets the application expects."
 
   impact 0.5

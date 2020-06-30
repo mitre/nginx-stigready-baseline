@@ -29,7 +29,7 @@ each event the client source of the event.
 
   If the web server is not sitting behind a proxy server, this finding is Not Applicable. 
 
-  If the Nginx web server is behind a proxy server, review the documentation and deployment
+  If the NGINX web server is behind a proxy server, review the documentation and deployment
   configuration to determine if the web server is configured to generate sufficient 
   information to resolve the source, e.g. source IP, of the logged event and not the 
   proxy server.

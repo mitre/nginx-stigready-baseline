@@ -28,7 +28,7 @@ exhaustion."
   Once partition is created, the directory needs to be copied over using the following command:
     # sudo rsync -av <DOCUMENT HOME DIRECTORY> <NEW MOUNTED PARTITION>.
   
-  Update the 'root' directives in the Nginx configuration file(s) with the new location."
+  Update the 'root' directives in the NGINX configuration file(s) with the new location."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000233-WSR-000146"

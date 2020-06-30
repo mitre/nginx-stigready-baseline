@@ -32,10 +32,10 @@ services and programs were installed and removed manually.
     # nginx -V
 
   If there are more modules installed than are needed for the operation of 
-  the Nginx web server, this is a finding.
+  the NGINX web server, this is a finding.
   "
   desc  "fix", "Use the configure script (available in the nginx download package) 
-  to exclude modules not needed by Nginx using the --without {module_name} option."
+  to exclude modules not needed by NGINX using the --without {module_name} option."
 
   impact 0.5
   tag "severity": "medium"

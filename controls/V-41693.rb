@@ -1,10 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41693" do
   title "The NGINX web server must only contain services and functions necessary for
@@ -19,15 +13,36 @@ the web server mission or can adversely impact server performance.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the NGINX web server documentation and deployed configuration to determine
-if web server features, services, and processes are installed that are not
-needed for hosted application deployment.
+  Review the NGINX web server documentation and deployed configuration to determine
+  if web server features, services, and processes are installed that are not
+  needed for hosted application deployment.
 
-    If excessive features, services, and processes are installed, this is a
-finding.
+  If the site requires the use of a particular piece of software, the ISSO will need 
+  to maintain documentation identifying this software as necessary for operations. The 
+  software must be operated at the vendor’s current patch level and must be a supported 
+  vendor release.
+
+  If programs or utilities that meet the above criteria are installed on the Web Server, 
+  and appropriate documentation and signatures are in evidence, this is not a finding.
+
+  Determine whether the web server is configured with unnecessary software.
+
+  Determine whether processes other than those that support the web server are loaded 
+  and/or run on the web server.
+
+  Examples of software that should not be on the web server are all web development 
+  tools, office suites (unless the web server is a private web development server), 
+  compilers, and other utilities that are not part of the web server suite or the basic 
+  operating system.
+
+  Check the directory structure of the server and ensure that additional, unintended, or 
+  unneeded applications are not loaded on the system.
+
+  If, after review of the application on the system, there is no justification for the 
+  identified software, this is a finding.
   "
   desc  "fix", "Uninstall or deactivate features, services, and processes not
-needed by the web server for operation."
+needed by the NGINX web server for operation."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000141-WSR-000075"
@@ -38,9 +53,11 @@ needed by the web server for operation."
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe "Manual Check" do
+    skip "Check the directory structure of the server and ensure that additional, unintended, or 
+    unneeded applications are not loaded on the system.
+    If, after review of the application on the system, there is no justification for the 
+    identified software, this is a finding."
   end
-  
 end
 

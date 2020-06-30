@@ -1,10 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55973" do
   title "The NGINX web server must use a logging mechanism that is configured to
@@ -31,7 +25,7 @@ warning to the ISSO and SA at a minimum.
   If there is no alert configured, this is a finding.
   "
   desc  "fix", "Work with the SIEM administrator to configure an alert when no audit 
-  data is received from Nginx based on the defined schedule of connections
+  data is received from NGINX based on the defined schedule of connections
   "
   impact 0.5
   tag "severity": "medium"
@@ -43,11 +37,10 @@ warning to the ISSO and SA at a minimum.
   tag "cci": ["CCI-000139"]
   tag "nist": ["AU-5 a", "Rev_4"]
 
-  describe "Manual Step" do
+  describe "Manual Check" do
     skip "Work with the SIEM administrator to determine if an alert is configured when audit 
     data is no longer received as expected. 
     If there is no alert configured, this is a finding."
   end
-
 end
 

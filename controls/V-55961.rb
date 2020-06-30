@@ -37,11 +37,11 @@ service (DoS) attacks on the web server.
   addresses by default and only allow addresses in secure zones. If a 'deny all' 
   is not set in each location, this is a finding.
   "
-  desc  "fix", "Add a 'deny all' in each location context in the Nginx configuration 
+  desc  "fix", "Add a 'deny all' in each location context in the NGINX configuration 
   file(s) to deny access to all IP addresses by default, including addresses in 
   nonsecure zones. 
   
-  Then add 'allow' directive(s) in each location context in the Nginx configuration file(s)
+  Then add 'allow' directive(s) in each location context in the NGINX configuration file(s)
   and configure it to only allow addresses in secure zones."
 
   impact 0.5

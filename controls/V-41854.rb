@@ -33,8 +33,8 @@ to not aid in the blueprinting of the web server.
   The default value for the 'server_tokens' directive is set to 'on'. If the 'server_tokens' 
   directive does not exist or is not set to 'off', this is a finding
   "
-  desc  "fix", "Configure the Nginx web server to include the 'server_tokens' directive 
-  and set to 'off' in the Nginx configuration file(s) to mask server details and minimize 
+  desc  "fix", "Configure the NGINX web server to include the 'server_tokens' directive 
+  and set to 'off' in the NGINX configuration file(s) to mask server details and minimize 
   the information provided to the client in warning and error messages."
 
   impact 0.5

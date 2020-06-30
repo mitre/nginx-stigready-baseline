@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-56035" do
-  title "The web server must display a default hosted application web page, not
+  title "The NGINX web server must display a default hosted application web page, not
 a directory listing, when a requested web page cannot be found."
   desc  "The goal is to completely control the web user's experience in
 navigating any portion of the web document root directories. Ensuring all web
@@ -24,17 +19,22 @@ reveals the server type and version.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to locate
-all the web document directories.
+  Review the NGINX web server documentation and deployed configuration to locate
+  all the web document directories:
 
-    Verify that each web document directory contains a default hosted
-application web page that can be used by the web server in the event a web page
-cannot be found.
+    # grep for 'root' directive in each http, server, and location context of the 
+    nginx.conf and any separated include configuration file.
 
-    If a document directory does not contain a default web page, this is a
-finding.
+  Verify that each web document directory contains a default hosted application web 
+  page that can be used by the web server in the event a web page cannot be found:
+
+    # Execute the 'ls' command on each directory defined in the root directive and 
+    check if index.html is present for each directory.
+
+  If a document directory does not contain a default web page (index.html), 
+  this is a finding.
   "
-  desc  "fix", "Place a default web page in every web document directory."
+  desc  "fix", "Add index.html file to all NGINX web document directories."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000266-WSR-000142"
@@ -45,9 +45,36 @@ finding.
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  # collect root directores from nginx_conf
+  webserver_roots = []
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
-  
+
+  nginx_conf_handle.http.entries.each do |http|
+    webserver_roots.push(http.params['root']) unless http.params['root'].nil?
+  end
+
+  nginx_conf_handle.servers.entries.each do |server|
+    webserver_roots.push(server.params['root']) unless server.params['root'].nil?
+  end
+
+  nginx_conf_handle.locations.entries.each do |location|
+    webserver_roots.push(location.params['root']) unless location.params['root'].nil?
+  end
+
+  webserver_roots.flatten!
+  webserver_roots.uniq!
+   
+  webserver_roots.each do |root|
+    root_files = command("ls #{root}").stdout.split("\n")
+    describe "The root directory #{root}" do
+      it "should include the default index.html file." do
+        expect(root_files).to(include 'index.html')
+      end
+    end
+  end
 end
 

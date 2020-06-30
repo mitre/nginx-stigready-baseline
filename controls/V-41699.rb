@@ -28,14 +28,17 @@ server.
   determine if the OS shell is accessible by any MIME types that are enabled.
 
   Enter the following command to find the mime.types file:
-    # find / mime.types 
+  # find / mime.types 
 
   Review the 'mime.types' file.
 
-  If there are any MIME types enabled that allow a user to invoke OS shell programs, 
-  this is a finding.
+  If there are any MIME types enabled for  .exe, .dll, .com, .bat, and .csh 
+  programs, this is a finding.
+
   "
-  desc  "fix", "Edit the 'mime.types' file to only allow approved MIME types."
+  desc  "fix", "Edit the 'mime.types' file and disable all MIME types for .exe, 
+  .dll, .com, .bat, and .csh programs.
+  "
 
   impact 0.5
   tag "severity": "medium"

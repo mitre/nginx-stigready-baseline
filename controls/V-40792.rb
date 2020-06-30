@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 control "V-40792" do
-  title "The Nginx web server must perform server-side session management."
+  title "The NGINX  web server must perform server-side session management."
   desc  "Session management is the practice of protecting the bulk of the user
 authorization and identity information. Storing of this data can occur on the
 client system or on the server.
@@ -22,14 +22,14 @@ be compromised.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the Nginx web server documentation and configuration to determine if
-    server-side session management is configured.
+  Review the NGINX web server documentation and configuration to determine if
+  server-side session management is configured.
 
-    If it is determined that the web server is not required to perform session management, this check is Not Applicable. 
+  If it is determined that the web server is not required to perform session management, this check is Not Applicable. 
 
-    If it is not configured, this is a finding.
+  If it is not configured, this is a finding.
   "
-  desc  "fix", "Configure the Nginx web server to perform server-side session
+  desc  "fix", "Configure the NGINX web server to perform server-side session
 management."
   impact 0.5
   tag "severity": "medium"
@@ -41,8 +41,8 @@ management."
   tag "cci": ["CCI-000054"]
   tag "nist": ["AC-10", "Rev_4"]
 
-  describe "This is a manual check" do
-    skip "Review the Nginx web server documentation and configuration to determine if
+  describe "Manual Check" do
+    skip "Review the NGINX web server documentation and configuration to determine if
     server-side session management is configured. If it is determined that the web 
     server is not required to perform session management, this check is Not Applicable.
     If it is not configured, this is a finding."

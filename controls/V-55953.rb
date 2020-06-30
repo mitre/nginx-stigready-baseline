@@ -30,7 +30,7 @@ implementing secure tokens, and validating users.
   If the an enterprise tools is enforcing the organization's requirements for remote 
   connections, this control must be reviewed Manually.
 
-  If Nginx is enforcing the requirements for remote connections, check for the following:
+  If NGINX is enforcing the requirements for remote connections, check for the following:
       # grep for a 'deny' directive in the location context of the nginx.conf and any 
       separated include configuration file.
 
@@ -39,10 +39,10 @@ implementing secure tokens, and validating users.
 
   If a 'deny all' is not set in each location, this is a finding.
   "
-  desc  "fix", "Add a 'deny all' in each location context in the Nginx configuration 
+  desc  "fix", "Add a 'deny all' in each location context in the NGINX configuration 
   file(s) to enforce the remote access policy. 
 
-  Then add 'allow' directive(s) in each location context in the Nginx configuration file(s)
+  Then add 'allow' directive(s) in each location context in the NGINX configuration file(s)
   and configure it to only allow approved IP addresses."
 
   impact 0.5

@@ -1,13 +1,7 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-56029" do
-  title "The web server must augment re-creation to a stable and known
+  title "The NGINX web server must augment re-creation to a stable and known
 baseline."
   desc  "Making certain that the web server has not been updated by an
 unauthorized user is always a concern. Adding patches, functions, and modules
@@ -23,17 +17,20 @@ server, can be used.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to determine
-if the web server offers the capability to reinstall from a known state.
+  Review the NGINX web server documentation and deployed configuration to determine
+  if the web server offers the capability to reinstall from a known state.
 
-    If the web server does not offer this capability, determine if the web
-server, in any manner, prohibits the reinstallation of a known state.
+  Interview the System Administrator for the NGINX web server.
 
-    If the web server does prohibit the reinstallation to a known state, this
-is a finding.
+  Ask for documentation on the disaster recovery methods tested and planned for the 
+  NGINX web server in the event of the necessity for rollback.
+  
+  If documentation for a disaster recovery has not been established, this is a finding.
   "
-  desc  "fix", "Configure the web server to augment and not hinder the
-reinstallation of a known and stable baseline."
+  desc  "fix", "Prepare documentation for disaster recovery methods for the Nginx web server in the event of the necessity for rollback.
+
+  Document and test the disaster recovery methods designed."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000225-WSR-000074"
@@ -45,7 +42,10 @@ reinstallation of a known and stable baseline."
   tag "nist": ["SC-24", "Rev_4"]
 
   describe "Skip Test" do
-    skip "This is a manual check"
+    skip "Interview the System Administrator for the NGINX web server.
+    Ask for documentation on the disaster recovery methods tested and planned for the 
+    NGINX web server in the event of the necessity for rollback.
+    If documentation for a disaster recovery has not been established, this is a finding."
   end
   
 end

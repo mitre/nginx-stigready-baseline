@@ -24,8 +24,8 @@ rules invoked.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and deployment configuration to determine 
-  if the Nginx web server is configured to generate a date and time for each logged event.
+  Review the NGINX web server documentation and deployment configuration to determine 
+  if the NGINX web server is configured to generate a date and time for each logged event.
 
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.

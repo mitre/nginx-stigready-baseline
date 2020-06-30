@@ -1,10 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55975" do
   title "The NGINX web server must use a logging mechanism that is configured to
@@ -49,8 +43,8 @@ dedicated log tool that meets this requirement.
   tag "cci": ["CCI-001855"]
   tag "nist": ["AU-5 (1)", "Rev_4"]
 
-  describe "Manual Step" do
-    skip "  Work with the SIEM administrator to determine if an alert is configured when 
+  describe "Manual Check" do
+    skip "Work with the SIEM administrator to determine if an alert is configured when 
     allocated record storage volume reaches 75% of maximum log record storage capacity.
     If there is no alert configured, this is a finding."
   end

@@ -2,7 +2,7 @@
 conf_path = input('conf_path')
 
 control "V-41609" do
-  title "The Nginx web server must capture, record, and log all content related to a
+  title "The NGINX web server must capture, record, and log all content related to a
 user session."
   desc  "A user session to a web server is in the context of a user accessing a
 hosted application that extends to any plug-ins/modules and services that may
@@ -16,8 +16,8 @@ investigations into suspicious user activity would be hampered.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and deployed configuration to determine 
-  if the Nginx web server captures and logs all content related to a user session.
+  Review the NGINX web server documentation and deployed configuration to determine 
+  if the NGINX web server captures and logs all content related to a user session.
 
   Check for the following:
     #grep the 'log_format' directive in the http context of the nginx.conf. 

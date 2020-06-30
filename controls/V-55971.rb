@@ -30,7 +30,7 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   Review the NGINX web server documentation and deployed configuration to determine
   whether the web server is logging security-relevant events.
 
-  Execute the following commands to verify that the Nginx web server is producing 
+  Execute the following commands to verify that the NGINX web server is producing 
   logs and linking them to stdout and stderr:
   # readlink <access_log_path>/access.log
   # readlink <error_log_path>/error.log
@@ -42,7 +42,7 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
 
   If the SIEM is not integrated with security, this is a finding.
   "
-  desc  "fix", "Execute the following command on the Nginx web server to link logs 
+  desc  "fix", "Execute the following command on the NGINX web server to link logs 
   to stdout and stderr:
   # ln -sf /dev/stdout <access_log_path>/access.log
   # ln -sf /dev/stderr <access_log_path>/access.log

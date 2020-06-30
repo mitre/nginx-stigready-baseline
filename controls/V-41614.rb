@@ -25,7 +25,7 @@ access control, or flow control rules invoked.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and deployment configuration to determine 
+  Review the NGINX web server documentation and deployment configuration to determine 
   if the web server is configured to generate sufficient information to resolve in which 
   process within the web server the log event occurred.
 

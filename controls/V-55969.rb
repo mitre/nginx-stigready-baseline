@@ -37,8 +37,8 @@ be capable of writing logs to centralized audit log servers."
   If there is a setting within the SIEM that could impede the ability to write 
   specific log record content, this is a finding.
   "
-  desc  "fix", "Enable logging on the Nginx web server by configuring the 'access_log' 
-  and 'error_log' directives in the Nginx configuration file(s).
+  desc  "fix", "Enable logging on the NGINX web server by configuring the 'access_log' 
+  and 'error_log' directives in the NGINX configuration file(s).
 
   Work with the SIEM administrator to allow the ability to write specified log record 
   content to an audit log server."

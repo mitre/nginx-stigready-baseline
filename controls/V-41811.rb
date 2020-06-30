@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 control "V-41811" do
-  title "The web server must be built to fail to a known safe state if system
+  title "The NGINX web server must be built to fail to a known safe state if system
 initialization fails, shutdown fails, or aborts fail."
   desc  "Determining a safe state for failure and weighing that against a
 potential DoS for users depends on what type of application the web server is
@@ -16,15 +16,22 @@ condition will provide a known fail safe state for the web server.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation, deployed configuration, and risk
-analysis documentation to determine whether the web server will fail to known
-states for system initialization, shutdown, or abort failures.
+  Review the NGINX web server documentation, deployed configuration, and risk
+  analysis documentation to determine whether the web server will fail to known
+  states for system initialization, shutdown, or abort failures.
 
-    If the web server will not fail to known state, this is a finding.
+  Interview the System Administrator for the Nginx web server.
+
+  Ask for documentation on the disaster recovery methods tested and planned for 
+  the Nginx web server in the event of the necessity for rollback.
+
+  If documentation for a disaster recovery has not been established, this is a finding.
   "
-  desc  "fix", "Configure the web server to fail to the states of operation
-during system initialization, shutdown, or abort failures found in the risk
-analysis."
+  desc  "fix", "Prepare documentation for disaster recovery methods for the Nginx 
+  web server in the event of the necessity for rollback.
+
+  Document and test the disaster recovery methods designed."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000225-WSR-000140"
@@ -35,8 +42,11 @@ analysis."
   tag "cci": ["CCI-001190"]
   tag "nist": ["SC-24", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe "Manual Check" do
+    skip "Interview the System Administrator for the Nginx web server.
+    Ask for documentation on the disaster recovery methods tested and planned for 
+    the Nginx web server in the event of the necessity for rollback.
+    If documentation for a disaster recovery has not been established, this is a finding."
   end
   
 end

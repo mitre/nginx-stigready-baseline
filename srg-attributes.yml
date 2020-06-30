@@ -32,29 +32,45 @@ error_log_path: '/var/log/nginx/error.log'
 password_path: '/etc/passwd'
 key_file_path: '/etc/ssl/key.pem'
 
-access_control_files: [ 
-  '.htaccess',
-  '.htpasswd', 
-  'nginx.conf' 
-]
-
-charset_required: 'utf-8'
+#description: Minimum Web vendor-supported version.
+nginx_min_ver: '1.19.0'
 
 nginx_owner: 'nginx'
+
 nginx_group: 'nginx'
+
 sys_admin : ['root']
+
 sys_admin_group: ['root']
+
 
 #description: List of non admin user accounts
 authorized_user_list: [
   'user'
 ]
 
+#description: List of authorized ports that are IANA compliant
 authorized_ports: [
   '80',
   '443'
 ]
 
+access_control_files: [ 
+  '.htaccess',
+  '.htpasswd', 
+  'nginx.conf' 
+]
+
+
+charset_required: 'utf-8'
+
+#description: DoD-approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners.
+dod_approved_pkis:
+  ['DoD',
+   'ECA'
+  ]
+
+#description: List of approved and FIPS compliant SSL Ciphers
 # NOTE: Some sites show +'s in the cipher names, while others use -'s. 
 approved_ssl_ciphers: [
   'ECDH-AESGCM', 
@@ -77,10 +93,12 @@ approved_ssl_ciphers: [
   '!MD5'
 ]
 
+#description: List of approved and FIPS compliant TSL protocols. 
 approved_ssl_protocols: [
   'TLSv1.2'
 ]
 
+#description: List of authorized NGINX modules
 nginx_authorized_modules: [
   'http_addition',
   'http_auth_request',
@@ -103,14 +121,29 @@ nginx_authorized_modules: [
   'stream_ssl_preread'
 ]
 
+#description: List of unauthorized NGINX modules
 nginx_unauthorized_modules: [
   'http_proxy'
 ]
 
+#description: File list of disallowed documentation, sample code, example applications, and tutorials.
 nginx_disallowed_file_list: [
   '/usr/share/man/man8/nginx.8.gz'
 ]
 
+
+#description: File list of allowed documentation, sample code, example applications, and tutorials.
+nginx_allowed_file_list:
+  [
+  ]
+
+#description: List of allowed cgi scripts.
+nginx_allowed_script_list:
+  [
+    ''
+  ]
+
+#description: List of disallowed MIME types.
 nginx_disallowed_mime_type: [
   'text/mathml', 
   'text/vnd.sun.j2me.app-descriptor', 
@@ -136,3 +169,6 @@ nginx_disallowed_mime_type: [
   'application/x-xpinstall',  
   'application/octet-stream'
 ]
+
+#description: Path for the nginx binary
+nginx_path: '/usr/sbin/nginx'

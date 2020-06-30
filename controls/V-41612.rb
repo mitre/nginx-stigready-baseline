@@ -23,7 +23,7 @@ control rules invoked.
   desc  "rationale", ""
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to determine 
-  if the Nginx web server contains sufficient information to establish what type of event occurred
+  if the NGINX web server contains sufficient information to establish what type of event occurred
 
   Check for the following:
     # grep the 'log_format' directive in the http context of the nginx.conf. 

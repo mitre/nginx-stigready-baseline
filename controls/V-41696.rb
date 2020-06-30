@@ -36,7 +36,7 @@ and must be deleted when these features are uninstalled.
   not used by the installed features, this is a finding.
   "
   desc  "fix", "Ensure at least one 'user' directive exists in the nginx.conf file 
-  and remove user accounts not used by the installed Nginx web server features."
+  and remove user accounts not used by the installed NGINX web server features."
 
   impact 0.5
   tag "severity": "medium"
@@ -54,7 +54,7 @@ and must be deleted when these features are uninstalled.
     its ('params') { should_not be_empty }
   end
 
- # This test assumes that Nginx has been configured to run with the account "nginx".
+ # This test assumes that NGINX has been configured to run with the account "nginx".
   # Thus there should be at least one user parameter, and the only value of that parameter
   # should be "nginx".
   describe 'At least one user directive' do

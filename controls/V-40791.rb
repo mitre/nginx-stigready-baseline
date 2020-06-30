@@ -2,7 +2,7 @@
 conf_path = input('conf_path')
 
 control "V-40791" do
-  title "The Nginx web server must limit the number of allowed simultaneous session
+  title "The NGINX web server must limit the number of allowed simultaneous session
 requests."
   desc  "Web server management includes the ability to control the number of
 users and user sessions that utilize a web server. Limiting the number of
@@ -17,7 +17,7 @@ requirement of a given system.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and configuration to determine if the number of simultaneous sessions is limited.
+  Review the NGINX web server documentation and configuration to determine if the number of simultaneous sessions is limited.
 
   Check for the following:
     # grep the 'limit_conn_zone' directive in the http context of the nginx.conf and any separated include configuration file.
@@ -26,7 +26,7 @@ requirement of a given system.
   
   If the 'limit_conn_zone' and 'limit_conn' directives do not exist, are not configured, or is unlimited, this is a finding. 
   "
-  desc  "fix", "Configure the Nginx web server to include the 'limit_conn_zone' and 'limit_conn' directives in the Nginx configuration file(s) to limit the number of concurrent sessions."
+  desc  "fix", "Configure the NGINX web server to include the 'limit_conn_zone' and 'limit_conn' directives in the NGINX configuration file(s) to limit the number of concurrent sessions."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000001-WSR-000001"

@@ -27,7 +27,7 @@ clustered web server manager for an update.
   directive does not exist in the configuration or is not set to the approved TLS 
   versions, this is a finding. 
   "
-  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
+  desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
   and configure it to use the approved TLS protocols to encrypt the transmission passwords.
   
   Example:

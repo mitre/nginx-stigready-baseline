@@ -5,7 +5,7 @@ error_log_path = input('error_log_path')
 
 
 control "V-41611" do
-  title "The Nginx web server must initiate session logging upon start up."
+  title "The NGINX web server must initiate session logging upon start up."
   desc  "An attacker can compromise a web server during the startup process. If
 logging is not initiated until all the web server processes are started, key
 information may be missed and not available during a forensic investigation. To
@@ -13,8 +13,8 @@ assure all logable events are captured, the web server must begin logging once
 the first web server process is initiated."
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and deployed configuration to determine 
-  if the Nginx web server captures log data as soon as the Nginx web server is started.
+  Review the NGINX web server documentation and deployed configuration to determine 
+  if the NGINX web server captures log data as soon as the NGINX web server is started.
 
   Check for the following:
       # grep for 'access_log' and 'error_log' directives in the nginx.conf and any separated include configuration file.
@@ -25,7 +25,7 @@ the first web server process is initiated."
   
   If the access_log and error_log directives do not exist and the access.log and error.log files do not exist, this is a finding.  
   "
-  desc  "fix", "Enable loggin on the Nginx web server by configuring the 'access_log' and 'error_log' directives in the Nginx configuration 
+  desc  "fix", "Enable loggin on the NGINX web server by configuring the 'access_log' and 'error_log' directives in the NGINX configuration 
   file(s) to generate log records for system startup."
   impact 0.5
   tag "severity": "medium"

@@ -35,7 +35,7 @@ server."
   If the value of  'keepalive_timeout' directive is not set to 5 (seconds) or less, this is a finding.
   "
   desc  "fix", "
-  Configure the Nginx web server to include the 'client_body_timeout', 'client_header_timeout', and 'keepalive_timeout' in the Nginx configuration file(s). Set the value of 'client_body_timeout' and 'client_header_timeout to be 10 seconds or less. Set the value of 'keep_alive_timeout' to be 5 seconds or less. 
+  Configure the NGINX web server to include the 'client_body_timeout', 'client_header_timeout', and 'keepalive_timeout' in the NGINX configuration file(s). Set the value of 'client_body_timeout' and 'client_header_timeout to be 10 seconds or less. Set the value of 'keep_alive_timeout' to be 5 seconds or less. 
 
   Example:
     client_body_timeout   10s;

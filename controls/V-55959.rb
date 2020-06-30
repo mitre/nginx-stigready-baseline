@@ -44,8 +44,8 @@ storage dependent on the impact of the web server.
   If there is no setting within a SIEM to accommodate enough a large logging 
   capacity, this is a finding.
   "
-  desc  "fix", "Enable logging on the Nginx web server by configuring the 'access_log' 
-  and 'error_log' directives in the Nginx configuration file(s).
+  desc  "fix", "Enable logging on the NGINX web server by configuring the 'access_log' 
+  and 'error_log' directives in the NGINX configuration file(s).
 
   Work with the SIEM administrator to determine if the SIEM is configured to allocate 
   log record storage capacity large enough to accommodate the logging requirements of 

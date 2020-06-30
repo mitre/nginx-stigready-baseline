@@ -13,7 +13,7 @@ anonymous."
   Review the NGINX web server documentation and deployed configuration to determine
   if the web server is also a proxy server.
 
-  If the Nginx server is a proxy server and not a web server, this check is Not Applicable.
+  If the NGINX server is a proxy server and not a web server, this check is Not Applicable.
 
   Execute the following command: 
 
@@ -28,7 +28,7 @@ anonymous."
   desc  "fix", "
   Use the configure script (available in the nginx download package) to exclude the 'nginx_http_proxy_module' module by using the --without {module_name} option. 
 
-  Ensure the 'proxy_pass' directive is not enabled in the Nginx configuration file(s).   
+  Ensure the 'proxy_pass' directive is not enabled in the NGINX configuration file(s).   
   "
   impact 0.5
   tag "severity": "medium"

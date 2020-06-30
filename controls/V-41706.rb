@@ -33,7 +33,7 @@ application IP address.
 
   If the 'listen' directive does not exist, this is a finding.
   "
-  desc  "fix", "Configure the 'listen' directive in the server context of the Nginx configuration file(s) to listen on a 
+  desc  "fix", "Configure the 'listen' directive in the server context of the NGINX configuration file(s) to listen on a 
   specific IP address and port."
 
   impact 0.5

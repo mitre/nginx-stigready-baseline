@@ -35,7 +35,7 @@ capability of stopping the server, whether intentionally or unintentionally.
   
   If the file owner/group is not an administrative service account, this is a finding.
   
-  Verify the service utilities used to manage the Nginx service owner/group is of an 
+  Verify the service utilities used to manage the NGINX service owner/group is of an 
   administrative service account.
   
     # ls -lah /usr/sbin/service

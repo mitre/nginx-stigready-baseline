@@ -31,10 +31,10 @@ decrypt, and use before the session has expired."
   If the 'ssl_protocols' directive does not exist in the configuration or is not 
   set to the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Configure the 'listen' directive to the Nginx configuration 
+  desc  "fix", "Configure the 'listen' directive to the NGINX configuration 
   file(s) to enable the use of SSL to ensure the session IDs are encrypted.
 
-  Add the 'ssl_protocols' directive to the Nginx configuration file(s) and 
+  Add the 'ssl_protocols' directive to the NGINX configuration file(s) and 
   configure it to use the approved TLS protocols to ensure the session IDs 
   are encrypted.
   

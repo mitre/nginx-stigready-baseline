@@ -36,7 +36,7 @@ monitoring systems.
 
   If the access_log and error_log directives do not exist and the access.log and error.log files do not exist, this is a finding.
 
-  Execute the following commands to verify that the Nginx web server is producing logs and linking them to stdout and stderr:
+  Execute the following commands to verify that the NGINX web server is producing logs and linking them to stdout and stderr:
 
     # readlink <access_log_path>/access.log
     # readlink <error_log_path>/error.log
@@ -44,9 +44,9 @@ monitoring systems.
   If the access.log and error.log files are not linked to stdout and stderr, this is a finding.
   "
   desc  "fix", "
-  Enable loggin on the Nginx web server by configuring the 'access_log' and 'error_log' directives in the Nginx configuration file(s).
+  Enable loggin on the NGINX web server by configuring the 'access_log' and 'error_log' directives in the NGINX configuration file(s).
 
-  Execute the following command on the Nginx web server to link logs to stdout and stderr:
+  Execute the following command on the NGINX web server to link logs to stdout and stderr:
   # ln -sf /dev/stdout <access_log_path>/access.log
   # ln -sf /dev/stderr <access_log_path>/access.log"
   

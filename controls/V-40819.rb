@@ -3,7 +3,7 @@ conf_path = input('conf_path')
 approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-40819" do
-  title "The Nginx web server must use cryptography to protect the integrity of
+  title "The NGINX web server must use cryptography to protect the integrity of
 remote sessions."
   desc  "Data exchanged between the user and the web server can range from
 static display data to credentials used to log into the hosted application.
@@ -14,8 +14,8 @@ protect the integrity and trust, encryption methods should be used to protect
 the complete communication session."
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and configuration to make certain that the 
-  Nginx web server is configured to use cryptography to protect the integrity of remote 
+  Review the NGINX web server documentation and configuration to make certain that the 
+  NGINX web server is configured to use cryptography to protect the integrity of remote 
   access sessions.
 
   Check for the following:
@@ -25,7 +25,7 @@ the complete communication session."
   If the 'ssl_protocols' directive does not exist in the configuration or is not set to 
   the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
+  desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
   and configure it to use the approved TLS protocols to utilize encryption during 
   remote access sessions.
   

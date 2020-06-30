@@ -39,10 +39,10 @@ website code revealing business logic, or other user personal information.
   to the approved TLS version, this is a finding. 
   "
   desc  "fix", "
-  Configure the 'listen' directive to the Nginx configuration file(s) to enable the 
+  Configure the 'listen' directive to the NGINX configuration file(s) to enable the 
   use of SSL to ensure that all information in transmission is being encrypted.
 
-  Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
+  Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
   and configure it to use the approved TLS protocols to ensure that all information 
   in transmission is being encrypted.
 

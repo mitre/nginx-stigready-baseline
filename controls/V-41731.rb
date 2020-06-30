@@ -35,7 +35,7 @@ server.
   
   If the private key is accessible by unauthenticated or unauthorized users, this is a finding.
   "
-  desc  "fix", "Configure the Nginx web server to ensure only authenticated and authorized 
+  desc  "fix", "Configure the NGINX web server to ensure only authenticated and authorized 
   users can access the web server's private key.
 
   Run the following commands:

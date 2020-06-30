@@ -33,7 +33,7 @@ data.
   If the 'ssl_protocols' directive does not exist in the configuration or is not 
   set to the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration 
+  desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration 
   file(s) and configure it to use only the approved TLS protocols to maintain 
   the confidentiality and integrity of information during reception.
 

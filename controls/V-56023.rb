@@ -1,10 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-56023" do
   title "The web server must generate a unique session identifier for each
@@ -27,18 +21,22 @@ sessions.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to verify
-that the web server is configured to generate unique session identifiers with a
-FIPS 140-2 approved random number generator.
+  Review the web server documentation and deployed configuration to verify
+  that the web server is configured to generate unique session identifiers with a
+  FIPS 140-2 approved random number generator.
 
-    Request two users access the web server and view the session identifier
-generated for each user to verify that the session IDs are not sequential.
+  NGINX web server versions after 1.11.0 have the $request_id embedded variable by 
+  default. This variable is a unique request identifier generated from 16 random 
+  bytes, in hexadecimal. 
 
-    If the web server is not configured to generate unique session identifiers
-or the random number generator is not FIPS 140-2 approved, this is a finding.
+  Execute the following command to get the current version of NGINX running:
+    # nginx -v
+
+  If the current version of NGINX running is 1.11.0 or earlier, this is a finding. 
   "
-  desc  "fix", "Configure the web server to generate unique session identifiers
-using a FIPS 140-2 random number generator."
+  desc  "fix", "Upgrade to the lastest stable version of NGINX web server to generate 
+  unique session identifiers using a FIPS 140-2 random number generator."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000224-WSR-000135"
@@ -49,8 +47,8 @@ using a FIPS 140-2 random number generator."
   tag "cci": ["CCI-001188"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe nginx do
+    its('version') { should cmp > '1.11.0' }
   end
   
 end

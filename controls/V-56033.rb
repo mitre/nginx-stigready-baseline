@@ -1,10 +1,5 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+nginx_min_ver = input('nginx_min_ver')
 
 control "V-56033" do
   title "The web server must install security-relevant software updates within
@@ -25,15 +20,20 @@ time period will be every 24 hours.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if the
-web server checks for patches from an authoritative source at least every 30
-days.
+  Review the web server documentation and configuration to determine if the
+  web server checks for patches from an authoritative source at least every 30
+  days.
 
-    If there is no timeframe or the timeframe is greater than 30 days, this is
-a finding.
+  Determine most recent patch level of NGINX with the following command:
+
+  # nginx -v
+
+  If the version is more than one version behind the most recent patch level, 
+  this is a finding.
   "
-  desc  "fix", "Configure the web server to check for patches and updates from
-an authoritative source at least every 30 days."
+  desc  "fix", "Install the current version of the web server software and 
+  maintain appropriate service packs and patches."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000456-WSR-000187"
@@ -44,9 +44,8 @@ an authoritative source at least every 30 days."
   tag "cci": ["CCI-002605"]
   tag "nist": ["SI-2 c", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe nginx do
+    its('version') { should cmp >= nginx_min_ver }
   end
-  
 end
 

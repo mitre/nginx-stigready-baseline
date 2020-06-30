@@ -23,16 +23,20 @@ map to system roles and privileges, each user would have the same abilities and
 roles to make changes to the production system."
   desc  "rationale", ""
   desc  "check", "
-    The web server must be configured to perform an authorization check to
-verify that the authenticated entity should be granted access to the requested
-content.
+  The NGINX web server must be configured to perform an authorization check to
+  verify that the authenticated entity should be granted access to the requested
+  content.
 
-    If the web server does not verify that the authenticated entity is
-authorized to access the requested content prior to granting access, this is a
-finding.
+  Check for the following:
+    #grep the 'auth_request' directive in the location context of the nginx.conf 
+    and any separated include configuration file.      
+
+  If the 'auth_request' directive does not exist inside the location context, 
+  this is a finding.
   "
-  desc  "fix", "Configure the web server to validate the authenticated entity's
-authorization to access requested content prior to granting access."
+  desc  "fix", "Configure server to use the 'auth_request' directive in the 
+  NGINX configuration file(s) to implement client authorization."
+
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000033-WSR-000169"
@@ -42,14 +46,7 @@ authorization to access requested content prior to granting access."
   tag "fix_id": "F-60823r1_fix"
   tag "cci": ["CCI-000213"]
   tag "nist": ["AC-3", "Rev_4"]
-# Check:
-  # Execute the following commands:
-    # grep 'auth_request' on the nginx.conf and any separated include configuration files
-      # If the auth_request directive does not exist inside the location context, this is a finding.
- 
-# Fix:
-  # Enable http_auth_request_module in the nginx configuration script the the '--with-http_auth_request_module' configuration parameter, if not aleady enabled.
-  # Configure server to use auth_reqest to implement client authorization. 
+
 
   auth_uris = []
   nginx_conf_handle = nginx_conf(conf_path)
@@ -61,12 +58,18 @@ authorization to access requested content prior to granting access."
   nginx_conf_handle.locations.entries.each do |location|
     auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
   end
-  
-  Array(nginx_conf(conf_path).locations).each do |location|
-    describe 'Each location context' do
-      it 'should include an auth_request directive.' do
-        expect(location.params).to(include "auth_request") unless auth_uris.include? location.params["_"]
-      end
-    end 
+  auth_uris.flatten!
+  auth_uris.uniq!
+
+  Array(nginx_conf_handle.locations).each do |location|
+    location.params["_"].each do |value|
+      deny_values = []
+      deny_values.push(location.params['deny'])
+      describe "Each root directory location context" do
+        it 'should include an deny all directive.' do
+          expect(deny_values.to_s).to(include "all")
+        end
+      end unless auth_uris.include?(value) 
+    end
   end
 end

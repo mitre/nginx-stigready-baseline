@@ -38,7 +38,7 @@ control requirements.
   443 (for HTTPS) and port configured is not approved for used by PPSM, this is 
   a finding.
   "
-  desc  "fix", "Configure the 'listen' directives in the Nginx configuration file(s) 
+  desc  "fix", "Configure the 'listen' directives in the NGINX configuration file(s) 
   to use IANA well-known ports for 'HTTP' and 'HTTPS'."
 
   impact 0.5

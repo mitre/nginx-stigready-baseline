@@ -30,7 +30,7 @@ server being used in a DoS attack is bandwidth throttling.
   If the 'limit_conn_zone', 'limit_conn', 'limit_rate' directives do not exist, are not 
   configured, or is unlimited, this is a finding. 
   "
-  desc  "fix", "Configure the Nginx web server to include the 'limit_conn_zone', 'limit_conn', 
+  desc  "fix", "Configure the NGINX web server to include the 'limit_conn_zone', 'limit_conn', 
   'limit_rate' directives to limit the number of concurrent sessions and the bandwidth allowed."
 
   impact 0.5

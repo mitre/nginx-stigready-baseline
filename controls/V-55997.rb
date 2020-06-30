@@ -23,8 +23,8 @@ handle the expected traffic for the hosted applications."
   If the values of each are not set to 10 seconds (10s) or less, this is a finding.'
   "
   desc  "fix", "
-  Configure the Nginx web server to include the 'client_body_timeout' and 
-  'client_header_timeout' directives in the Nginx configuration file(s). 
+  Configure the NGINX web server to include the 'client_body_timeout' and 
+  'client_header_timeout' directives in the NGINX configuration file(s). 
   Set the value of 'client_body_timeout' and 'client_header_timeout to be 
   10 seconds or less to mitigate the effects of several types of denial of 
   service attacks:

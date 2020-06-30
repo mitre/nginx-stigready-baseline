@@ -1,10 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55957" do
   title "A web server that is part of a web server cluster must route all
@@ -17,13 +11,13 @@ remote management of the cluster be done through a designated management system
 acting as a single access point."
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if the
-web server is part of a cluster.
+  Review the web server documentation and configuration to determine if the
+  web server is part of a cluster.
 
-    If the web server is not part of a cluster, then this is NA.
+  If the web server is not part of a cluster, then this check is Not Applicable.
 
-    If the web server is part of a cluster and is not centrally managed, then
-this is a finding.
+  If the web server is part of a cluster and is not centrally managed, then
+  this is a finding.
   "
   desc  "fix", "Configure the web server to be centrally managed."
   impact 0.5
@@ -36,8 +30,12 @@ this is a finding.
   tag "cci": ["CCI-001844"]
   tag "nist": ["AU-3 (2)", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe "Manual Check" do
+    skip "Review the web server documentation and configuration to determine if the
+    web server is part of a cluster.
+    If the web server is not part of a cluster, then this check is Not Applicable.
+    If the web server is part of a cluster and is not centrally managed, then
+    this is a finding."
   end
   
 end

@@ -14,12 +14,12 @@ files, before installation, are valid.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the NGINX web server documentation and deployment configuration to
-determine if the web server validates files before the files are implemented
-into the running configuration.
+  Review the NGINX web server documentation and deployment configuration to
+  determine if the web server validates files before the files are implemented
+  into the running configuration.
 
-    If the web server does not meet this requirement and an external facility
-is not available for use, this is a finding.
+  If the NGINX web server does not meet this requirement and an external facility
+  is not available for use, this is a finding.
   "
   desc  "fix", "Configure the web server to verify object integrity before
 becoming part of the production web server or utilize an external tool designed
@@ -34,11 +34,11 @@ to meet this requirement."
   tag "cci": ["CCI-001749"]
   tag "nist": ["CM-5 (3)", "Rev_4"]
 
-  describe "Manual Step" do
+  describe "Manual Check" do
     skip "Review the NGINX web server documentation and deployment configuration to
     determine if the web server validates files before the files are implemented
     into the running configuration.
-    If the web server does not meet this requirement and an external facility
+    If the NGINX web server does not meet this requirement and an external facility
     is not available for use, this is a finding."
   end
   

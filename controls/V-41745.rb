@@ -7,7 +7,7 @@ password_path = input('password_path')
 key_file_path = input('key_file_path')
 
 control "V-41745" do
-  title "The web server must use cryptographic modules that meet the
+  title "The NGINX web server must use cryptographic modules that meet the
 requirements of applicable federal laws, Executive Orders, directives,
 policies, regulations, standards, and guidance when encrypting stored data."
   desc  "Encryption is only as good as the encryption modules utilized.
@@ -24,19 +24,22 @@ encrypted data and configuration settings.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review web server documentation and deployed configuration to determine
-whether the encryption modules utilized for storage of data are FIPS 140-2
-compliant.
+  Review NGINX web server documentation and deployed configuration to determine
+  whether the encryption modules utilized for storage of data are FIPS 140-2
+  compliant.
 
     Reference the following NIST site to identify validated encryption modules:
 
     http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm
 
-    If the encryption modules used for storage of data are not FIPS 140-2
-validated, this is a finding.
+  If the web server host utilizes FIPS 140-2 compliant encryption modules for 
+  storage of data, this is not a finding. 
+
+  If the encryption modules used for storage of data are not FIPS 140-2
+  validated, this is a finding.
   "
   desc  "fix", "Configure the web server to utilize FIPS 140-2 approved
-encryption modules when the web server is storing data."
+  encryption modules when the web server is storing data."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000179-WSR-000110"
@@ -48,7 +51,13 @@ encryption modules when the web server is storing data."
   tag "nist": ["IA-7", "Rev_4"]
 
   describe "Skip Test" do
-    skip "This is a manual check"
+    skip "Review NGINX web server documentation and deployed configuration to determine
+    whether the encryption modules utilized for storage of data are FIPS 140-2
+    compliant.
+    If the web server host utilizes FIPS 140-2 compliant encryption modules for 
+    storage of data, this is not a finding. 
+    If the encryption modules used for storage of data are not FIPS 140-2
+    validated, this is a finding."
   end
 end
 

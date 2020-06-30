@@ -28,7 +28,7 @@ is built for enterprise-wide user management, like LDAP and Active Directory.
   If the 'auth_basic' and 'auth_basic_user_file' directives exist, this is a finding.
   "
   desc  "fix", "Remove the 'auth_basic' and 'auth_basic_user_file' directives from the 
-  http, server, and location contexts of the Nginx configuration file(s)."
+  http, server, and location contexts of the NGINX configuration file(s)."
 
   impact 0.5
   tag "severity": "medium"

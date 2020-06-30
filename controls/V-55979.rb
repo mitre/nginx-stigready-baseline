@@ -1,10 +1,6 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+
 
 control "V-55979" do
   title "The NGINX web server must generate log records that can be mapped to
@@ -45,14 +41,20 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   tag "cci": ["CCI-001890"]
   tag "nist": ["AU-8 b", "Rev_4"]
 
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
   found_utc = false;
   describe "" do
     it 'In the nginx.conf file env TZ should be set.' do
-      expect(nginx_conf(conf_path).params['env']).to_not(cmp nil)
+      expect(nginx_conf_handle.params['env']).to_not(cmp nil)
     end
   end
 
-  Array(nginx_conf(conf_path).params['env']).each do |env|
+  Array(nginx_conf_handle.params['env']).each do |env|
     found_utc = false
     Array(env).each do |value|
       if (value == "TZ=UTC" || value == "TZ=GMT")

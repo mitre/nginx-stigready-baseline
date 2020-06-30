@@ -1,13 +1,8 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-56025" do
-  title "Cookies exchanged between the web server and client, such as session
+  title "Cookies exchanged between the NGINX web server and client, such as session
 cookies, must have security settings that disallow cookie access outside the
 originating web server and hosted application."
   desc  "Cookies are used to exchange data between the web server and the
@@ -22,15 +17,32 @@ the same domain.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to determine if
-cookies between the web server and client are accessible by applications or web
-servers other than the originating pair.
+  Review the NGINX web server documentation and configuration to determine if
+  cookies between the web server and client are accessible by applications or web
+  servers other than the originating pair.
 
-    If the cookie information is accessible outside the originating pair, this
-is a finding.
+  If it is determined that the web server is not required to perform session management, 
+  this check is Not Applicable. 
+
+  Check for the following: 
+    # grep the 'proxy_cookie_path' directive in the location context 
+    of the nginx.conf and any separated include configuration file.
+
+  If the 'proxy_cookie_path' directive exists and is not set to the 'HTTPOnly' and 
+  'Secure' properties, this is a finding.
+
+    # grep ‘proxy_cookie_domain’ directive in the location context 
+    of the nginx.conf and any separated include configuration file.
+
+  If the 'proxy_cookie_domain' directive is found and not set to 'off', this is a finding.
   "
-  desc  "fix", "Configure the web server to set properties within cookies to
-disallow the cookie to be accessed by other web servers and applications."
+  desc  "fix", "If the 'proxy_cookie_path' directive exists in the NGINX configuration 
+  file(s), configure it to include the 'HTTPOnly' and 'Secure' properties. 
+
+  Example:
+  proxy_cookie_path / '/; HTTPOnly; Secure';
+  
+  Ensure the 'proxy_cookie_domain' directive is set to 'off' if it exists."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000223-WSR-000011"
@@ -41,9 +53,27 @@ disallow the cookie to be accessed by other web servers and applications."
   tag "cci": ["CCI-001664"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
-  
+
+  Array(nginx_conf_handle.locations).each do |location|
+    values = []
+    values.push(location.params['proxy_cookie_path'])
+    describe "The 'proxy_cookie_path'" do
+      it 'should be configured to HTTPOnly and Secure' do
+        expect(values.to_s).to(include "/; HTTPOnly; Secure") 
+      end unless location.params['proxy_cookie_path'].nil?
+    end
+    describe "The 'proxy_cookie_domain" do
+      it 'should be set to off if found' do
+        Array(location.params["proxy_cookie_domain"]).each do |cookie_domain|
+          expect(cookie_domain).to(cmp 'off')
+        end
+      end unless location.params['proxy_cookie_domain'].nil?
+    end
+  end
 end
 

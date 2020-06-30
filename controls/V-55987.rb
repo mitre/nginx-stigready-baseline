@@ -1,14 +1,12 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+nginx_owner = input('nginx_owner')
+sys_admin = input('sys_admin')
+nginx_path = input('nginx_path')
 
 control "V-55987" do
-  title "All accounts installed with the NGINX web server software and tools must
-have passwords assigned and default passwords changed."
+  title "The account used to run the NGINX web server must not have a valid 
+  login shell and password defined."
   desc  "During installation of the web server software, accounts are created
 for the web server to operate properly. The accounts installed can have either
 no password installed or a default password, which will be known and documented
@@ -27,7 +25,7 @@ need to have passwords set or changed.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the web server documentation and deployment configuration to
+  Review the NGINX web server documentation and deployment configuration to
   determine what non-service/system accounts were installed by the web server
   installation process.
 
@@ -46,8 +44,8 @@ need to have passwords set or changed.
   If the service account has a valid login shell, verify that no password is 
   configured for the account:
 
-    # cut -d: -f1,2 /etc/shadow | grep -i root:!!
-    # cut -d: -f1,2 /etc/shadow | grep -i nginx:!!
+    # cut -d: -f1,2 /etc/shadow | grep -i root:!
+    # cut -d: -f1,2 /etc/shadow | grep -i nginx:!
 
   If the account has a valid login shell and a password defined, 
   this is a finding.
@@ -72,9 +70,45 @@ need to have passwords set or changed.
   tag "cci": ["CCI-000366"]
   tag "nist": ["CM-6 b", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  service_accounts = []
+
+  if (command('ps').exist?)
+    ps_output = command("ps -ef | grep -i nginx | grep -v grep").stdout.split("\n")
+
+    ps_output.each do |output|
+      account = command("echo '#{output}' | awk '{print $1}'").stdout.split()
+      service_accounts.push(account)
+    end
+  else
+    service_accounts = sys_admin.clone << nginx_owner
   end
-  
+
+  service_accounts.flatten!
+  service_accounts.uniq!
+
+  service_accounts.each do |account|
+    # Verify no there's no valid login shell for account
+    # describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}:/usr/sbin/nologin") do
+    # its('exit_status') { should eq 0 }
+    # end
+    describe.one do 
+      describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
+        its('stdout') { should match /\/sbin\/nologin/}
+      end
+      describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
+        its('stdout') { should match /\/bin\/false/}
+      end
+    end
+    #Verify there's no password set for account
+    describe.one do
+      describe command("cut -d: -f1,2 /etc/shadow | grep -i '#{account}'") do
+        its('stdout') { should match "#{account}:!"}
+      end
+      
+      describe command("cut -d: -f1,2 /etc/shadow | grep -i '#{account}'") do
+        its('stdout') { should match "#{account}:\\*" }
+      end
+    end
+  end
 end
 

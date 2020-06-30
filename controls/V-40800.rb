@@ -3,10 +3,10 @@ conf_path = input('conf_path')
 approved_ssl_ciphers = input('approved_ssl_ciphers')
 
 control "V-40800" do
-  title "The Nginx web server must use encryption strength in accordance with the
+  title "The NGINX web server must use encryption strength in accordance with the
 categorization of data hosted by the web server when remote connections are
 provided."
-  desc  "The Nginx web server has several remote communications channels. Examples
+  desc  "The NGINX web server has several remote communications channels. Examples
 are user requests via http/https, communication to a backend database, or
 communication to authenticate users. The encryption used to communicate must
 match the data that is being retrieved or presented.
@@ -17,7 +17,7 @@ encryption methods to a database.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and configuration to determine the 
+  Review the NGINX web server documentation and configuration to determine the 
   communication methods that are being used.
 
   Check for the following:
@@ -38,7 +38,7 @@ encryption methods to a database.
   If it is not, then this is a finding.
   "
   desc  "fix", "Include the 'ssl_prefer_server_cipher' directive in all server context 
-  of the Nginx configuration file(s) and set the directive to 'on'.  
+  of the NGINX configuration file(s) and set the directive to 'on'.  
   Configure the nginx web server to use encryption strength equal to the categorization 
   of data hosted when remote connections are provided."
 

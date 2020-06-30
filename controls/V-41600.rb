@@ -2,7 +2,7 @@
 conf_path = input('conf_path')
 
 control "V-41600" do
-  title "The Nginx web server must generate, at a minimum, log records for system
+  title "The NGINX web server must generate, at a minimum, log records for system
 startup and shutdown, system access, and system authentication events."
   desc  "Log records can be generated from various components within the web
 server (e.g., httpd, plug-ins to external backends, etc.). From a web server
@@ -18,7 +18,7 @@ missing pertinent information needed to replay what occurred.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and the deployed system configuration to determine 
+  Review the NGINX web server documentation and the deployed system configuration to determine 
   if, at a minimum, system startup and shutdown, system access, and system authentication events are logged.
     
   Check for the following:

@@ -38,13 +38,13 @@ not also be compressed.
   If it is determined that the web server is not required to perform session 
   management, this check is Not Applicable. 
 
-  SSL/TLS compression has been disabled by default since Nginx version 1.3.2.
-  Execute the following command to get the current version of Nginx running:
+  SSL/TLS compression has been disabled by default since NGINX version 1.3.2.
+  Execute the following command to get the current version of NGINX running:
     # nginx -v
 
-    If the current version of Nginx running is older than 1.3.2, this is a finding. 
+    If the current version of NGINX running is older than 1.3.2, this is a finding. 
   "
-  desc  "fix", "Upgrade to the lastest stable version of Nginx web server to 
+  desc  "fix", "Upgrade to the lastest stable version of NGINX web server to 
   ensure Web server cookies, such as session cookies, are not compressed."
 
   impact 0.5

@@ -1,13 +1,7 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55955" do
-  title "The web server must provide the capability to immediately disconnect
+  title "The NGINX web server must provide the capability to immediately disconnect
 or disable remote access to the hosted applications."
   desc  "During an attack on the web server or any of the hosted applications,
 the system administrator may need to disconnect or disable access by users to
@@ -27,16 +21,34 @@ log data is conserved for later forensic analysis.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and configuration to make certain that
-the web server is configured to allow for the immediate disconnection or
-disabling of remote access to hosted applications when necessary.
+  Review the NGINX web server documentation and configuration to make certain that
+  the web server is configured to allow for the immediate disconnection or
+  disabling of remote access to hosted applications when necessary.
 
-    If the web server is not capable of or cannot be configured to disconnect
-or disable remote access to the hosted applications when necessary, this is a
-finding.
+  Interview the SA and Web Manager.
+
+  Ask for documentation for the Nginx administration.
+
+  Verify there are documented procedures for shutting down an Nginx website in the 
+  event of an attack. The procedure should, at a minimum, provide the following steps:
+
+  Determine the respective website for the application at risk of an attack.
+
+  In a command line, enter the following command:
+
+  # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`
+
+  If Nginx is not capable of or cannot be configured to disconnect or disable remote 
+  access to the hosted applications when necessary, this is a finding.
   "
-  desc  "fix", "Configure the web server to provide the capability to
-immediately disconnect or disable remote access to the hosted applications."
+  desc  "fix", "Prepare documented procedures for shutting down an Nginx website in the 
+  event of an attack.
+
+  The procedure should, at a minimum, provide the following steps:
+  
+  In a command line, enter the following command:
+  
+    # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`"
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000316-WSR-000170"
@@ -48,8 +60,12 @@ immediately disconnect or disable remote access to the hosted applications."
   tag "nist": ["AC-17 (9)", "Rev_4"]
 
   describe "Skip Test" do
-    skip "This is a manual check"
-  end
+    skip "In a command line, enter the following command:
+
+    # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`
   
+    If Nginx is not capable of or cannot be configured to disconnect or disable remote 
+    access to the hosted applications when necessary, this is a finding."
+  end
 end
 

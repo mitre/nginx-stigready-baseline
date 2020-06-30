@@ -1,10 +1,6 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+nginx_disallowed_mime_type = input('nginx_disallowed_mime_type')
 
 control "V-41701" do
   title "The web server must have resource mappings set to disable the serving
@@ -22,16 +18,21 @@ to a user and all other types must be disabled.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine what types of files are being used for the hosted applications.
+  Review the web server documentation and deployment configuration to
+  determine what types of files are being used for the hosted applications.
 
-    If the web server is configured to allow other file types not associated
-with the hosted application, especially those associated with logs,
-configuration files, passwords, etc., this is a finding.
+  Enter the following command to find the mime.types file:
+    # find / mime.types 
+
+  Review the 'mime.types' file.
+
+  If there are any MIME types enabled for .exe, .dll, .com, .bat, and 
+  .csh programs, this is a finding.
+
   "
-  desc  "fix", "Configure the web server to only serve file types to the user
-that are needed by the hosted applications.  All other file types must be
-disabled."
+  desc  "fix", "Configure the web server to disable all MIME types that invoke 
+  OS shell programs. Edit the 'mime.types' file and disable MIME types for .exe, 
+  .dll, .com, .bat, and .csh programs."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000141-WSR-000083"
@@ -41,17 +42,11 @@ disabled."
   tag "fix_id": "F-47160r2_fix"
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
-# https://www.stigviewer.com/stig/apache_server_2.4_unix_server/2019-12-19/finding/V-92653
-# Need to verify if this check is sufficient enough
-# May need to add more file types
 
-  # Within location
-  describe 'The location context' do
-    it 'should not serve these file types' do
-      Array(nginx_conf(conf_path).locations).each do |location|
-        Array(location.params["_"]).each do |dir|     
-          expect(dir).to_not(match /log|conf|bak|passwd|shadow/)
-        end 
+  Array(nginx_disallowed_mime_type).each do |mime_type|
+    describe "The MIME type: #{mime_type}" do
+      it 'should not be enabled in the configuration' do
+        expect(command("grep -w #{mime_type}" + mime_type_path).stdout).to(eq "")
       end
     end
   end

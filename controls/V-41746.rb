@@ -32,7 +32,7 @@ authenticating users and processes.
   If the 'ssl_protocols' directive does not exist in the configuration or is not 
   set to the FIPS comliant TLS versions, this is a finding. 
   "
-  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) 
+  desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
   and configure it to use the FIPS compliant TLS protocols.
   Example:
   server {

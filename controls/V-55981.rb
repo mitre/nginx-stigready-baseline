@@ -3,7 +3,7 @@ conf_path = input('conf_path')
 access_control_files = input('access_control_files')
 
 nginx_owner = input('nginx_owner')
-nginx_group = input('nginx_owner')
+nginx_group = input('nginx_group')
 sys_admin = input('sys_admin')
 sys_admin_group = input('sys_admin_group')
 

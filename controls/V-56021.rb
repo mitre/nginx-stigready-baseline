@@ -21,15 +21,18 @@ minimize the potential for an attacker to hijack that particular user session.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployed configuration to verify
-that the web server is configured to invalidate session identifiers when a
-session is terminated.
+  Review the web server documentation and deployed configuration to verify
+  that the web server is configured to invalidate session identifiers when a
+  session is terminated.
 
-    If the web server does not invalidate session identifiers when a session is
-terminated, this is a finding.
+  If it is determined that the web server is not required to perform session 
+  management, this check is Not Applicable. 
+
+  If the web server does not invalidate session identifiers when a session is
+  terminated, this is a finding.
   "
   desc  "fix", "Configure the web server to invalidate session identifiers when
-a session is terminated."
+  a session is terminated."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000220-WSR-000201"
@@ -40,8 +43,11 @@ a session is terminated."
   tag "cci": ["CCI-001185"]
   tag "nist": ["SC-23 (1)", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe "Manual Check" do
+    skip "If it is determined that the web server is not required to perform session 
+    management, this check is Not Applicable. 
+    If the web server does not invalidate session identifiers when a session is
+    terminated, this is a finding."
   end
   
 end

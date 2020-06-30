@@ -16,7 +16,7 @@ assessments.
   "
   desc  "rationale", ""
   desc  "check", "
-  Review the Nginx web server documentation and deployment configuration to
+  Review the NGINX web server documentation and deployment configuration to
   determine which ports and protocols are enabled.
 
   Verify that the ports and protocols being used are permitted, necessary for
@@ -31,7 +31,7 @@ assessments.
   443 (for HTTPS) and port configured is not approved for used by PPSM, this is 
   a finding.
   "
-  desc  "fix", "Configure the 'listen' directives in the Nginx configuration file(s) 
+  desc  "fix", "Configure the 'listen' directives in the NGINX configuration file(s) 
   to use IANA well-known ports for 'HTTP' and 'HTTPS'."
 
   impact 0.5

@@ -24,7 +24,7 @@ applications.
 
   If the 'ssl_protocols' directive does not exist in the configuration or is not set to the approved TLS version, this is a finding. 
   "
-  desc  "fix", "Add the 'ssl_protocols' directive to the Nginx configuration file(s) and configure it to use only the approved TLS protocols. 
+  desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) and configure it to use only the approved TLS protocols. 
 
   Example:
     server {

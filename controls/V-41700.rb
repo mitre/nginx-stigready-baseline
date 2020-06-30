@@ -1,10 +1,6 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
+nginx_allowed_script_list = input('nginx_allowed_script_list')
 
 control "V-41700" do
   title "The web server must allow the mappings to unused and vulnerable
@@ -20,16 +16,29 @@ application operation must be removed.
   "
   desc  "rationale", ""
   desc  "check", "
-    Review the web server documentation and deployment configuration to
-determine what script mappings are available.
+  Review the web server documentation and deployment configuration to
+  determine what script mappings are available.
 
-    Review the scripts used by the web server and the hosted applications.
+  Review the scripts used by the web server and the hosted applications.
 
-    If there are script mappings in use that are not used by the web server or
-hosted applications for operation, this is a finding.
+  Check the following:
+    # grep 'fastcgi_param' directive in the location context of the nginx.conf 
+    and any separated include configuration file.
+  
+  Review the 'fastcgi_param' directive and go into each directory to locate 
+  cgi-bin scripts with the following command:
+    # ls <fastcgi_param directory>
+  
+  If the 'fastcgi_param' directive exists and if there are any scripts are 
+  present that are unused or vulnerable, this is a finding.
+  
+  If this is not documented and approved by the Information System Security 
+  Officer (ISSO), this is a finding.
   "
-  desc  "fix", "Remove script mappings that are not needed for web server and
-hosted application operation."
+  desc  "fix", "Review script mappings that are configured in the 'fastcgi_param' 
+  directive, if it exists, and remove scripts that are not needed for the NGINX web 
+  server and hosted application operation."
+  
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000141-WSR-000082"
@@ -40,11 +49,26 @@ hosted application operation."
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  #https://www.stigviewer.com/stig/apache_server_2.4_unix_server/2019-12-19/finding/V-92655
+  nginx_conf_handle = nginx_conf(conf_path)
 
-  describe "Skip Test" do
-    skip "This is a manual check"
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
   end
-  
+
+  Array(nginx_conf_handle.locations).each do |location|
+    Array(location.params["fastcgi_params"]).each do |value|
+      if (value[0] == "SCRIPT_FILENAME")
+        cgi_script_path = command("echo #{value[1]} | cut -d '$' -f 1").stdout
+        cgi_scripts = command("ls #{cgi_script_path}").stdout.split("\n")
+        cgi_scripts.uniq!
+
+        cgi_scripts.each do |script|
+          describe (script) do
+           it { should be_in nginx_allowed_script_list }
+          end
+        end
+      end 
+    end
+  end
 end
 

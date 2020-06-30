@@ -36,15 +36,15 @@ entropy (PRNG).
   If it is determined that the web server is not required to perform session management, 
   this check is Not Applicable. 
 
-  Nginx web server versions after 1.11.0 have the $request_id embedded variable by default. 
+  NGINX web server versions after 1.11.0 have the $request_id embedded variable by default. 
   This variable is a unique request identifier generated from 16 random bytes, in hexadecimal. 
 
-  Execute the following command to get the current version of Nginx running:
+  Execute the following command to get the current version of NGINX running:
     # nginx -v
 
-  If the current version of Nginx running is 1.11.0 or earlier, this is a finding. 
+  If the current version of NGINX running is 1.11.0 or earlier, this is a finding. 
   "
-  desc  "fix", "Upgrade to the lastest stable version of Nginx web server to use the '$request_id' 
+  desc  "fix", "Upgrade to the lastest stable version of NGINX web server to use the '$request_id' 
   embedded variable for generating unique identifiers withminimum entropy equal to half the session 
   ID length."
   impact 0.5
@@ -57,7 +57,7 @@ entropy (PRNG).
   tag "cci": ["CCI-001188"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
 
-# Nginx versions after 1.11.0 have the $request_id embedded variable by default
+# NGINX versions after 1.11.0 have the $request_id embedded variable by default
 # This variable is a unique request identifier generated from 16 random bytes, in hexadecimal
 
   describe nginx do
