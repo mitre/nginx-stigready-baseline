@@ -64,12 +64,10 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   # Ensure access log is linked to stdout
   describe command('readlink ' + access_log_path) do
     its('stdout') { should eq "/dev/stdout\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
   end
   # Ensure error log is linked to stderror
   describe command('readlink ' + error_log_path)do
     its('stdout') { should eq "/dev/stderr\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
   end
   
   describe "Manual Step" do

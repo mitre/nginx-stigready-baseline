@@ -77,9 +77,8 @@ monitoring systems.
       Array(access_log).each do |access_value|
         if access_value.include? "access.log"
           describe file(access_value) do
-            it 'The access log should exist and be a file.' do
+            it 'The access log should exist.' do
               expect(subject).to(exist)
-              expect(subject).to(be_file)
             end
           end
         end
@@ -90,9 +89,8 @@ monitoring systems.
     Array(error_log).each do |error_value|
       if error_value.include? "error.log"
         describe file(error_value) do
-          it 'The error log should exist and be a file.' do
+          it 'The error log should exist.' do
             expect(subject).to(exist)
-            expect(subject).to(be_file)
           end
         end
       end
@@ -102,12 +100,10 @@ monitoring systems.
   # Ensure access log is linked to stdout
   describe command('readlink ' + access_log_path) do
     its('stdout') { should eq "/dev/stdout\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
   end
   # Ensure error log is linked to stderror
   describe command('readlink ' + error_log_path)do
     its('stdout') { should eq "/dev/stderr\n" }
-    # its('stdout') { should cmp '/proc/1/fd/pipe' }
   end
 end
 

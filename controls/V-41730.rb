@@ -76,12 +76,12 @@ status protocol (OCSP) responses."
       it 'ssl_verify_depth should exist in the server context.' do
         expect(server.params).to(include "ssl_verify_depth")
       end 
-      server.params["ssl_verify_client"].each do |ssl_verify_client|
+      Array(server.params["ssl_verify_client"]).each do |ssl_verify_client|
         it "ssl_verify_client should be set to 'on'." do
           expect(ssl_verify_client).to(cmp 'on')
         end
       end 
-      server.params["ssl_verify_depth"].each do |ssl_verify_client|
+      Array(server.params["ssl_verify_depth"]).each do |ssl_verify_client|
         it "ssl_verify_depth should not equal '0'." do
           expect(ssl_verify_client).not_to(cmp '0')
         end

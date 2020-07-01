@@ -73,14 +73,14 @@ the logs must be protected from modification by non-privileged users.
   # nginx access log file should have 640 permissions
   describe file(access_log_path) do
     its('owner') { should be_in authorized_sa_user_list }
-    its('group') { should cmp nginx_group }
+    its('group') { should be_in authorized_sa_group_list }
     its('mode')  { should cmp '0640'}
   end
 
   # nginx error log file should have 640 permissions
   describe file(error_log_path) do
     its('owner') { should be_in authorized_sa_user_list }
-    its('group') { should cmp nginx_group }
+    its('group') { should be_in authorized_sa_group_list }
     its('mode')  { should cmp '0640'} 
   end
 end

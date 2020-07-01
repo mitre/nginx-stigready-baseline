@@ -78,9 +78,8 @@ storage dependent on the impact of the web server.
       Array(access_log).each do |access_value|
         if access_value.include? "access.log"
           describe file(access_value) do
-            it 'The access log should exist and be a file.' do
+            it 'The access log should exist.' do
               expect(subject).to(exist)
-              expect(subject).to(be_file)
             end
           end
         end
@@ -91,9 +90,8 @@ storage dependent on the impact of the web server.
     Array(error_log).each do |error_value|
       if error_value.include? "error.log"
         describe file(error_value) do
-          it 'The error log should exist and be a file.' do
+          it 'The error log should exist.' do
             expect(subject).to(exist)
-            expect(subject).to(be_file)
           end
         end
       end

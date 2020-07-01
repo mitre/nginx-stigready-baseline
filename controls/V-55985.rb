@@ -67,9 +67,9 @@ control requirements.
       end
       describe "The listening port" do
         listen_port = listen.join.split(':')[1]
-        it "should be an approved port." do
-          expect(listen_port).to(be_in authorized_ports)
-        end 
+          it "should be an approved port." do
+            expect(listen_port).to(be_in authorized_ports)
+          end 
       end
     end unless server.params['listen'].nil?
   end 
