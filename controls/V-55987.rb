@@ -2,7 +2,7 @@
 conf_path = input('conf_path')
 nginx_owner = input('nginx_owner')
 sys_admin = input('sys_admin')
-nginx_path = input('nginx_path')
+
 
 control "V-55987" do
   title "The account used to run the NGINX web server must not have a valid 
@@ -88,9 +88,6 @@ need to have passwords set or changed.
 
   service_accounts.each do |account|
     # Verify no there's no valid login shell for account
-    # describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}:/usr/sbin/nologin") do
-    # its('exit_status') { should eq 0 }
-    # end
     describe.one do 
       describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
         its('stdout') { should match /\/sbin\/nologin/}

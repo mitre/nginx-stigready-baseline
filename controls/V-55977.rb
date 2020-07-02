@@ -1,10 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55977" do
   title "The NGINX web server must record time stamps for log records to a minimum
@@ -40,8 +35,14 @@ to a granularity of one second.
   tag "cci": ["CCI-001889"]
   tag "nist": ["AU-8 b", "Rev_4"]
 
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
   # log_format - Context:	http
-  Array(nginx_conf(conf_path).params['http']).each do |http|
+  Array(nginx_conf_handle.params['http']).each do |http|
     Array(http["log_format"]).each do |log_format|
       describe 'time_local' do
         it 'should be part of every log format in the http context.' do

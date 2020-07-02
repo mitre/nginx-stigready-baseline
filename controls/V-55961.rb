@@ -1,10 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55961" do
   title "The NGINX web server must restrict inbound connections from nonsecure zones."
@@ -54,7 +49,13 @@ service (DoS) attacks on the web server.
   tag "cci": ["CCI-002314"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-  Array(nginx_conf(conf_path).locations).each do |location|
+  nginx_conf_handle = nginx_conf(conf_path)
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
+  Array(nginx_conf_handle.locations).each do |location|
     deny_values = []
     deny_values.push(location.params['deny']) unless location.params['deny'].nil?
     describe "Each location context" do

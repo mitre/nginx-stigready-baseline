@@ -27,9 +27,9 @@ log data is conserved for later forensic analysis.
 
   Interview the SA and Web Manager.
 
-  Ask for documentation for the Nginx administration.
+  Ask for documentation for the NGINX administration.
 
-  Verify there are documented procedures for shutting down an Nginx website in the 
+  Verify there are documented procedures for shutting down an NGINX website in the 
   event of an attack. The procedure should, at a minimum, provide the following steps:
 
   Determine the respective website for the application at risk of an attack.
@@ -38,10 +38,10 @@ log data is conserved for later forensic analysis.
 
   # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`
 
-  If Nginx is not capable of or cannot be configured to disconnect or disable remote 
+  If NGINX is not capable of or cannot be configured to disconnect or disable remote 
   access to the hosted applications when necessary, this is a finding.
   "
-  desc  "fix", "Prepare documented procedures for shutting down an Nginx website in the 
+  desc  "fix", "Prepare documented procedures for shutting down an NGINX website in the 
   event of an attack.
 
   The procedure should, at a minimum, provide the following steps:
@@ -64,7 +64,7 @@ log data is conserved for later forensic analysis.
 
     # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`
   
-    If Nginx is not capable of or cannot be configured to disconnect or disable remote 
+    If NGINX is not capable of or cannot be configured to disconnect or disable remote 
     access to the hosted applications when necessary, this is a finding."
   end
 end

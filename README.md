@@ -1,11 +1,11 @@
-# Web Server SRG InSpec profile for nginx 1.15
+# Web Server SRG Verson 2 Release 3 InSpec profile for nginx 1.19
 
-InSpec profile testing secure configuration of nginx 1.15
+InSpec profile testing secure configuration of nginx 1.19
 
 ## Description
 
 This InSpec compliance profile is a collection of automated tests for
-secure configuration of nginx 1.15.
+secure configuration of nginx 1.19.
 
 InSpec is an open-source run-time framework and rule language used to
 specify compliance, security, and policy requirements for testing any
@@ -30,7 +30,7 @@ any time.
 ## Requirements
 
 - [ruby](https://www.ruby-lang.org/en/) version 2.4  or greater
-- [InSpec](http://inspec.io/) version 2.1  or greater
+- [InSpec](http://inspec.io/) version 4.x  or greater
 - Install via ruby gem: `gem install inspec`
     
 ## Usage
@@ -58,12 +58,12 @@ $ git clone https://github.com/mitre/nginx-srg-baseline.git
 # for export called output.json
 $ inspec exec nginx-srg-baseline --reporter cli json:output.json
 
-# Run profile with custom settings defined in attributes.yml against the target 
+# Run profile with custom settings defined in inputs.yml against the target 
 # server example.com. 
-$ inspec exec nginx-srg-baseline -t example.com --user root --password=Pa55w0rd --attrs attributes.yml --reporter cli json:output.json
+$ inspec exec nginx-srg-baseline -t example.com --user root --password=Pa55w0rd --input-file=srg-inputs.yml --reporter cli json:output.json
 
 # Run profile with: custom attributes, ssh keyed into a custom target, and sudo.
-$ inspec exec nginx-srg-baseline -t ssh://user@hostname -i /path/to/key --sudo --attrs attributes.yml --reporter cli json:output.json
+$ inspec exec nginx-srg-baseline -t ssh://user@hostname -i /path/to/key --sudo --input-file=inputs.yml --reporter cli json:output.json
 ```
 ## Contributors
 

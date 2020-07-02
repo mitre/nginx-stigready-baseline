@@ -1,10 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55959" do
   title "The NGINX web server must use a logging mechanism that is configured to
@@ -61,13 +56,13 @@ storage dependent on the impact of the web server.
   tag "cci": ["CCI-001849"]
   tag "nist": ["AU-4", "Rev_4"]
 
-  # Verify that access_log and error_log is enabled
   nginx_conf_handle = nginx_conf(conf_path)
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
+  # Verify that access_log and error_log is enabled
   Array(nginx_conf_handle.params['http']).each do |http|
     describe 'Each http context' do
       it 'should include an access_log directive.' do

@@ -1,10 +1,5 @@
 # encoding: UTF-8
 conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-55945" do
   title "The NGINX web server must enforce approved authorizations for logical access
@@ -47,29 +42,36 @@ roles to make changes to the production system."
   tag "cci": ["CCI-000213"]
   tag "nist": ["AC-3", "Rev_4"]
 
-
-  auth_uris = []
   nginx_conf_handle = nginx_conf(conf_path)
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
+  # List of all auth_request uris in the configuration files
+  auth_uris = []
   nginx_conf_handle.locations.entries.each do |location|
     auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
   end
+  # This list should not be empty or auth_request is not being implemented
+  describe "The auth_uri list" do
+    it "should not be empty." do
+      expect(auth_uris).not_to(be_empty)
+    end  
+  end
+
   auth_uris.flatten!
   auth_uris.uniq!
 
+  # Make sure all locations include an auth_request directive except the location the auth_request gets sent to
   Array(nginx_conf_handle.locations).each do |location|
-    location.params["_"].each do |value|
-      deny_values = []
-      deny_values.push(location.params['deny'])
-      describe "Each root directory location context" do
-        it 'should include an deny all directive.' do
-          expect(deny_values.to_s).to(include "all")
+    auth_uris.each do |uri|
+      describe "Each location context" do
+        it 'should include an auth_request directive.' do
+          puts location
+          expect(location.params).to(include "auth_request")
         end
-      end unless auth_uris.include?(value) 
+      end unless location.params["_"].flatten.include?(uri)  
     end
   end
 end

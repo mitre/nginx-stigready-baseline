@@ -27,7 +27,7 @@ server, can be used.
   
   If documentation for a disaster recovery has not been established, this is a finding.
   "
-  desc  "fix", "Prepare documentation for disaster recovery methods for the Nginx web server in the event of the necessity for rollback.
+  desc  "fix", "Prepare documentation for disaster recovery methods for the NGINX web server in the event of the necessity for rollback.
 
   Document and test the disaster recovery methods designed."
 

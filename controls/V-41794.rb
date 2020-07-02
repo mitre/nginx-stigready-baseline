@@ -32,7 +32,7 @@ from web server management functionality."
   tag "cci": ["CCI-001082"]
   tag "nist": ["SC-2", "Rev_4"]
 
-  describe "Skip Test" do
+  describe "Manual Check" do
     skip "Review the NGINX web server documentation and deployed configuration to determine
     whether hosted application functionality is separated from web server
     management functions.

@@ -20,14 +20,14 @@ condition will provide a known fail safe state for the web server.
   analysis documentation to determine whether the web server will fail to known
   states for system initialization, shutdown, or abort failures.
 
-  Interview the System Administrator for the Nginx web server.
+  Interview the System Administrator for the NGINX web server.
 
   Ask for documentation on the disaster recovery methods tested and planned for 
-  the Nginx web server in the event of the necessity for rollback.
+  the NGINX web server in the event of the necessity for rollback.
 
   If documentation for a disaster recovery has not been established, this is a finding.
   "
-  desc  "fix", "Prepare documentation for disaster recovery methods for the Nginx 
+  desc  "fix", "Prepare documentation for disaster recovery methods for the NGINX 
   web server in the event of the necessity for rollback.
 
   Document and test the disaster recovery methods designed."
@@ -43,9 +43,9 @@ condition will provide a known fail safe state for the web server.
   tag "nist": ["SC-24", "Rev_4"]
 
   describe "Manual Check" do
-    skip "Interview the System Administrator for the Nginx web server.
+    skip "Interview the System Administrator for the NGINX web server.
     Ask for documentation on the disaster recovery methods tested and planned for 
-    the Nginx web server in the event of the necessity for rollback.
+    the NGINX web server in the event of the necessity for rollback.
     If documentation for a disaster recovery has not been established, this is a finding."
   end
   

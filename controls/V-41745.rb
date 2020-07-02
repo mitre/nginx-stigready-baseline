@@ -1,10 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-mime_type_path = input('mime_type_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-password_path = input('password_path')
-key_file_path = input('key_file_path')
 
 control "V-41745" do
   title "The NGINX web server must use cryptographic modules that meet the
@@ -50,7 +44,7 @@ encrypted data and configuration settings.
   tag "cci": ["CCI-000803"]
   tag "nist": ["IA-7", "Rev_4"]
 
-  describe "Skip Test" do
+  describe "Manual Check" do
     skip "Review NGINX web server documentation and deployed configuration to determine
     whether the encryption modules utilized for storage of data are FIPS 140-2
     compliant.

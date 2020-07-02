@@ -21,26 +21,34 @@ reference.dc.identifier: '2557'
 content_ref.name: M
 content_ref.href: DPMS_XCCDF_Benchmark_Web_Server_SRG.xml
 
-
+#description: Path for the nginx configuration file
 conf_path: '/etc/nginx/nginx.conf'
-mime_type_path: '/etc/nginx/mime.types'
 
+#description: Path for the nginx log directory
 nginx_log_path: '/var/log/nginx'
+
+#description: Path for the nginx access log
 access_log_path: '/var/log/nginx/access.log'
+
+#description: Path for the nginx error log
 error_log_path: '/var/log/nginx/error.log'
 
-password_path: '/etc/passwd'
+#description: Path for the private key
 key_file_path: '/etc/ssl/key.pem'
 
-#description: Minimum Web vendor-supported version.
+#description: Minimum Web vendor-supported version
 nginx_min_ver: '1.19.0'
 
+#description: Nginx owner
 nginx_owner: 'nginx'
 
+#description: The Nginx group
 nginx_group: 'nginx'
 
+#description: The system adminstrator
 sys_admin : ['root']
 
+#description: The system adminstrator group
 sys_admin_group: ['root']
 
 
@@ -55,13 +63,14 @@ authorized_ports: [
   '443'
 ]
 
+#description: List of the access control files
 access_control_files: [ 
   '.htaccess',
   '.htpasswd', 
   'nginx.conf' 
 ]
 
-
+#description: Charset required
 charset_required: 'utf-8'
 
 #description: DoD-approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners.
@@ -143,6 +152,9 @@ nginx_allowed_script_list:
     ''
   ]
 
+#description: Path for the MIME types file
+mime_type_path: '/etc/nginx/mime.types'
+
 #description: List of disallowed MIME types.
 nginx_disallowed_mime_type: [
   'text/mathml', 
@@ -169,6 +181,3 @@ nginx_disallowed_mime_type: [
   'application/x-xpinstall',  
   'application/octet-stream'
 ]
-
-#description: Path for the nginx binary
-nginx_path: '/usr/sbin/nginx'

@@ -47,23 +47,23 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
     its ('params') { should_not be_empty }
   end
 
-  found_utc = false;
-  describe "" do
-    it 'In the nginx.conf file env TZ should be set.' do
+  found_utc_gmt = false;
+  describe "In the nginx.conf file" do
+    it 'the TZ environment variable should be set.' do
       expect(nginx_conf_handle.params['env']).to_not(cmp nil)
     end
   end
 
   Array(nginx_conf_handle.params['env']).each do |env|
-    found_utc = false
+    found_utc_gmt = false
     Array(env).each do |value|
       if (value == "TZ=UTC" || value == "TZ=GMT")
-        found_utc = true
+        found_utc_gmt = true
       end
     end
-    describe "" do
-      it 'The TZ variable should be set to UTC time.' do
-        expect(found_utc).to(cmp true)
+    describe "The TZ environment variable" do
+      it 'should be set to UTC or GMT time.' do
+        expect(found_utc_gmt).to(cmp true)
       end
     end
   end

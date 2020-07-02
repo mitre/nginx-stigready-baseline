@@ -14,7 +14,7 @@ application could cause to a system.
   "
   desc  "rationale", ""
   desc  "check", "
-  Interview the System Administrator for the Nginx web server or review the NGINX  
+  Interview the System Administrator for the NGINX web server or review the NGINX  
   web server documentation and configuration to determine the access to server 
   resources given to hosted applications.
 
@@ -34,7 +34,7 @@ application could cause to a system.
   tag "nist": ["CM-7 a", "Rev_4"]
 
   describe "Manual Check" do
-    skip "Interview the System Administrator for the Nginx web server or review the NGINX  
+    skip "Interview the System Administrator for the NGINX web server or review the NGINX  
     web server documentation and configuration to determine the access to server 
     resources given to hosted applications.
     If hosted applications have access to more system resources than needed for 
