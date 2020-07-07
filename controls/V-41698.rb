@@ -1,32 +1,29 @@
 # encoding: UTF-8
-nginx_authorized_modules = input('nginx_authorized_modules')
-nginx_unauthorized_modules = input('nginx_unauthorized_modules')
 
 control "V-41698" do
   title "The NGINX web server must provide install options to exclude installation of
-utility programs, services, plug-ins, and modules not necessary for operation."
+  utility programs, services, plug-ins, and modules not necessary for operation."
   desc  "Just as running unneeded services and protocols is a danger to the web
-server at the lower levels of the OSI model, running unneeded utilities and
-programs is also a danger at the application layer of the OSI model. Office
-suites, development tools, and graphical editors are examples of such programs
-that are troublesome.
+  server at the lower levels of the OSI model, running unneeded utilities and
+  programs is also a danger at the application layer of the OSI model. Office
+  suites, development tools, and graphical editors are examples of such programs
+  that are troublesome.
 
     Individual productivity tools have no legitimate place or use on an
-enterprise, production web server and they are also prone to their own security
-risks. The web server installation process must provide options allowing the
-installer to choose which utility programs, services, and modules are to be
-installed or removed. By having a process for installation and removal, the web
-server is guaranteed to be in a more stable and secure state than if these
-services and programs were installed and removed manually.
+  enterprise, production web server and they are also prone to their own security
+  risks. The web server installation process must provide options allowing the
+  installer to choose which utility programs, services, and modules are to be
+  installed or removed. By having a process for installation and removal, the web
+  server is guaranteed to be in a more stable and secure state than if these
+  services and programs were installed and removed manually.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployment configuration to
-  determine which web server utilities, services, and modules are installed.
-  Verify these options are essential to the operation of the web server. Also,
-  confirm the web server install process offers an option to exclude these
-  utilities, services, and modules from installation that are not needed for
-  operation and that there is an uninstall option for their removal.
+  
+  desc  "check", "Review the NGINX web server documentation and deployment 
+  configuration to determine which web server utilities, services, and modules 
+  are installed. Verify these options are essential to the operation of the 
+  web server. Also, confirm the web server install process offers an option to 
+  exclude these utilities, services, and modules from installation that are not 
+  needed for operation and that there is an uninstall option for their removal.
 
   Enter the following command to get a list of the modules installed: 
     # nginx -V
@@ -49,10 +46,10 @@ services and programs were installed and removed manually.
 
 # Only allow a small subset of authorized modules in an attempt to minimize the number of modules active
   describe nginx do
-    its('modules') { should be_in nginx_authorized_modules }
+    its('modules') { should be_in input('nginx_authorized_modules') }
   end
   describe nginx do
-    its('modules') { should_not be_in nginx_unauthorized_modules }
+    its('modules') { should_not be_in input('nginx_unauthorized_modules') }
   end
 end
 

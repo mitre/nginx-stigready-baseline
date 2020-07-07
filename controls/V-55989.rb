@@ -1,25 +1,23 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-55989" do
   title "The NGINX web server must not perform user management for hosted
-applications."
+  applications."
   desc  "User management and authentication can be an essential part of any
-application hosted by the web server. Along with authenticating users, the user
-management function must perform several other tasks like password complexity,
-locking users after a configurable number of failed logins, and management of
-temporary and emergency accounts; and all of this must be done enterprise-wide.
+  application hosted by the web server. Along with authenticating users, the user
+  management function must perform several other tasks like password complexity,
+  locking users after a configurable number of failed logins, and management of
+  temporary and emergency accounts; and all of this must be done enterprise-wide.
 
     The web server contains a minimal user management function, but the web
-server user management function does not offer enterprise-wide user management,
-and user management is not the primary function of the web server. User
-management for the hosted applications should be done through a facility that
-is built for enterprise-wide user management, like LDAP and Active Directory.
+  server user management function does not offer enterprise-wide user management,
+  and user management is not the primary function of the web server. User
+  management for the hosted applications should be done through a facility that
+  is built for enterprise-wide user management, like LDAP and Active Directory.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and configuration to determine if the
-  web server is being used as a user management application.
+  
+  desc  "check", " Review the NGINX web server documentation and configuration 
+  to determine if the web server is being used as a user management application.
 
   Check for the following:
   # grep 'auth_basic' and 'auth_basic_user_file' directive in the http, server, 
@@ -40,7 +38,7 @@ is built for enterprise-wide user management, like LDAP and Active Directory.
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
@@ -49,7 +47,7 @@ is built for enterprise-wide user management, like LDAP and Active Directory.
   # auth_basic - Context:	http, server, location, limit_except
   # auth_basic_user_file - Context:	http, server, location, limit_except
   # Within http
-  Array(nginx_conf_handle.params['http']).each do |http|
+ nginx_conf_handle.params['http'].each do |http|
     describe 'http context:' do
       it 'There should not be an auth_basic directive.' do
         expect(http).to_not(include "auth_basic")
@@ -60,7 +58,7 @@ is built for enterprise-wide user management, like LDAP and Active Directory.
     end
   end
   # Within server
-  Array(nginx_conf_handle.servers).each do |server| 
+  nginx_conf_handle.servers.each do |server| 
     describe 'server context:' do
       it 'There should not be an auth_basic directive.' do
         expect(server.params).to_not(include "auth_basic")
@@ -71,7 +69,7 @@ is built for enterprise-wide user management, like LDAP and Active Directory.
     end
   end
   # Within location
-  Array(nginx_conf_handle.locations).each do |location|
+ nginx_conf_handle.locations.each do |location|
     describe "location context:" do
       it 'There should not be an auth_basic directive.' do
         expect(location.params).to_not(include "auth_basic")
@@ -79,7 +77,7 @@ is built for enterprise-wide user management, like LDAP and Active Directory.
       it 'There should not be an auth_basic_user_file directive.' do
         expect(location.params).to_not(include "auth_basic_user_file")
       end
-      Array(location.params["limit_except"]).each do |limit_except|
+      location.params["limit_except"].each do |limit_except|
         # Within limit_except
         describe "limit_except context:" do
           it 'There should not be an auth_basic directive.' do
@@ -89,7 +87,7 @@ is built for enterprise-wide user management, like LDAP and Active Directory.
             expect(location.params).to_not(include "auth_basic_user_file")
           end
         end
-      end
+      end unless location.params["limit_except"].nil?
     end
   end
 end

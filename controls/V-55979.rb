@@ -1,6 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-
 
 control "V-55979" do
   title "The NGINX web server must generate log records that can be mapped to
@@ -13,7 +11,7 @@ devices and log records.
 commonly expressed in Coordinated Universal Time (UTC), a modern continuation
 of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server documentation and configuration to determine the time
   stamp format for log data.
@@ -41,7 +39,7 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   tag "cci": ["CCI-001890"]
   tag "nist": ["AU-8 b", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
@@ -54,9 +52,9 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
     end
   end
 
-  Array(nginx_conf_handle.params['env']).each do |env|
+  nginx_conf_handle.params['env'].each do |env|
     found_utc_gmt = false
-    Array(env).each do |value|
+    env.each do |value|
       if (value == "TZ=UTC" || value == "TZ=GMT")
         found_utc_gmt = true
       end
@@ -66,6 +64,6 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
         expect(found_utc_gmt).to(cmp true)
       end
     end
-  end
+  end unless nginx_conf_handle.params['env'].nil?
 end
 

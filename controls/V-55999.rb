@@ -1,9 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-nginx_owner = input('nginx_owner')
-nginx_group = input('nginx_group')
-sys_admin = input('sys_admin')
-sys_admin_group = input('sys_admin_group')
 
 control "V-55999" do
   title "The NGINX web server must be protected from being stopped by a
@@ -18,11 +13,10 @@ protected from access by non-privileged users. By knowing the pid and having
 access to the web server utilities, a non-privileged user has a greater
 capability of stopping the server, whether intentionally or unintentionally.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  where the process ID is stored and which utilities are used to start/stop the
-  web server.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed 
+  configuration to determine where the process ID is stored and which utilities 
+  are used to start/stop the web server.
 
   Determine where the 'nginx.pid' file is located by running the following command:
 
@@ -76,10 +70,10 @@ capability of stopping the server, whether intentionally or unintentionally.
   tag "cci": ["CCI-002385"]
   tag "nist": ["SC-5", "Rev_4"]
   
-  authorized_sa_user_list = sys_admin.clone << nginx_owner
-  authorized_sa_group_list = sys_admin_group.clone << nginx_group
+  authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
+  authorized_sa_group_list = input('sys_admin_group').clone << input('nginx_group')
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }

@@ -1,24 +1,23 @@
 # encoding: UTF-8
-nginx_min_ver = input('nginx_min_ver')
 
 control "V-56033" do
   title "The web server must install security-relevant software updates within
-the configured time period directed by an authoritative source (e.g., IAVM,
-CTOs, DTMs, and STIGs)."
+  the configured time period directed by an authoritative source (e.g., IAVM,
+  CTOs, DTMs, and STIGs)."
   desc  "Security flaws with software applications are discovered daily.
-Vendors are constantly updating and patching their products to address newly
-discovered security vulnerabilities. Organizations (including any contractor to
-the organization) are required to promptly install security-relevant software
-updates (e.g., patches, service packs, and hot fixes). Flaws discovered during
-security assessments, continuous monitoring, incident response activities, or
-information system error handling must also be addressed expeditiously.
+  Vendors are constantly updating and patching their products to address newly
+  discovered security vulnerabilities. Organizations (including any contractor to
+  the organization) are required to promptly install security-relevant software
+  updates (e.g., patches, service packs, and hot fixes). Flaws discovered during
+  security assessments, continuous monitoring, incident response activities, or
+  information system error handling must also be addressed expeditiously.
 
     The web server will be configured to check for and install
-security-relevant software updates from an authoritative source within an
-identified time period from the availability of the update. By default, this
-time period will be every 24 hours.
+  security-relevant software updates from an authoritative source within an
+  identified time period from the availability of the update. By default, this
+  time period will be every 24 hours.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the web server documentation and configuration to determine if the
   web server checks for patches from an authoritative source at least every 30
@@ -45,7 +44,7 @@ time period will be every 24 hours.
   tag "nist": ["SI-2 c", "Rev_4"]
 
   describe nginx do
-    its('version') { should cmp >= nginx_min_ver }
+    its('version') { should cmp >= input('nginx_min_ver') }
   end
 end
 

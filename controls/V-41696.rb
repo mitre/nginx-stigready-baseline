@@ -1,30 +1,25 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-
-nginx_owner = input('nginx_owner')
-authorized_user_list = input('authorized_user_list')
 
 control "V-41696" do
   title "Web server accounts not utilized by installed features (i.e., tools,
-utilities, specific services, etc.) must not be created and must be deleted
-when the NGINX web server feature is uninstalled."
+  utilities, specific services, etc.) must not be created and must be deleted
+  when the NGINX web server feature is uninstalled."
   desc  "When accounts used for web server features such as documentation,
-sample code, example applications, tutorials, utilities, and services are
-created even though the feature is not installed, they become an exploitable
-threat to a web server.
+  sample code, example applications, tutorials, utilities, and services are
+  created even though the feature is not installed, they become an exploitable
+  threat to a web server.
 
     These accounts become inactive, are not monitored through regular use, and
-passwords for the accounts are not created or updated. An attacker, through
-very little effort, can use these accounts to gain access to the web server and
-begin investigating ways to elevate the account privileges.
+  passwords for the accounts are not created or updated. An attacker, through
+  very little effort, can use these accounts to gain access to the web server and
+  begin investigating ways to elevate the account privileges.
 
     The accounts used for web server features not installed must not be created
-and must be deleted when these features are uninstalled.
+  and must be deleted when these features are uninstalled.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation to determine the user accounts created
-  when particular features are installed.
+  
+  desc  "check", "Review the NGINX web server documentation to determine the user 
+  accounts created when particular features are installed.
 
   Verify that at least one 'user' directive exists:
     #grep the 'user' directive in the main context of the nginx.conf file
@@ -48,7 +43,7 @@ and must be deleted when these features are uninstalled.
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
@@ -62,11 +57,11 @@ and must be deleted when these features are uninstalled.
       expect(nginx_conf_handle.params['user']).to_not(be_nil)
     end
   end
-  Array(nginx_conf_handle.params['user']).each do |user|
-    Array(user[0]).each do |value|
+  nginx_conf_handle.params['user'].each do |user|
+    user.each do |value|
       describe 'The value of user' do
         it 'should be the default nginx user or other authorized user.' do
-          expect(value).to (eq nginx_owner).or (be_in authorized_user_list)
+          expect(value).to (eq input('nginx_owner')).or (be_in input('authorized_user_list'))
         end
       end
         # /etc/passwd should include the runner account.

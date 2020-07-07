@@ -1,5 +1,5 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
+
 approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-56003" do
@@ -10,10 +10,10 @@ used to identify a session and a user. If the session identifier is compromised
 by an attacker, the session can be hijacked. By encrypting the session
 identifier, the identifier becomes more difficult for an attacker to hijack,
 decrypt, and use before the session has expired."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  whether the session identifier is being sent to the client encrypted.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed 
+  configuration to determine whether the session identifier is being sent to 
+  he client encrypted.
 
   If it is determined that the web server is not required to perform session 
   management, this check is Not Applicable. 
@@ -53,13 +53,13 @@ decrypt, and use before the session has expired."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.servers).each do |server|
+  nginx_conf_handle.servers.each do |server|
     describe 'The listen directive' do
       it 'should be included in the configuration.' do
         expect(server.params).to(include "listen")
@@ -73,13 +73,13 @@ decrypt, and use before the session has expired."
         expect(server.params).to(include "ssl_protocols")
       end
     end
-    Array(server.params["ssl_protocols"]).each do |protocol|
+    server.params["ssl_protocols"].each do |protocol|
       describe 'Each protocol' do
         it 'should be included in the list of protocols approved to encrypt data' do
-          expect(protocol).to(be_in approved_ssl_protocols)
+          expect(protocol).to(be_in input('approved_ssl_protocols'))
         end
       end
-    end
+    end unless server.params["ssl_protocols"].nil?
   end
 end
 

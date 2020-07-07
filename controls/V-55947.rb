@@ -1,13 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-access_control_files = input('access_control_files')
-
-nginx_owner = input('nginx_owner')
-nginx_group = input('nginx_owner')
-sys_admin = input('sys_admin')
-sys_admin_group = input('sys_admin_group')
-
-
 
 control "V-55947" do
   title "Non-privileged accounts on the hosting system must only access NGINX web
@@ -20,11 +11,10 @@ when operating on the web server or on security-relevant information forces
 users to only operate as a web server administrator when necessary. Operating
 in this manner allows for better logging of changes and better forensic
 information and limits accidental changes to the web server."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and configuration to determine if
-  accounts used for administrative duties of the web server are separated from
-  non-privileged accounts.
+  
+  desc  "check", "Review the NGINX web server documentation and configuration 
+  to determine if accounts used for administrative duties of the web server are 
+  separated from non-privileged accounts.
 
   This check verifies that the SA or Web Manager controlled account owns the key 
   web server files. These same files, which control the configuration of the web 
@@ -73,17 +63,17 @@ information and limits accidental changes to the web server."
   tag "cci": ["CCI-002235"]
   tag "nist": ["AC-6 (10)", "Rev_4"]
 
-    authorized_sa_user_list = sys_admin.clone << nginx_owner
-    authorized_sa_group_list = sys_admin_group.clone << nginx_group
+    authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
+    authorized_sa_group_list = input('sys_admin_group').clone << input('nginx_group')
 
-    nginx_conf_handle = nginx_conf(conf_path)
+    nginx_conf_handle = nginx_conf(input('conf_path'))
     nginx_conf_handle.params
     
     describe nginx_conf_handle do
       its ('params') { should_not be_empty }
     end
 
-    access_control_files.each do |file|
+    input('access_control_files').each do |file|
       file_path = command("find / -name #{file}").stdout.chomp
 
       if file_path.empty?

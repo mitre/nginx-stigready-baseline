@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41855" do
   title "Debugging and trace information used to diagnose the NGINX web server must
@@ -13,7 +12,7 @@ type of code being used by the hosted application, and any backends being used
 for data storage may be displayed. Since this information may be placed in logs
 and general messages during normal operation of the web server, an attacker
 does not need to cause an error condition to gain this information."
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to determine
   if debugging and trace information are enabled.
@@ -36,14 +35,14 @@ does not need to cause an error condition to gain this information."
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.params['error_log']).each do |error_log|
-    Array(error_log).each do |error_value|
+  nginx_conf_handle.params['error_log'].each do |error_log|
+    error_log.each do |error_value|
       describe "The error log level" do
         it 'should not be set to debug.' do
           expect(error_value).not_to(eq 'debug')

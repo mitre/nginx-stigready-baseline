@@ -1,20 +1,18 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-56009" do
   title "Cookies exchanged between the NGINX web server and the client, such as
-session cookies, must have cookie properties set to force the encryption of
-cookies."
+  session cookies, must have cookie properties set to force the encryption of
+  cookies."
   desc  "Cookies can be sent to a client using TLS/SSL to encrypt the cookies,
-but TLS/SSL is not used by every hosted application since the data being
-displayed does not require the encryption of the transmission. To safeguard
-against cookies, especially session cookies, being sent in plaintext, a cookie
-can be encrypted before transmission. To force a cookie to be encrypted before
-transmission, the cookie Secure property can be set."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to verify
-  that cookies are encrypted before transmission.
+  but TLS/SSL is not used by every hosted application since the data being
+  displayed does not require the encryption of the transmission. To safeguard
+  against cookies, especially session cookies, being sent in plaintext, a cookie
+  can be encrypted before transmission. To force a cookie to be encrypted before
+  transmission, the cookie Secure property can be set."
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to verify that cookies are encrypted before transmission.
 
   If it is determined that the web server is not required to perform session 
   management, this check is Not Applicable. 
@@ -41,13 +39,13 @@ transmission, the cookie Secure property can be set."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     values = []
     values.push(location.params['proxy_cookie_path'])
     describe "The 'proxy_cookie_path'" do

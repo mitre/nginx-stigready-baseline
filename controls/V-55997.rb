@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-55997" do
   title "The NGINX web server must be tuned to handle the operational requirements of
@@ -9,10 +8,9 @@ overwhelmed that it can no longer respond to additional requests. A web server
 not properly tuned may become overwhelmed and cause a DoS condition even with
 expected traffic from users. To avoid a DoS, the web server must be tuned to
 handle the expected traffic for the hosted applications."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  what parameters are set to tune the web server.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine what parameters are set to tune the web server.
 
   To view the timeout values enter the following commands:
     # grep ''client_body_timeout'' on the nginx.conf file and any separate included 
@@ -22,8 +20,7 @@ handle the expected traffic for the hosted applications."
 
   If the values of each are not set to 10 seconds (10s) or less, this is a finding.'
   "
-  desc  "fix", "
-  Configure the NGINX web server to include the 'client_body_timeout' and 
+  desc  "fix", "Configure the NGINX web server to include the 'client_body_timeout' and 
   'client_header_timeout' directives in the NGINX configuration file(s). 
   Set the value of 'client_body_timeout' and 'client_header_timeout to be 
   10 seconds or less to mitigate the effects of several types of denial of 
@@ -42,48 +39,48 @@ handle the expected traffic for the hosted applications."
   tag "cci": ["CCI-002385"]
   tag "nist": ["SC-5", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
   # Within http
-  Array(nginx_conf_handle.params['http']).each do |http|
+  nginx_conf_handle.params['http'].each do |http|
     describe 'The http context client_header_timeout value' do
       it 'should exist and should be set to 10 (seconds) or less.' do
         expect(http).to(include "client_header_timeout")
-        Array(http["client_header_timeout"]).each do |http_client_header|
+        http["client_header_timeout"].each do |http_client_header|
           expect(http_client_header[0].to_i).to(be <= 10)
-        end
+        end unless http["client_header_timeout"].nil?
       end
     end
     describe 'The http context client_body_timeout value' do
       it 'should exist and should be set to 10 (seconds) or less.' do
         expect(http).to(include "client_body_timeout")
-        Array(http["client_body_timeout"]).each do |http_client_body|
+        http["client_body_timeout"].each do |http_client_body|
           expect(http_client_body[0].to_i).to(be <= 10)
-        end
+        end unless http["client_body_timeout"].nil?
       end
     end
   end
 
   # Within server
-  Array(nginx_conf_handle.servers).each do |server|
+  nginx_conf_handle.servers.each do |server|
     describe 'The server context client_header_timeout value' do
       it 'should exist and should be set to 10 (seconds) or less.' do
         expect(server.params).to(include "client_header_timeout")
-        Array(server.params["client_header_timeout"]).each do |server_client_header|
+        server.params["client_header_timeout"].each do |server_client_header|
           expect(server_client_header[0].to_i).to(be <= 10)
-        end
+        end unless server.params["client_header_timeout"].nil?
       end
     end
     describe 'The server context client_body_timeout value' do
       it 'should exist and should be set to 10 (seconds) or less.' do
         expect(server.params).to(include "client_body_timeout")
-        Array(server.params["client_body_timeout"]).each do |server_client_body|
+        server.params["client_body_timeout"].each do |server_client_body|
           expect(server_client_body[0].to_i).to(be <= 10)
-        end
+        end unless server.params["client_body_timeout"].nil?
       end
     end
   end

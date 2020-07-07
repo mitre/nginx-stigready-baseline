@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-55961" do
   title "The NGINX web server must restrict inbound connections from nonsecure zones."
@@ -16,7 +15,7 @@ protection devices. By restricting access from nonsecure zones, through
 internal web server access list, the web server can stop or slow denial of
 service (DoS) attacks on the web server.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server configuration to verify that the web server is
   restricting access from nonsecure zones.
@@ -49,13 +48,13 @@ service (DoS) attacks on the web server.
   tag "cci": ["CCI-002314"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     deny_values = []
     deny_values.push(location.params['deny']) unless location.params['deny'].nil?
     describe "Each location context" do

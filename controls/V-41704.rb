@@ -1,24 +1,22 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41704" do
   title "Users and scripts running on behalf of users must be contained to the
-document root or home directory tree of the NGINX web server."
+  document root or home directory tree of the NGINX web server."
   desc  "A web server is designed to deliver content and execute scripts or
-applications on the request of a client or user.  Containing user requests to
-files in the directory tree of the hosted web application and limiting the
-execution of scripts and applications guarantees that the user is not accessing
-information protected outside the application's realm.
+  applications on the request of a client or user.  Containing user requests to
+  files in the directory tree of the hosted web application and limiting the
+  execution of scripts and applications guarantees that the user is not accessing
+  information protected outside the application's realm.
 
     The web server must also prohibit users from jumping outside the hosted
-application directory tree through access to the user's home directory,
-symbolic links or shortcuts, or through search paths for missing files.
+  application directory tree through access to the user's home directory,
+  symbolic links or shortcuts, or through search paths for missing files.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and configuration to determine where
-  the document root or home directory for each application hosted by the web
-  server is located.
+  
+  desc  "check", "Review the NGINX web server documentation and configuration 
+  to determine where the document root or home directory for each application 
+  hosted by the web server is located.
 
   Check for the following: 
     # grep for a 'deny' directive in the root directoy location context of the 
@@ -46,13 +44,13 @@ symbolic links or shortcuts, or through search paths for missing files.
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     location.params["_"].each do |value|
       if (value == '/') 
         deny_values = []

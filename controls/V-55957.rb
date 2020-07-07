@@ -9,10 +9,9 @@ greater scalability. Without having centralized control of the web server
 cluster, management of the cluster becomes difficult. It is critical that
 remote management of the cluster be done through a designated management system
 acting as a single access point."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the web server documentation and configuration to determine if the
-  web server is part of a cluster.
+  
+  desc  "check", "Review the web server documentation and configuration to 
+  determine if the web server is part of a cluster.
 
   If the web server is not part of a cluster, then this check is Not Applicable.
 
@@ -30,9 +29,13 @@ acting as a single access point."
   tag "cci": ["CCI-001844"]
   tag "nist": ["AU-3 (2)", "Rev_4"]
 
-  describe "Manual Check" do
-    skip "Review the web server documentation and configuration to determine if the
-    web server is part of a cluster.
+  describe "This test requires a Manual Review: Review the web server documentation and 
+  configuration to determine if the web server is part of a cluster.
+  If the web server is not part of a cluster, then this check is Not Applicable.
+  If the web server is part of a cluster and is not centrally managed, then
+  this is a finding." do
+    skip "This test requires a Manual Review: Review the web server documentation and 
+    configuration to determine if the web server is part of a cluster.
     If the web server is not part of a cluster, then this check is Not Applicable.
     If the web server is part of a cluster and is not centrally managed, then
     this is a finding."

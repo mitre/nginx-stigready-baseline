@@ -1,31 +1,28 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41616" do
   title "A NGINX web server, behind a load balancer or proxy server, must produce log
-records containing the client IP information as the source and destination and
-not the load balancer or proxy IP information with each event."
+  records containing the client IP information as the source and destination and
+  not the load balancer or proxy IP information with each event."
   desc  "Web server logging capability is critical for accurate forensic
-analysis. Without sufficient and accurate information, a correct replay of the
-events cannot be determined.
+  analysis. Without sufficient and accurate information, a correct replay of the
+  events cannot be determined.
 
     Ascertaining the correct source, e.g. source IP, of the events is important
-during forensic analysis. Correctly determining the source of events will add
-information to the overall reconstruction of the logable event. By determining
-the source of the event correctly, analysis of the enterprise can be undertaken
-to determine if events tied to the source occurred in other areas within the
-enterprise.
+  during forensic analysis. Correctly determining the source of events will add
+  information to the overall reconstruction of the logable event. By determining
+  the source of the event correctly, analysis of the enterprise can be undertaken
+  to determine if events tied to the source occurred in other areas within the
+  enterprise.
 
     A web server behind a load balancer or proxy server, when not configured
-correctly, will record the load balancer or proxy server as the source of every
-logable event. When looking at the information forensically, this information
-is not helpful in the investigation of events. The web server must record with
-each event the client source of the event.
+  correctly, will record the load balancer or proxy server as the source of every
+  logable event. When looking at the information forensically, this information
+  is not helpful in the investigation of events. The web server must record with
+  each event the client source of the event.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the deployment configuration to determine if the web server is
-  sitting behind a proxy server.
+  desc  "check", "Review the deployment configuration to determine if the NGINX web 
+  server is sitting behind a proxy server.
 
   If the web server is not sitting behind a proxy server, this finding is Not Applicable. 
 
@@ -54,17 +51,17 @@ each event the client source of the event.
   tag "nist": ["AU-3", "Rev_4"]
 
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-# $realip_remote_addr keeps the original client address
-  Array(nginx_conf_handle.params['http']).each do |http|
-    Array(http["log_format"]).each do |log_format|
-      describe "" do
-        it 'realip_remote_addr should be part of every log format in http.' do
+  # $realip_remote_addr keeps the original client address
+  nginx_conf_handle.params['http'].each do |http|
+    http["log_format"].each do |log_format|
+      describe "realip_remote_addr" do
+        it 'should be part of every log format in http.' do
           expect(log_format.to_s).to(match /.*?\$realip_remote_addr.*?/)
         end
       end

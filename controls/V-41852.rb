@@ -1,6 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-charset_required = input('charset_required')
 
 control "V-41852" do
   title "The NGINX web server must limit the character set used for data entry."
@@ -18,10 +16,9 @@ checks.
     The web server, by defining the character set available for data entry, can
 trap efforts to bypass security checks or to compromise an application.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  what the data set is for data entry.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine what the data set is for data entry.
 
   Check for the following:
       # grep the 'charset' directive in the http, server, and location context of 
@@ -43,43 +40,43 @@ trap efforts to bypass security checks or to compromise an application.
   tag "cci": ["CCI-001310"]
   tag "nist": ["SI-10", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
   #  charset - Context:	http, server, location
-  Array(nginx_conf_handle.params['http']).each do |http|
+  nginx_conf_handle.params['http'].each do |http|
     # Within http
     describe 'Charset directive' do
       it 'should exist and be configured to the expected value in the http context.' do
         expect(http).to(include "charset")
-        Array(http["charset"]).each do |charset|
-          expect(charset).to(cmp charset_required)
-        end
+        http["charset"].each do |charset|
+          expect(charset).to(cmp input('charset_required'))
+        end unless http["charset"].nil?
       end
     end 
   end
 
   # Within server
-  Array(nginx_conf_handle.servers).each do |server|
+  nginx_conf_handle.servers.each do |server|
     describe 'Charset' do
       it 'should be configured to the expected value if found in the server context.' do
-        Array(server.params["charset"]).each do |charset|       
-          expect(charset).to(cmp charset_required)
-        end 
+        server.params["charset"].each do |charset|       
+          expect(charset).to(cmp input('charset_required'))
+        end unless server.params["charset"].nil?
       end
     end
   end
 
   # Within location
-  Array(nginx_conf_handle.locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     describe 'Charset' do
       it 'should be configured to the expected value if found in the location context.' do
-        Array(location.params["charset"]).each do |charset|       
-          expect(charset).to(cmp charset_required)
-        end 
+        location.params["charset"].each do |charset|       
+          expect(charset).to(cmp input('charset_required'))
+        end unless location.params["charset"].nil?
       end
     end
   end

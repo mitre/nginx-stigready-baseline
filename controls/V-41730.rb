@@ -1,22 +1,20 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41730" do
   title "The NGINX web server must perform RFC 5280-compliant certification path
-validation."
+  validation."
   desc  "A certificate's certification path is the path from the end entity
-certificate to a trusted root certification authority (CA). Certification path
-validation is necessary for a relying party to make an informed decision
-regarding acceptance of an end entity certificate. Certification path
-validation includes checks such as certificate issuer trust, time validity and
-revocation status for each certificate in the certification path. Revocation
-status information for CA and subject certificates in a certification path is
-commonly provided via certificate revocation lists (CRLs) or online certificate
-status protocol (OCSP) responses."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  whether the web server provides PKI functionality that validates certification
+  certificate to a trusted root certification authority (CA). Certification path
+  validation is necessary for a relying party to make an informed decision
+  regarding acceptance of an end entity certificate. Certification path
+  validation includes checks such as certificate issuer trust, time validity and
+  revocation status for each certificate in the certification path. Revocation
+  status information for CA and subject certificates in a certification path is
+  commonly provided via certificate revocation lists (CRLs) or online certificate
+  status protocol (OCSP) responses."
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine whether the web server provides PKI functionality that validates certification
   paths in accordance with RFC 5280.
 
   If PKI is not being used, this is check is Not Applicable.
@@ -50,13 +48,13 @@ status protocol (OCSP) responses."
   tag "cci": ["CCI-000185"]
   tag "nist": ["IA-5 (2) (a)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.servers).each do |server|
+  nginx_conf_handle.servers.each do |server|
     describe 'The directive' do
       it 'ssl_verify_client should exist in the server context.' do
         expect(server.params).to(include "ssl_verify_client")
@@ -64,16 +62,16 @@ status protocol (OCSP) responses."
       it 'ssl_verify_depth should exist in the server context.' do
         expect(server.params).to(include "ssl_verify_depth")
       end 
-      Array(server.params["ssl_verify_client"]).each do |ssl_verify_client|
+      server.params["ssl_verify_client"].each do |ssl_verify_client|
         it "ssl_verify_client should be set to 'on'." do
           expect(ssl_verify_client).to(cmp 'on')
         end
-      end 
-      Array(server.params["ssl_verify_depth"]).each do |ssl_verify_client|
+      end unless server.params["ssl_verify_client"].nil?
+      server.params["ssl_verify_depth"].each do |ssl_verify_client|
         it "ssl_verify_depth should not equal '0'." do
           expect(ssl_verify_client).not_to(cmp '0')
         end
-      end 
+      end unless server.params["ssl_verify_depth"].nil?
     end
   end 
 end

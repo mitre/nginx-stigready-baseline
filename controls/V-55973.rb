@@ -13,11 +13,10 @@ Organizations shall define logging failure events, at which time the
 application or the logging mechanism the application utilizes will provide a
 warning to the ISSO and SA at a minimum.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployment configuration settings
-  to determine if the web server logging system provides an alert to the ISSO and
-  the SA at a minimum when a processing failure occurs.
+  
+  desc  "check", "Review the NGINX web server documentation and deployment 
+  configuration settings to determine if the web server logging system provides an 
+  alert to the ISSO and the SA at a minimum when a processing failure occurs.
 
   Work with the SIEM administrator to determine if an alert is configured when audit 
   data is no longer received as expected.
@@ -37,9 +36,11 @@ warning to the ISSO and SA at a minimum.
   tag "cci": ["CCI-000139"]
   tag "nist": ["AU-5 a", "Rev_4"]
 
-  describe "Manual Check" do
-    skip "Work with the SIEM administrator to determine if an alert is configured when audit 
-    data is no longer received as expected. 
+  describe "This test requires a Manual Review: Work with the SIEM administrator to determine 
+  if an alert is configured when audit data is no longer received as expected. 
+  If there is no alert configured, this is a finding." do
+    skip "This test requires a Manual Review: Work with the SIEM administrator to determine 
+    if an alert is configured when audit data is no longer received as expected. 
     If there is no alert configured, this is a finding."
   end
 end

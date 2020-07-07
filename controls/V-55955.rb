@@ -19,11 +19,10 @@ certain that, during an attack, the proper action is taken to conserve
 connectivity to any other hosted application if possible and to make certain
 log data is conserved for later forensic analysis.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and configuration to make certain that
-  the web server is configured to allow for the immediate disconnection or
-  disabling of remote access to hosted applications when necessary.
+  
+  desc  "check", "Review the NGINX web server documentation and configuration 
+  to make certain that the web server is configured to allow for the immediate 
+  disconnection or disabling of remote access to hosted applications when necessary.
 
   Interview the SA and Web Manager.
 
@@ -59,8 +58,15 @@ log data is conserved for later forensic analysis.
   tag "cci": ["CCI-002322"]
   tag "nist": ["AC-17 (9)", "Rev_4"]
 
-  describe "Skip Test" do
-    skip "In a command line, enter the following command:
+  describe "This test requires a Manual Review.
+  In a command line, enter the following command:
+
+  # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`
+
+  If NGINX is not capable of or cannot be configured to disconnect or disable remote 
+  access to the hosted applications when necessary, this is a finding." do
+    skip "This test requires a Manual Review.
+    In a command line, enter the following command:
 
     # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`
   

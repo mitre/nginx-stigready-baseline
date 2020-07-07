@@ -1,5 +1,5 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
+
 dod_approved_pkis = input('dod_approved_pkis')
 
 control "V-56027" do
@@ -11,7 +11,7 @@ for DoD systems to rely on the identity asserted in the certificate. PKIs
 lacking sufficient security controls and identity vetting procedures risk being
 compromised and issuing certificates that enable adversaries to impersonate
 legitimate users."
-  desc  "rationale", ""
+  
   desc  "check", "
     Review the web server deployed configuration to determine if the web server
   will accept client certificates issued by unapproved PKIs. The authoritative
@@ -39,7 +39,7 @@ legitimate users."
   tag "cci": ["CCI-002470"]
   tag "nist": ["SC-23 (5)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
@@ -57,7 +57,7 @@ legitimate users."
         its('subject.O') { should cmp 'U.S. Government' }
       end
       describe x509_certificate(cert.join).subject.CN[0..2] do
-        it { should be_in dod_approved_pkis }
+        it { should be_in input('dod_approved_pkis') }
       end
     end unless http.params['ssl_client_certificate'].nil?
   end
@@ -71,7 +71,7 @@ legitimate users."
         its('subject.O') { should cmp 'U.S. Government' }
       end
       describe x509_certificate(cert.join).subject.CN[0..2] do
-        it { should be_in dod_approved_pkis }
+        it { should be_in input('dod_approved_pkis') }
       end
     end unless server.params['ssl_client_certificate'].nil?
   end

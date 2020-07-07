@@ -1,6 +1,4 @@
 # encoding: UTF-8
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
 
 control "V-55971" do
   title "The NGINX web server must be configurable to integrate with an organizations
@@ -21,7 +19,7 @@ each event logged is open to interpretation by a reviewer. By integrating the
 web server into an overall or organization-wide log review, a larger picture of
 events can be viewed, and analysis can be done in a timely and reliable manner.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to determine
   whether the web server is logging security-relevant events.
@@ -58,16 +56,19 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
 
 
   # Ensure access log is linked to stdout
-  describe command('readlink ' + access_log_path) do
+  describe command('readlink ' + input('access_log_path')) do
     its('stdout') { should eq "/dev/stdout\n" }
   end
   # Ensure error log is linked to stderror
-  describe command('readlink ' + error_log_path)do
+  describe command('readlink ' + input('error_log_path'))do
     its('stdout') { should eq "/dev/stderr\n" }
   end
   
-  describe "Manual Step" do
-    skip "Work with the SIEM administrator to determine current security integrations.
+  describe "This test requires a Manual Review: Work with the SIEM administrator 
+  to determine current security integrations.
+  If the SIEM is not integrated with security, this is a finding." do
+    skip "This test requires a Manual Review: Work with the SIEM administrator 
+    to determine current security integrations.
     If the SIEM is not integrated with security, this is a finding."
   end
 end

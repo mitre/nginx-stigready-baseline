@@ -1,29 +1,21 @@
 # encoding: UTF-8
-nginx_log_path = input('nginx_log_path')
-access_log_path = input('access_log_path')
-error_log_path = input('error_log_path')
-
-nginx_owner = input('nginx_owner')
-nginx_group = input('nginx_group')
-sys_admin = input('sys_admin')
-sys_admin_group = input('sys_admin_group')
 
 control "V-41671" do
   title "The log information from the NGINX web server must be protected from
-unauthorized modification."
+  unauthorized modification."
   desc  "Log data is essential in the investigation of events. The accuracy of
-the information is always pertinent. Information that is not accurate does not
-help in the revealing of potential security risks and may hinder the early
-discovery of a system compromise. One of the first steps an attacker will
-undertake is the modification or deletion of log records to cover his tracks
-and prolong discovery.
+  the information is always pertinent. Information that is not accurate does not
+  help in the revealing of potential security risks and may hinder the early
+  discovery of a system compromise. One of the first steps an attacker will
+  undertake is the modification or deletion of log records to cover his tracks
+  and prolong discovery.
 
     The web server must protect the log data from unauthorized modification.
-This can be done by the web server if the web server is also doing the logging
-function. The web server may also use an external log system. In either case,
-the logs must be protected from modification by non-privileged users.
+  This can be done by the web server if the web server is also doing the logging
+  function. The web server may also use an external log system. In either case,
+  the logs must be protected from modification by non-privileged users.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration settings to
   determine if the web server logging features protect log information from
@@ -60,25 +52,25 @@ the logs must be protected from modification by non-privileged users.
   tag "cci": ["CCI-000163"]
   tag "nist": ["AU-9", "Rev_4"]
 
-  authorized_sa_user_list = sys_admin.clone << nginx_owner
-  authorized_sa_group_list = sys_admin_group.clone << nginx_group
+  authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
+  authorized_sa_group_list = input('sys_admin_group').clone << input('nginx_group')
 
   # nginx log directory should have 750 permissions
-  describe file(nginx_log_path) do
+  describe file(input('nginx_log_path')) do
     its('owner') { should be_in authorized_sa_user_list }
     its('group') { should be_in authorized_sa_group_list }
     its('mode')  { should cmp '0750'}
   end
 
   # nginx access log file should have 640 permissions
-  describe file(access_log_path) do
+  describe file(input('access_log_path')) do
     its('owner') { should be_in authorized_sa_user_list }
     its('group') { should be_in authorized_sa_group_list }
     its('mode')  { should cmp '0640'}
   end
 
   # nginx error log file should have 640 permissions
-  describe file(error_log_path) do
+  describe file(input('error_log_path')) do
     its('owner') { should be_in authorized_sa_user_list }
     its('group') { should be_in authorized_sa_group_list }
     its('mode')  { should cmp '0640'} 

@@ -1,5 +1,5 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
+
 
 control "V-41821" do
   title "The NGINX web server document directory must be in a separate partition from
@@ -13,10 +13,9 @@ vulnerabilities. To facilitate such access by misconfiguring the web document
 (home) directory is a serious error. In addition, having the path on the same
 drive as the system folder compounds potential attacks such as drive space
 exhaustion."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  where the document directory is located for each hosted application.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine where the document directory is located for each hosted application.
 
   Check for the following:
 
@@ -42,7 +41,7 @@ exhaustion."
   
     # collect root directores from nginx_conf
     webserver_roots = []
-    nginx_conf_handle = nginx_conf(conf_path)
+    nginx_conf_handle = nginx_conf(input('conf_path'))
 
     describe nginx_conf_handle do
       its ('params') { should_not be_empty }

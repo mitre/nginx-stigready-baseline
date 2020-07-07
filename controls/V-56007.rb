@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-56007" do
   title "Cookies exchanged between the web server and the client, such as
@@ -11,10 +10,10 @@ client-side scripts, information such as session identifiers could be
 compromised and used by an attacker who intercepts the cookie. Setting cookie
 properties (i.e. HttpOnly property) to disallow client-side scripts from
 reading cookies better protects the information inside the cookie."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  how to disable client-side scripts from reading cookies.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed 
+  configuration to determine how to disable client-side scripts from reading 
+  cookies.
 
   If it is determined that the web server is not required to perform session 
   management, this check is Not Applicable. 
@@ -42,13 +41,13 @@ reading cookies better protects the information inside the cookie."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     values = []
     values.push(location.params['proxy_cookie_path'])
     describe "The 'proxy_cookie_path'" do

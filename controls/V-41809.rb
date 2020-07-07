@@ -2,22 +2,21 @@
 
 control "V-41809" do
   title "The NGINX web server must generate a session ID using as much of the
-character set as possible to reduce the risk of brute force."
+  character set as possible to reduce the risk of brute force."
   desc  "Generating a session identifier (ID) that is not easily guessed
-through brute force is essential to deter several types of session attacks. By
-knowing the session ID, an attacker can hijack a user session that has already
-been user-authenticated by the hosted application. The attacker does not need
-to guess user identifiers and passwords or have a secure token since the user
-session has already been authenticated.
+  through brute force is essential to deter several types of session attacks. By
+  knowing the session ID, an attacker can hijack a user session that has already
+  been user-authenticated by the hosted application. The attacker does not need
+  to guess user identifiers and passwords or have a secure token since the user
+  session has already been authenticated.
 
     By generating session IDs that contain as much of the character set as
-possible, i.e., A-Z, a-z, and 0-9, the session ID becomes exponentially harder
-to guess.
+  possible, i.e., A-Z, a-z, and 0-9, the session ID becomes exponentially harder
+  to guess.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  what characters are used in generating session IDs.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine what characters are used in generating session IDs.
 
   If it is determined that the web server is not required to perform session management, 
   this check is Not Applicable. 

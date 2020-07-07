@@ -2,13 +2,13 @@
 
 control "V-41674" do
   title "The log data and records from the NGINX web server must be backed up onto a
-different system or media."
+  different system or media."
   desc  "Protection of log data includes assuring log data is not accidentally
-lost or deleted. Backing up log records to an unrelated system or onto separate
-media than the system the web server is actually running on helps to assure
-that, in the event of a catastrophic system failure, the log records will be
-retained."
-  desc  "rationale", ""
+  lost or deleted. Backing up log records to an unrelated system or onto separate
+  media than the system the web server is actually running on helps to assure
+  that, in the event of a catastrophic system failure, the log records will be
+  retained."
+  
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to determine
   if the web server log records are backed up onto an unrelated system or media
@@ -40,8 +40,11 @@ retained."
   tag "cci": ["CCI-001348"]
   tag "nist": ["AU-9 (2)", "Rev_4"]
 
-  describe "Manual Check" do
-    skip "Interview the Information System Security Officer, System Administrator, Web Manager, 
+  describe "This test requires a Manual Review: Interview the Information System Security Officer, System Administrator, Web Manager, 
+  Webmaster, or developers as necessary to determine whether a tested and verifiable 
+  backup strategy has been implemented for web server software and all web server 
+  data files. If there is not a backup and recovery process for the web server, this is a finding." do
+    skip "This test requires a Manual Review: Interview the Information System Security Officer, System Administrator, Web Manager, 
     Webmaster, or developers as necessary to determine whether a tested and verifiable 
     backup strategy has been implemented for web server software and all web server 
     data files. If there is not a backup and recovery process for the web server, this is a finding."

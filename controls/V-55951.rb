@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-55951" do
   title "The NGINX web server must set an absolute timeout for sessions."
@@ -47,7 +46,7 @@ server."
   tag "cci": ["CCI-002361"]
   tag "nist": ["AC-12", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }

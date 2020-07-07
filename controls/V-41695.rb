@@ -1,23 +1,22 @@
 # encoding: UTF-8
-nginx_disallowed_file_list = input('nginx_disallowed_file_list')
 
 control "V-41695" do
   title "The NGINX web server must provide install options to exclude the
-installation of documentation, sample code, example applications, and
-tutorials."
+  installation of documentation, sample code, example applications, and
+  tutorials."
   desc  "Web server documentation, sample code, example applications, and
-tutorials may be an exploitable threat to a web server because this type of
-code has not been evaluated and approved. A production web server must only
-contain components that are operationally necessary (e.g., compiled code,
-scripts, web-content, etc.).
+  tutorials may be an exploitable threat to a web server because this type of
+  code has not been evaluated and approved. A production web server must only
+  contain components that are operationally necessary (e.g., compiled code,
+  scripts, web-content, etc.).
 
     Any documentation, sample code, example applications, and tutorials must be
-removed from a production web server. To make certain that the documentation
-and code are not installed or uninstalled completely; the web server must offer
-an option as part of the installation process to exclude these packages or to
-uninstall the packages if necessary.
+  removed from a production web server. To make certain that the documentation
+  and code are not installed or uninstalled completely; the web server must offer
+  an option as part of the installation process to exclude these packages or to
+  uninstall the packages if necessary.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server documentation and deployment configuration to
   determine if the web server contains documentation, sample code, example
@@ -70,7 +69,7 @@ uninstall the packages if necessary.
 
   # Add files to check for in the 'nginx_disallowed_file_list' input
 
-  nginx_disallowed_file_list.each do |file|
+  input('nginx_disallowed_file_list').each do |file|
     describe file(file) do
       it { should_not exist }
     end

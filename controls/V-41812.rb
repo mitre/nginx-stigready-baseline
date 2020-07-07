@@ -1,19 +1,18 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41812" do
   title "The NGINX web server must provide a clustering capability."
   desc  "The web server may host applications that display information that
-cannot be disrupted, such as information that is time-critical or
-life-threatening. In these cases, a web server that shuts down or ceases to be
-accessible when there is a failure is not acceptable. In these types of cases,
-clustering of web servers is used.
+  cannot be disrupted, such as information that is time-critical or
+  life-threatening. In these cases, a web server that shuts down or ceases to be
+  accessible when there is a failure is not acceptable. In these types of cases,
+  clustering of web servers is used.
 
-    Clustering of multiple web servers is a common approach to providing
-fail-safe application availability. To assure application availability, the web
-server must provide clustering or some form of failover functionality.
+      Clustering of multiple web servers is a common approach to providing
+  fail-safe application availability. To assure application availability, the web
+  server must provide clustering or some form of failover functionality.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server documentation, deployed configuration, and risk
   analysis documentation to verify that the web server is configured to provide
@@ -44,11 +43,17 @@ server must provide clustering or some form of failover functionality.
   tag "cci": ["CCI-001190"]
   tag "nist": ["SC-24", "Rev_4"]
   
+  nginx_conf_handle = nginx_conf(input('conf_path'))
+
+  describe nginx_conf_handle do
+    its ('params') { should_not be_empty }
+  end
+
   describe nginx do
     its('modules') { should include 'http_proxy' }
   end
 
-  Array(nginx_conf(conf_path).locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     describe 'proxy_pass' do
       it 'should be configured in the location context.' do
         expect(location.params).to(include "proxy_pass")

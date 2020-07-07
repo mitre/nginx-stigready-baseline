@@ -2,19 +2,18 @@
 
 control "V-41693" do
   title "The NGINX web server must only contain services and functions necessary for
-operation."
+  operation."
   desc  "A web server can provide many features, services, and processes. Some
-of these may be deemed unnecessary or too unsecure to run on a production DoD
-system.
+  of these may be deemed unnecessary or too unsecure to run on a production DoD
+  system.
 
     The web server must provide the capability to disable, uninstall, or
-deactivate functionality and services that are deemed to be non-essential to
-the web server mission or can adversely impact server performance.
+  deactivate functionality and services that are deemed to be non-essential to
+  the web server mission or can adversely impact server performance.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  if web server features, services, and processes are installed that are not
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine if web server features, services, and processes are installed that are not
   needed for hosted application deployment.
 
   If the site requires the use of a particular piece of software, the ISSO will need 
@@ -53,8 +52,11 @@ needed by the NGINX web server for operation."
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  describe "Manual Check" do
-    skip "Check the directory structure of the server and ensure that additional, unintended, or 
+  describe "This test requires a Manual Review: Check the directory structure of the server and ensure that additional, unintended, or 
+  unneeded applications are not loaded on the system.
+  If, after review of the application on the system, there is no justification for the 
+  identified software, this is a finding." do
+    skip "This test requires a Manual Review: Check the directory structure of the server and ensure that additional, unintended, or 
     unneeded applications are not loaded on the system.
     If, after review of the application on the system, there is no justification for the 
     identified software, this is a finding."

@@ -1,6 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-authorized_ports = input('authorized_ports')
 
 control "V-55991" do
   title "The NGINX web server must prohibit or restrict the use of nonsecure or
@@ -14,7 +12,7 @@ network-related services that are deemed to be non-essential to the server
 mission, are too unsecure, or are prohibited by the PPSM CAL and vulnerability
 assessments.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server documentation and deployment configuration to
   determine which ports and protocols are enabled.
@@ -44,13 +42,13 @@ assessments.
   tag "cci": ["CCI-001762"]
   tag "nist": ["CM-7 (1) (b)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
   
-  nginx_conf(conf_path).servers.entries.each do |server|
+  nginx_conf_handle.servers.entries.each do |server|
     server.params['listen'].each do |listen|
       describe "The listen directive" do
         listen_address = listen.join
@@ -61,7 +59,7 @@ assessments.
       describe "The listening port" do
         listen_port = listen.join.split(':')[1]
         it "should be an approved port." do
-          expect(listen_port).to(be_in authorized_ports)
+          expect(listen_port).to(be_in input('authorized_ports'))
         end 
       end
     end unless server.params['listen'].nil?

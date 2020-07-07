@@ -1,24 +1,19 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-key_file_path = input('key_file_path')
-
-sys_admin = input('sys_admin')
-sys_admin_group = input('sys_admin_group')
 
 control "V-41731" do
   title "Only authenticated system administrators or the designated PKI Sponsor
-for the NGINX web server must have access to the web servers private key."
+  for the NGINX web server must have access to the web servers private key."
   desc  "The web server's private key is used to prove the identity of the
-server to clients and securely exchange the shared secret key used to encrypt
-communications between the web server and clients.
+  server to clients and securely exchange the shared secret key used to encrypt
+  communications between the web server and clients.
 
     By gaining access to the private key, an attacker can pretend to be an
-authorized server and decrypt the SSL traffic between a client and the web
-server.
+  authorized server and decrypt the SSL traffic between a client and the web
+  server.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  If the NGINX web server does not have a private key, this check is Not Applicable.
+  
+  desc  "check", "If the NGINX web server does not have a private key, this 
+  check is Not Applicable.
 
   Review the web server documentation and deployed configuration to determine
   whether only authenticated system administrators and the designated PKI Sponsor
@@ -55,13 +50,13 @@ server.
   tag "nist": ["IA-5 (2) (b)", "Rev_4"]
 
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.servers).each do |server|
+  nginx_conf_handle.servers.each do |server|
     describe 'The directive' do
       it 'ssl_certificate should exist in the server context.' do
         expect(server.params).to(include "ssl_certificate")
@@ -71,21 +66,21 @@ server.
       end  
     end
     describe 'The private key should have the following permissions:' do
-      Array(server.params["ssl_certificate"]).each do |certificate|
+      server.params["ssl_certificate"].each do |certificate|
         certificate_string = certificate.to_s
         describe file(certificate.join) do
-          its('owner') { should be_in sys_admin_group }
-          its('group') { should be_in sys_admin_group }
+          its('owner') { should be_in input('sys_admin') }
+          its('group') { should be_in input('sys_admin_group') }
           its('mode') { should cmp '0400' }
         end
-      end
-      Array(server.params["ssl_certificate_key"]).each do |certificate_key|
+      end unless server.params["ssl_certificate"].nil?
+      server.params["ssl_certificate_key"].each do |certificate_key|
         describe file(certificate_key.join) do
-          its('owner') { should be_in sys_admin_group }
-          its('group') { should be_in sys_admin_group }
+          its('owner') { should be_in input('sys_admin') }
+          its('group') { should be_in input('sys_admin_group') }
           its('mode') { should cmp '0400' }
         end
-      end
+      end unless server.params["ssl_certificate_key"].nil?
     end
   end 
 end

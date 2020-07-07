@@ -3,18 +3,17 @@
 control "V-41702" do
   title "The web server must have Web Distributed Authoring (WebDAV) disabled."
   desc  "A web server can be installed with functionality that, just by its
-nature, is not secure. Web Distributed Authoring (WebDAV) is an extension to
-the HTTP protocol that, when developed, was meant to allow users to create,
-change, and move documents on a server, typically a web server or web share.
-Allowing this functionality, development, and deployment is much easier for web
-authors.
+  nature, is not secure. Web Distributed Authoring (WebDAV) is an extension to
+  the HTTP protocol that, when developed, was meant to allow users to create,
+  change, and move documents on a server, typically a web server or web share.
+  Allowing this functionality, development, and deployment is much easier for web
+  authors.
 
     WebDAV is not widely used and has serious security concerns because it may
-allow clients to modify unauthorized files on the web server.
+  allow clients to modify unauthorized files on the web server.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the web server documentation and deployment configuration to
+  
+  desc  "check", "Review the web server documentation and deployment configuration to
   determine if Web Distributed Authoring (WebDAV) is enabled.
 
   Execute the following command: 

@@ -1,29 +1,26 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41620" do
   title "The web server must produce log records containing sufficient
-information to establish the identity of any user/subject or process associated
-with an event."
+  information to establish the identity of any user/subject or process associated
+  with an event."
   desc  "Web server logging capability is critical for accurate forensic
-analysis. Without sufficient and accurate information, a correct replay of the
-events cannot be determined.
+  analysis. Without sufficient and accurate information, a correct replay of the
+  events cannot be determined.
 
     Determining user accounts, processes running on behalf of the user, and
-running process identifiers also enable a better understanding of the overall
-event. User tool identification is also helpful to determine if events are
-related to overall user access or specific client tools.
+  running process identifiers also enable a better understanding of the overall
+  event. User tool identification is also helpful to determine if events are
+  related to overall user access or specific client tools.
 
     Log record content that may be necessary to satisfy the requirement of this
-control includes: time stamps, source and destination addresses, user/process
-identifiers, event descriptions, success/fail indications, file names involved,
-and access control or flow control rules invoked.
+  control includes: time stamps, source and destination addresses, user/process
+  identifiers, event descriptions, success/fail indications, file names involved,
+  and access control or flow control rules invoked.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployment configuration to
-  determine if the web server can generate log data containing the user/subject
-  identity.
+  desc  "check", "Review the NGINX web server documentation and deployment 
+  configuration to determine if the web server can generate log data containing 
+  the user/subject identity.
 
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.
@@ -45,14 +42,14 @@ and access control or flow control rules invoked.
   tag "cci": ["CCI-001487"]
   tag "nist": ["AU-3", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.params['http']).each do |http|
-    Array(http["log_format"]).each do |log_format|
+  nginx_conf_handle.params['http'].each do |http|
+    http["log_format"].each do |log_format|
       describe 'remote_user' do
         it 'should be part of every log format in http.' do
           expect(log_format.to_s).to(match /.*?\$remote_user.*?/)

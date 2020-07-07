@@ -2,21 +2,20 @@
 
 control "V-41703" do
   title "The web server must protect system resources and privileged operations
-from hosted applications."
+  from hosted applications."
   desc  "A web server may host one too many applications.  Each application
-will need certain system resources and privileged operations to operate
-correctly.  The web server must be configured to contain and control the
-applications and protect the system resources and privileged operations from
-those not needed by the application for operation.
+  will need certain system resources and privileged operations to operate
+  correctly.  The web server must be configured to contain and control the
+  applications and protect the system resources and privileged operations from
+  those not needed by the application for operation.
 
     Limiting the application will confine the potential harm a compromised
-application could cause to a system.
+  application could cause to a system.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Interview the System Administrator for the NGINX web server or review the NGINX  
-  web server documentation and configuration to determine the access to server 
-  resources given to hosted applications.
+  
+  desc  "check", "Interview the System Administrator for the NGINX web server 
+  or review the NGINX web server documentation and configuration to determine 
+  the access to server resources given to hosted applications.
 
   If hosted applications have access to more system resources than needed for 
   operation, this is a finding.
@@ -33,8 +32,12 @@ application could cause to a system.
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  describe "Manual Check" do
-    skip "Interview the System Administrator for the NGINX web server or review the NGINX  
+  describe "This test requires a Manual Review: Interview the System Administrator for the NGINX web server or review the NGINX  
+  web server documentation and configuration to determine the access to server 
+  resources given to hosted applications.
+  If hosted applications have access to more system resources than needed for 
+  operation, this is a finding." do
+    skip "This test requires a Manual Review: Interview the System Administrator for the NGINX web server or review the NGINX  
     web server documentation and configuration to determine the access to server 
     resources given to hosted applications.
     If hosted applications have access to more system resources than needed for 

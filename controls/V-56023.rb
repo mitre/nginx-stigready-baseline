@@ -1,28 +1,27 @@
 # encoding: UTF-8
 
 control "V-56023" do
-  title "The web server must generate a unique session identifier for each
-session using a FIPS 140-2 approved random number generator."
+  title "The NGINX web server must generate a unique session identifier for each
+  session using a FIPS 140-2 approved random number generator."
   desc  "Communication between a client and the web server is done using the
-HTTP protocol, but HTTP is a stateless protocol. In order to maintain a
-connection or session, a web server will generate a session identifier (ID) for
-each client session when the session is initiated. The session ID allows the
-web server to track a user session and, in many cases, the user, if the user
-previously logged into a hosted application.
+  HTTP protocol, but HTTP is a stateless protocol. In order to maintain a
+  connection or session, a web server will generate a session identifier (ID) for
+  each client session when the session is initiated. The session ID allows the
+  web server to track a user session and, in many cases, the user, if the user
+  previously logged into a hosted application.
 
-    Unique session IDs are the opposite of sequentially generated session IDs,
-which can be easily guessed by an attacker. Unique session identifiers help to
-reduce predictability of generated identifiers. Unique session IDs address
-man-in-the-middle attacks, including session hijacking or insertion of false
-information into a session. If the attacker is unable to identify or guess the
-session information related to pending application traffic, the attacker will
-have more difficulty in hijacking the session or otherwise manipulating valid
-sessions.
+  Unique session IDs are the opposite of sequentially generated session IDs,
+  which can be easily guessed by an attacker. Unique session identifiers help to
+  reduce predictability of generated identifiers. Unique session IDs address
+  man-in-the-middle attacks, including session hijacking or insertion of false
+  information into a session. If the attacker is unable to identify or guess the
+  session information related to pending application traffic, the attacker will
+  have more difficulty in hijacking the session or otherwise manipulating valid
+  sessions.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the web server documentation and deployed configuration to verify
-  that the web server is configured to generate unique session identifiers with a
+  
+  desc  "check", "Review the web server documentation and deployed configuration 
+  to verify that the web server is configured to generate unique session identifiers with a
   FIPS 140-2 approved random number generator.
 
   NGINX web server versions after 1.11.0 have the $request_id embedded variable by 

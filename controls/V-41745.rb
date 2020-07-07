@@ -2,24 +2,23 @@
 
 control "V-41745" do
   title "The NGINX web server must use cryptographic modules that meet the
-requirements of applicable federal laws, Executive Orders, directives,
-policies, regulations, standards, and guidance when encrypting stored data."
+  requirements of applicable federal laws, Executive Orders, directives,
+  policies, regulations, standards, and guidance when encrypting stored data."
   desc  "Encryption is only as good as the encryption modules utilized.
-Unapproved cryptographic module algorithms cannot be verified, and cannot be
-relied upon to provide confidentiality or integrity, and DoD data may be
-compromised due to weak algorithms.
+  Unapproved cryptographic module algorithms cannot be verified, and cannot be
+  relied upon to provide confidentiality or integrity, and DoD data may be
+  compromised due to weak algorithms.
 
     FIPS 140-2 is the current standard for validating cryptographic modules and
-NSA Type-X (where X=1, 2, 3, 4) products are NSA-certified, hardware-based
-encryption modules.
+  NSA Type-X (where X=1, 2, 3, 4) products are NSA-certified, hardware-based
+  encryption modules.
 
     The web server must provide FIPS-compliant encryption modules when storing
-encrypted data and configuration settings.
+  encrypted data and configuration settings.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review NGINX web server documentation and deployed configuration to determine
-  whether the encryption modules utilized for storage of data are FIPS 140-2
+  
+  desc  "check", "Review NGINX web server documentation and deployed configuration 
+  to determine whether the encryption modules utilized for storage of data are FIPS 140-2
   compliant.
 
     Reference the following NIST site to identify validated encryption modules:
@@ -44,8 +43,14 @@ encrypted data and configuration settings.
   tag "cci": ["CCI-000803"]
   tag "nist": ["IA-7", "Rev_4"]
 
-  describe "Manual Check" do
-    skip "Review NGINX web server documentation and deployed configuration to determine
+  describe "This test requires a Manual Review: Review NGINX web server documentation and deployed configuration to determine
+  whether the encryption modules utilized for storage of data are FIPS 140-2
+  compliant.
+  If the web server host utilizes FIPS 140-2 compliant encryption modules for 
+  storage of data, this is not a finding. 
+  If the encryption modules used for storage of data are not FIPS 140-2
+  validated, this is a finding." do
+    skip "This test requires a Manual Review: Review NGINX web server documentation and deployed configuration to determine
     whether the encryption modules utilized for storage of data are FIPS 140-2
     compliant.
     If the web server host utilizes FIPS 140-2 compliant encryption modules for 

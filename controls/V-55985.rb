@@ -1,6 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-authorized_ports = input('authorized_ports')
 
 control "V-55985" do
   title "The NGINX web server must be configured in accordance with the security
@@ -18,11 +16,11 @@ Security-related parameters are those parameters impacting the security state
 of the web server, including the parameters required to satisfy other security
 control requirements.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  if web server is configured in accordance with the security configuration
-  settings based on DoD security configuration or implementation guidance.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed 
+  configuration to determine if web server is configured in accordance with 
+  the security configuration settings based on DoD security configuration or 
+  implementation guidance.
 
   Review the website to determine if 'HTTP' and 'HTTPS' are used in accordance 
   with well-known ports (e.g., 80 and 443) or those ports and services as registered 
@@ -51,13 +49,13 @@ control requirements.
   tag "cci": ["CCI-000366"]
   tag "nist": ["CM-6 b", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
   
-  nginx_conf(conf_path).servers.entries.each do |server|
+  nginx_conf_handle.servers.entries.each do |server|
     server.params['listen'].each do |listen|
       describe "The listen directive" do
         listen_address = listen.join
@@ -68,7 +66,7 @@ control requirements.
       describe "The listening port" do
         listen_port = listen.join.split(':')[1]
           it "should be an approved port." do
-            expect(listen_port).to(be_in authorized_ports)
+            expect(listen_port).to(be_in input('authorized_ports'))
           end 
       end
     end unless server.params['listen'].nil?

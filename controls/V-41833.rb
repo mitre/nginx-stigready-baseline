@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41833" do
   title "The NGINX web server must restrict the ability of users to launch Denial of
@@ -11,10 +10,9 @@ hosted applications and their resource needs for proper operation.
     An example setting that could be used to limit the ability of the web
 server being used in a DoS attack is bandwidth throttling.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  whether the web server has been configured to limit the ability of the web
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine whether the web server has been configured to limit the ability of the web
   server to be used in a DoS attack.
 
   Check if there's a limit on the number of connections allowed and the bandwith allowed:
@@ -44,20 +42,20 @@ server being used in a DoS attack is bandwidth throttling.
   tag "nist": ["SC-5 (1)", "Rev_4"]
 
 
-nginx_conf_handle = nginx_conf(conf_path)
+nginx_conf_handle = nginx_conf(input('conf_path'))
 
 describe nginx_conf_handle do
   its ('params') { should_not be_empty }
 end
 
 # limit_conn_zone - Context:	http
-  Array(nginx_conf_handle.params['http']).each do |http|
+  nginx_conf_handle.params['http'].each do |http|
     describe 'The HTTP context' do
       it 'should include a limit_conn_zone.' do
         expect(http).to(include "limit_conn_zone")
       end
     end
-    Array(http["limit_conn_zone"]).each do |limit_conn_zone|
+    http["limit_conn_zone"].each do |limit_conn_zone|
       describe 'The limit_conn_zone' do
         it 'should include a client address.' do
           expect(limit_conn_zone.to_s).to(include "$binary_remote_addr")
@@ -68,7 +66,7 @@ end
           expect(limit_conn_zone.to_s).to(include "zone=")
         end
       end
-      Array(limit_conn_zone).each do |value|
+      limit_conn_zone.each do |value|
         if value.start_with?("zone")
           zone = value.split(":").last
           describe 'The zone in limit_conn_zone' do
@@ -78,18 +76,18 @@ end
           end
         end
       end
-    end
+    end unless http["limit_conn_zone"].nil?
   end
 
 # limit_conn - Context:	http, server, location
 # limit_rate - Context: location
-  Array(nginx_conf_handle.locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     describe 'Each location context' do
       it 'should include a limit_conn directive.' do
         expect(location.params).to(include "limit_conn")
       end
     end
-    Array(location.params["limit_conn"]).each do |limit_conn|
+    location.params["limit_conn"].each do |limit_conn|
       Array(limit_conn).each do |value|
         describe 'The limit_conn setting' do
           it 'should match this regex: [a-zA-Z0-9]' do
@@ -97,13 +95,13 @@ end
           end
         end
       end
-    end
+    end unless location.params["limit_conn"].nil?
     describe 'Each location context' do
       it 'should include a limit_rate directive.' do
         expect(location.params).to(include "limit_rate")
       end
     end
-    Array(location.params["limit_rate"]).each do |limit_rate|
+    location.params["limit_rate"].each do |limit_rate|
       Array(limit_rate).each do |value|
         describe 'The limit_rate setting' do
           it 'should match this regex: [a-zA-Z0-9]' do
@@ -111,7 +109,7 @@ end
           end
         end
       end
-    end
+    end unless location.params["limit_rate"].nil?
   end
 end
 

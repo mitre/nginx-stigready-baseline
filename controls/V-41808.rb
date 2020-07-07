@@ -14,10 +14,9 @@ session has already been authenticated.
 cause an attacker to take a large amount of time and resources to guess,
 reducing the likelihood of an attacker guessing a session ID.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to see how
-  long the generated session identifiers are.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to see how long the generated session identifiers are.
 
   If it is determined that the web server is not required to perform session 
   management, this check is Not Applicable. 

@@ -1,30 +1,27 @@
 # encoding: UTF-8
-mime_type_path = input('mime_type_path')
-nginx_disallowed_mime_type = input('nginx_disallowed_mime_type')
 
 control "V-41699" do
   title "The NGINX web server must have Multipurpose Internet Mail Extensions (MIME)
-that invoke OS shell programs disabled."
+  that invoke OS shell programs disabled."
   desc  "Controlling what a user of a hosted application can access is part of
-the security posture of the web server. Any time a user can access more
-functionality than is needed for the operation of the hosted application poses
-a security issue. A user with too much access can view information that is not
-needed for the user's job role, or the user could use the function in an
-unintentional manner.
+  the security posture of the web server. Any time a user can access more
+  functionality than is needed for the operation of the hosted application poses
+  a security issue. A user with too much access can view information that is not
+  needed for the user's job role, or the user could use the function in an
+  unintentional manner.
 
     A MIME tells the web server what type of program various file types and
-extensions are and what external utilities or programs are needed to execute
-the file type.
+  extensions are and what external utilities or programs are needed to execute
+  the file type.
 
     A shell is a program that serves as the basic interface between the user
-and the operating system, so hosted application users must not have access to
-these programs. Shell programs may execute shell escapes and can then perform
-unauthorized activities that could damage the security posture of the web
-server.
+  and the operating system, so hosted application users must not have access to
+  these programs. Shell programs may execute shell escapes and can then perform
+  unauthorized activities that could damage the security posture of the web
+  server.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the web server documentation and deployment configuration to
+  
+  desc  "check", "Review the web server documentation and deployment configuration to
   determine if the OS shell is accessible by any MIME types that are enabled.
 
   Enter the following command to find the mime.types file:
@@ -51,10 +48,10 @@ server.
   tag "nist": ["CM-7 a", "Rev_4"]
 
   # Checks for enabled mime types against the disallowed list
-  Array(nginx_disallowed_mime_type).each do |mime_type|
+  input('nginx_disallowed_mime_type').each do |mime_type|
     describe "The MIME type: #{mime_type}" do
       it 'should not be enabled in the configuration' do
-        expect(command("grep -w #{mime_type}" + mime_type_path).stdout).to(eq "")
+        expect(command("grep -w #{mime_type}" + input('mime_type_path')).stdout).to(eq "")
       end
     end
   end

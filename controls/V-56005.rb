@@ -21,10 +21,9 @@ Ratio Info-leak Made Easy (CRIME).
     Cookies shared between the web server and the client when encrypted should
 not also be compressed.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the web server documentation and deployed configuration to determine
-  whether cookies are being sent to the client using SSL/TLS.
+  
+  desc  "check", "Review the web server documentation and deployed configuration 
+  to determine whether cookies are being sent to the client using SSL/TLS.
 
   If the transmission is through a SSL/TLS connection, but the cookie is not
   being compressed, this finding is Not Applicable.

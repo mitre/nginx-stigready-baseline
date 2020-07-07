@@ -1,9 +1,4 @@
 # encoding: UTF-8
-nginx_owner = input('nginx_owner')
-nginx_group = input('nginx_group')
-sys_admin = input('sys_admin')
-sys_admin_group = input('sys_admin_group')
-
 
 control "V-55993" do
   title "Anonymous user access to the NGINX web server application directories must
@@ -19,16 +14,26 @@ used for forensic reporting in the case of a security issue. Allowing anonymous
 users to make changes will also grant change capabilities to anybody without
 forcing a user to authenticate before the changes can be made.
   "
-  desc  "rationale", ""
-  desc  "check", "
-    Review the NGINX web server documentation and configuration to determine if
-anonymous users can make changes to the web server or any applications hosted
-by the web server.
+  
+  desc  "check", "Review the NGINX web server documentation and configuration 
+  to determine if anonymous users can make changes to the web server or any 
+  applications hosted by the web server.
+  
+  Obtain a list of the user accounts for the system, noting the privileges for each account.
 
-    If anonymous users can make changes, this is a finding.
+  Verify with the System Administrator (SA) or the Information System Security Officer (ISSO) that 
+  all privileged accounts are mission essential and documented.
+
+  Verify with the SA or the ISSO that all non-administrator access to shell scripts and operating 
+  system functions are mission essential and documented.
+
+  If undocumented privileged accounts are present, this is a finding.
+
+  If undocumented access to shell scripts or operating system functions is present (i.e. anonymous users 
+  can make changes), this is a finding.
   "
-  desc  "fix", "Configure the web server to not allow anonymous users to change
-the web server or any hosted applications."
+  desc  "fix", "Ensure non-administrators (e.g. anonymous) are not allowed access to the directory tree, 
+  the shell, or other operating system functions and utilities."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000211-WSR-000031"
@@ -39,7 +44,7 @@ the web server or any hosted applications."
   tag "cci": ["CCI-001082"]
   tag "nist": ["SC-2", "Rev_4"]
 
-  authorized_sa_user_list = sys_admin.clone << nginx_owner
+  authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
   
   describe "Unauthorized users" do
     it "should not have shell access." do

@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-55953" do
   title "Remote access to the NGINX web server must follow access policy or work in
@@ -16,11 +15,10 @@ designed to enforce policy requirements.
 implementing IP filtering rules, using https instead of http for communication,
 implementing secure tokens, and validating users.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server product documentation and deployed configuration to
-  determine if the server or an enterprise tool is enforcing the organization's
-  requirements for remote connections.
+  
+  desc  "check", "Review the NGINX web server product documentation and deployed 
+  configuration to determine if the server or an enterprise tool is enforcing the 
+  organization's requirements for remote connections.
 
   If the an enterprise tools is enforcing the organization's requirements for remote 
   connections, this control must be reviewed Manually.
@@ -50,13 +48,13 @@ implementing secure tokens, and validating users.
   tag "cci": ["CCI-002314"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     deny_values = []
     deny_values.push(location.params['deny']) unless location.params['deny'].nil?
     describe "Each location context" do

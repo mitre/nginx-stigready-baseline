@@ -1,20 +1,18 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41609" do
   title "The NGINX web server must capture, record, and log all content related to a
-user session."
+  user session."
   desc  "A user session to a web server is in the context of a user accessing a
-hosted application that extends to any plug-ins/modules and services that may
-execute on behalf of the user.
+  hosted application that extends to any plug-ins/modules and services that may
+  execute on behalf of the user.
 
     The web server must be capable of enabling a setting for troubleshooting,
-debugging, or forensic gathering purposes which will log all user session
-information related to the hosted application session. Without the capability
-to capture, record, and log all content related to a user session,
-investigations into suspicious user activity would be hampered.
+  debugging, or forensic gathering purposes which will log all user session
+  information related to the hosted application session. Without the capability
+  to capture, record, and log all content related to a user session,
+  investigations into suspicious user activity would be hampered.
   "
-  desc  "rationale", ""
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to determine 
   if the NGINX web server captures and logs all content related to a user session.
@@ -36,15 +34,15 @@ investigations into suspicious user activity would be hampered.
   tag "cci": ["CCI-001462"]
   tag "nist": ["AU-14 (2)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
   # log_format - Context:	http
-  Array(nginx_conf_handle.params['http']).each do |http|
-    Array(http["log_format"]).each do |log_format|
+  nginx_conf_handle.params['http'].each do |http|
+    http["log_format"].each do |log_format|
       describe 'remote_user' do
         it 'should be part of every log format in the http context.' do
           expect(log_format.to_s).to(match /.*?\$remote_user.*?/)

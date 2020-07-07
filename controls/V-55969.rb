@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-55969" do
   title "The NGINX web server must not impede the ability to write specified log
@@ -10,9 +9,8 @@ of audit records and logs provides for efficiency in maintenance and management
 of records, enterprise analysis of events, and backup and archiving of event
 records enterprise-wide. The web server and related components are required to
 be capable of writing logs to centralized audit log servers."
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployment configuration to
+  
+  desc  "check", "Review the NGINX web server documentation and deployment configuration to
   determine if the web server can write log data to, or if log data can be
   transferred to, a separate audit server.
 
@@ -48,20 +46,20 @@ be capable of writing logs to centralized audit log servers."
   tag "nist": ["AU-4 (1)", "Rev_4"]
 
   # Verify that access_log and error_log is enabled
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.params['http']).each do |http|
+  nginx_conf_handle.params['http'].each do |http|
     describe 'Each http context' do
       it 'should include an access_log directive.' do
         expect(http).to(include "access_log")
       end
     end
-    Array(http["access_log"]).each do |access_log|
-      Array(access_log).each do |access_value|
+    http["access_log"].each do |access_log|
+      access_log.each do |access_value|
         if access_value.include? "access.log"
           describe file(access_value) do
             it 'The access log should exist.' do
@@ -72,8 +70,8 @@ be capable of writing logs to centralized audit log servers."
       end
     end
   end
-  Array(nginx_conf_handle.params['error_log']).each do |error_log|
-    Array(error_log).each do |error_value|
+  nginx_conf_handle.params['error_log'].each do |error_log|
+    error_log.each do |error_value|
       if error_value.include? "error.log"
         describe file(error_value) do
           it 'The error log should exist.' do
@@ -84,8 +82,12 @@ be capable of writing logs to centralized audit log servers."
     end       
   end
 
-  describe "Manual Step" do
-    skip "Work with SIEM administrator to determine audit configurations.
+  describe "This test requires a Manual Review: Work with SIEM administrator 
+  to determine audit configurations.
+  If there is a setting within the SIEM that could impede the ability to write 
+  specific log record content, this is a finding." do
+    skip "This test requires a Manual Review: Work with SIEM administrator 
+    to determine audit configurations.
     If there is a setting within the SIEM that could impede the ability to write 
     specific log record content, this is a finding."
   end

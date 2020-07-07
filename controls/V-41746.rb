@@ -1,24 +1,22 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-approved_ssl_protocols = input('approved_ssl_protocols')
 
 control "V-41746" do
   title "The NGINX web server must use cryptographic modules that meet the
-requirements of applicable federal laws, Executive Orders, directives,
-policies, regulations, standards, and guidance for such authentication."
+  requirements of applicable federal laws, Executive Orders, directives,
+  policies, regulations, standards, and guidance for such authentication."
   desc  "Encryption is only as good as the encryption modules utilized.
-Unapproved cryptographic module algorithms cannot be verified and cannot be
-relied upon to provide confidentiality or integrity, and DoD data may be
-compromised due to weak algorithms.
+  Unapproved cryptographic module algorithms cannot be verified and cannot be
+  relied upon to provide confidentiality or integrity, and DoD data may be
+  compromised due to weak algorithms.
 
     FIPS 140-2 is the current standard for validating cryptographic modules and
-NSA Type-X (where X=1, 2, 3, 4) products are NSA-certified, hardware-based
-encryption modules.
+  NSA Type-X (where X=1, 2, 3, 4) products are NSA-certified, hardware-based
+  encryption modules.
 
     The web server must provide FIPS-compliant encryption modules when
-authenticating users and processes.
+  authenticating users and processes.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review NGINX web server documentation and deployed configuration to determine
   whether the encryption modules utilized for authentication are FIPS 140-2
@@ -50,25 +48,25 @@ authenticating users and processes.
   tag "cci": ["CCI-000803"]
   tag "nist": ["IA-7", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.servers).each do |server|
+  nginx_conf_handle.servers.each do |server|
     describe 'Each server context' do
       it 'should include a ssl_protocols directive.' do
         expect(server.params).to(include "ssl_protocols")
       end
     end
-    Array(server.params["ssl_protocols"]).each do |protocol|
+    server.params["ssl_protocols"].each do |protocol|
       describe 'Each protocol' do
         it 'should be included in the list of protocols approved to encrypt data' do
-          expect(protocol).to(be_in approved_ssl_protocols)
+          expect(protocol).to(be_in input('approved_ssl_protocols'))
         end
       end
-    end
+    end unless server.params["ssl_protocols"].nil?
   end 
 end
 

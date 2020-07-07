@@ -2,25 +2,24 @@
 
 control "V-41807" do
   title "The NGINX web server must generate unique session identifiers that cannot be
-reliably reproduced."
+  reliably reproduced."
   desc  "Communication between a client and the web server is done using the
-HTTP protocol, but HTTP is a stateless protocol. In order to maintain a
-connection or session, a web server will generate a session identifier (ID) for
-each client session when the session is initiated. The session ID allows the
-web server to track a user session and, in many cases, the user, if the user
-previously logged into a hosted application.
+  HTTP protocol, but HTTP is a stateless protocol. In order to maintain a
+  connection or session, a web server will generate a session identifier (ID) for
+  each client session when the session is initiated. The session ID allows the
+  web server to track a user session and, in many cases, the user, if the user
+  previously logged into a hosted application.
 
-    By being able to guess session IDs, an attacker can easily perform a
-man-in-the-middle attack. To truly generate random session identifiers that
-cannot be reproduced, the web server session ID generator, when used twice with
-the same input criteria, must generate an unrelated random ID.
+      By being able to guess session IDs, an attacker can easily perform a
+  man-in-the-middle attack. To truly generate random session identifiers that
+  cannot be reproduced, the web server session ID generator, when used twice with
+  the same input criteria, must generate an unrelated random ID.
 
     The session ID generator also needs to be a FIPS 140-2 approved generator.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to verify
-  that random and unique session identifiers are generated.
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to verify that random and unique session identifiers are generated.
 
   If it is determined that the web server is not required to perform session management, 
   this check is Not Applicable. 

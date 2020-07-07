@@ -19,12 +19,11 @@ warning to the ISSO and SA at a minimum.
     This requirement can be met by configuring the web server to utilize a
 dedicated log tool that meets this requirement.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployment configuration settings
-  to determine if the web server log system provides a warning to the ISSO and SA
-  when allocated record storage volume reaches 75% of maximum record storage
-  capacity.
+  
+  desc  "check", "Review the NGINX web server documentation and deployment 
+  configuration settings to determine if the web server log system provides a 
+  warning to the ISSO and SA when allocated record storage volume reaches 75% of 
+  maximum record storage capacity.
 
   Work with the SIEM administrator to determine if an alert is configured when 
   allocated record storage volume reaches 75% of maximum log record storage capacity.
@@ -43,9 +42,13 @@ dedicated log tool that meets this requirement.
   tag "cci": ["CCI-001855"]
   tag "nist": ["AU-5 (1)", "Rev_4"]
 
-  describe "Manual Check" do
-    skip "Work with the SIEM administrator to determine if an alert is configured when 
-    allocated record storage volume reaches 75% of maximum log record storage capacity.
+  describe "This test requires a Manual Review: Work with the SIEM administrator to determine 
+  if an alert is configured when allocated record storage volume reaches 75% of maximum log 
+  record storage capacity.
+  If there is no alert configured, this is a finding." do
+    skip "This test requires a Manual Review: Work with the SIEM administrator to determine 
+    if an alert is configured when allocated record storage volume reaches 75% of maximum log 
+    record storage capacity.
     If there is no alert configured, this is a finding."
   end
 end

@@ -1,11 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-access_control_files = input('access_control_files')
-
-nginx_owner = input('nginx_owner')
-nginx_group = input('nginx_group')
-sys_admin = input('sys_admin')
-sys_admin_group = input('sys_admin_group')
 
 control "V-55981" do
   title "The NGINX web server application, libraries, and configuration files must
@@ -20,11 +13,10 @@ effects from the changes, files such as the web server application files,
 libraries, and configuration files must have permissions and ownership set
 properly to only allow privileged users access.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and configuration to determine if the
-  web server provides unique account roles specifically for the purposes of
-  segmenting the responsibilities for managing the web server.
+  
+  desc  "check", "Review the NGINX web server documentation and configuration 
+  to determine if the web server provides unique account roles specifically for 
+  the purposes of segmenting the responsibilities for managing the web server.
 
   This check verifies that the SA or Web Manager controlled account owns the key 
   web server files. These same files, which control the configuration of the web 
@@ -57,9 +49,8 @@ properly to only allow privileged users access.
   If root or an authorized user does not own the web system files and directories, and the 
   permission are not correct, this is a finding.
   "
-  desc  "fix", "
-  Restrict access to the web servers access control files and application directories to only 
-  the System Administrator, Web Manager, or the Web Manager designees.
+  desc  "fix", "Restrict access to the web servers access control files and application 
+  directories to only the System Administrator, Web Manager, or the Web Manager designees.
 
   Determine where the key server files are located by running the following command (per file):
   
@@ -88,17 +79,17 @@ properly to only allow privileged users access.
   tag "cci": ["CCI-001813"]
   tag "nist": ["CM-5 (1)", "Rev_4"]
 
-  authorized_sa_user_list = sys_admin.clone << nginx_owner
-  authorized_sa_group_list = sys_admin_group.clone << nginx_group
+  authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
+  authorized_sa_group_list = input('sys_admin_group').clone << input('nginx_group')
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
   nginx_conf_handle.params
   
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  access_control_files.each do |file|
+  input('access_control_files').each do |file|
     file_path = command("find / -name #{file}").stdout.chomp
 
     if file_path.empty?

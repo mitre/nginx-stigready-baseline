@@ -1,23 +1,22 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-56035" do
   title "The NGINX web server must display a default hosted application web page, not
-a directory listing, when a requested web page cannot be found."
+  a directory listing, when a requested web page cannot be found."
   desc  "The goal is to completely control the web user's experience in
-navigating any portion of the web document root directories. Ensuring all web
-content directories have at least the equivalent of an index.html file is a
-significant factor to accomplish this end.
+  navigating any portion of the web document root directories. Ensuring all web
+  content directories have at least the equivalent of an index.html file is a
+  significant factor to accomplish this end.
 
     Enumeration techniques, such as URL parameter manipulation, rely upon being
-able to obtain information about the web server's directory structure by
-locating directories without default pages. In the scenario, the web server
-will display to the user a listing of the files in the directory being
-accessed. By having a default hosted application web page, the anonymous web
-user will not obtain directory browsing information or an error message that
-reveals the server type and version.
+  able to obtain information about the web server's directory structure by
+  locating directories without default pages. In the scenario, the web server
+  will display to the user a listing of the files in the directory being
+  accessed. By having a default hosted application web page, the anonymous web
+  user will not obtain directory browsing information or an error message that
+  reveals the server type and version.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to locate
   all the web document directories:
@@ -47,7 +46,7 @@ reveals the server type and version.
 
   # collect root directores from nginx_conf
   webserver_roots = []
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }

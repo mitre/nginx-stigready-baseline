@@ -16,10 +16,9 @@ session IDs that have already been authenticated. Forcing the web server to
 only accept web server-generated session IDs and to create new session IDs once
 a user is authenticated will limit session hijacking.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the web server documentation and deployed configuration to determine
-  whether the web server accepts session IDs that are not system-generated.
+  
+  desc  "check", "Review the web server documentation and deployed configuration 
+  to determine whether the web server accepts session IDs that are not system-generated.
 
   If it is determined that the web server is not required to perform session management, 
   this check is Not Applicable. 

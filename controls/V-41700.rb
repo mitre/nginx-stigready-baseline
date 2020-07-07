@@ -1,20 +1,20 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
+
 nginx_allowed_script_list = input('nginx_allowed_script_list')
 
 control "V-41700" do
   title "The web server must allow the mappings to unused and vulnerable
-scripts to be removed."
+  scripts to be removed."
   desc  "Scripts allow server side processing on behalf of the hosted
-application user or as processes needed in the implementation of hosted
-applications. Removing scripts not needed for application operation or deemed
-vulnerable helps to secure the web server.
+  application user or as processes needed in the implementation of hosted
+  applications. Removing scripts not needed for application operation or deemed
+  vulnerable helps to secure the web server.
 
     To assure scripts are not added to the web server and run maliciously,
-those script mappings that are not needed or used by the web server for hosted
-application operation must be removed.
+  those script mappings that are not needed or used by the web server for hosted
+  application operation must be removed.
   "
-  desc  "rationale", ""
+  
   desc  "check", "
   Review the web server documentation and deployment configuration to
   determine what script mappings are available.
@@ -49,14 +49,14 @@ application operation must be removed.
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
-  Array(nginx_conf_handle.locations).each do |location|
-    Array(location.params["fastcgi_params"]).each do |value|
+  nginx_conf_handle.locations.each do |location|
+    location.params["fastcgi_params"].each do |value|
       if (value[0] == "SCRIPT_FILENAME")
         cgi_script_path = command("echo #{value[1]} | cut -d '$' -f 1").stdout
         cgi_scripts = command("ls #{cgi_script_path}").stdout.split("\n")
@@ -68,7 +68,7 @@ application operation must be removed.
           end
         end
       end 
-    end
+    end unless location.params["fastcgi_params"].nil?
   end
 end
 

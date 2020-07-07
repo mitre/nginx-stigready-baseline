@@ -1,8 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
-nginx_owner = input('nginx_owner')
-sys_admin = input('sys_admin')
-
 
 control "V-55987" do
   title "The account used to run the NGINX web server must not have a valid 
@@ -23,11 +19,10 @@ until change, reuse policy, etc.
     Service accounts or system accounts that have no login capability do not
 need to have passwords set or changed.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployment configuration to
-  determine what non-service/system accounts were installed by the web server
-  installation process.
+  
+  desc  "check", "Review the NGINX web server documentation and deployment 
+  configuration to determine what non-service/system accounts were installed 
+  by the web server installation process.
 
 
   Identify the account that is running the 'nginx' process:
@@ -80,7 +75,7 @@ need to have passwords set or changed.
       service_accounts.push(account)
     end
   else
-    service_accounts = sys_admin.clone << nginx_owner
+    service_accounts = input('sys_admin').clone << input('nginx_owner')
   end
 
   service_accounts.flatten!

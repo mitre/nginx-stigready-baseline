@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-41854" do
   title "Warning and error messages displayed to clients must be modified to
@@ -19,10 +18,9 @@ hosted application, and any backends being used for data storage.
 attacks might be successful. The information given to users must be minimized
 to not aid in the blueprinting of the web server.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the NGINX web server documentation and deployed configuration to determine
-  whether the web server offers different modes of operation that will minimize
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine whether the web server offers different modes of operation that will minimize
   the identity of the web server, patches, loaded modules, and directory paths
   given to clients on error conditions.
 
@@ -47,20 +45,20 @@ to not aid in the blueprinting of the web server.
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
   # Within http
-  Array(nginx_conf_handle.params['http']).each do |http|
+  nginx_conf_handle.params['http'].each do |http|
     describe 'server_tokens directive' do
       it 'should exist and be off in the http context.' do
         expect(http).to(include "server_tokens")
-        Array(http["server_tokens"]).each do |tokens|
+        http["server_tokens"].each do |tokens|
           expect(tokens).to(cmp 'off')
-        end
+        end unless http["server_tokens"].nil?
       end
     end
   end 
@@ -69,9 +67,9 @@ to not aid in the blueprinting of the web server.
   Array(nginx_conf_handle.servers).each do |server|
     describe 'server_tokens' do
       it 'should be off if found in the server context.' do
-        Array(server.params["server_tokens"]).each do |server_token|       
+        server.params["server_tokens"].each do |server_token|       
           expect(server_token).to (cmp 'off').or (be nil)
-        end 
+        end unless server.params["server_tokens"].nil?
       end
     end
   end
@@ -80,9 +78,9 @@ to not aid in the blueprinting of the web server.
   Array(nginx_conf_handle.locations).each do |location|
     describe 'server_tokens' do
       it 'should be off if found in the location context.' do
-          Array(location.params["server_tokens"]).each do |server_token|       
-            expect(server_token).to (cmp 'off').or (be nil)
-        end 
+        location.params["server_tokens"].each do |server_token|       
+          expect(server_token).to (cmp 'off').or (be nil)
+        end unless location.params["server_tokens"].nil?
       end
     end
   end

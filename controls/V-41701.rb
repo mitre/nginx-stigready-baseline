@@ -1,24 +1,21 @@
 # encoding: UTF-8
-mime_type_path = input('mime_type_path')
-nginx_disallowed_mime_type = input('nginx_disallowed_mime_type')
 
 control "V-41701" do
-  title "The web server must have resource mappings set to disable the serving
-of certain file types."
+  title "The NGINX web server must have resource mappings set to disable the serving
+  of certain file types."
   desc  "Resource mapping is the process of tying a particular file type to a
-process in the web server that can serve that type of file to a requesting
-client and to identify which file types are not to be delivered to a client.
+  process in the web server that can serve that type of file to a requesting
+  client and to identify which file types are not to be delivered to a client.
 
     By not specifying which files can and which files cannot be served to a
-user, the web server could deliver to a user web server configuration files,
-log files, password files, etc.
+  user, the web server could deliver to a user web server configuration files,
+  log files, password files, etc.
 
     The web server must only allow hosted application file types to be served
-to a user and all other types must be disabled.
+  to a user and all other types must be disabled.
   "
-  desc  "rationale", ""
-  desc  "check", "
-  Review the web server documentation and deployment configuration to
+  
+  desc  "check", "Review the web server documentation and deployment configuration to
   determine what types of files are being used for the hosted applications.
 
   Enter the following command to find the mime.types file:
@@ -43,10 +40,10 @@ to a user and all other types must be disabled.
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  Array(nginx_disallowed_mime_type).each do |mime_type|
+  input('nginx_disallowed_mime_type').each do |mime_type|
     describe "The MIME type: #{mime_type}" do
       it 'should not be enabled in the configuration' do
-        expect(command("grep -w #{mime_type}" + mime_type_path).stdout).to(eq "")
+        expect(command("grep -w #{mime_type}" + input('mime_type_path')).stdout).to(eq "")
       end
     end
   end

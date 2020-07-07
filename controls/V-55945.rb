@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-55945" do
   title "The NGINX web server must enforce approved authorizations for logical access
@@ -16,7 +15,7 @@ certificate to an account with an associated set of permissions on the system.
 If the web server relied only on the possession of the certificate and did not
 map to system roles and privileges, each user would have the same abilities and
 roles to make changes to the production system."
-  desc  "rationale", ""
+  
   desc  "check", "
   The NGINX web server must be configured to perform an authorization check to
   verify that the authenticated entity should be granted access to the requested
@@ -42,7 +41,7 @@ roles to make changes to the production system."
   tag "cci": ["CCI-000213"]
   tag "nist": ["AC-3", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
@@ -64,7 +63,7 @@ roles to make changes to the production system."
   auth_uris.uniq!
 
   # Make sure all locations include an auth_request directive except the location the auth_request gets sent to
-  Array(nginx_conf_handle.locations).each do |location|
+  nginx_conf_handle.locations.each do |location|
     auth_uris.each do |uri|
       describe "Each location context" do
         it 'should include an auth_request directive.' do

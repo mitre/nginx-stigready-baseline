@@ -1,5 +1,4 @@
 # encoding: UTF-8
-conf_path = input('conf_path')
 
 control "V-55959" do
   title "The NGINX web server must use a logging mechanism that is configured to
@@ -16,9 +15,8 @@ server administrator along with the physical location of the partition and
 disk. Refer to NIST SP 800-92 for specific requirements on log rotation and
 storage dependent on the impact of the web server.
   "
-  desc  "rationale", ""
-  desc  "check", "
-    Review the NGINX web server documentation and deployment configuration to
+  
+  desc  "check", "Review the NGINX web server documentation and deployment configuration to
   determine if the web server is using a logging mechanism to store log records.
   If a logging mechanism is in use, validate that the mechanism is configured to
   use record storage capacity in accordance with specifications within NIST SP
@@ -56,21 +54,21 @@ storage dependent on the impact of the web server.
   tag "cci": ["CCI-001849"]
   tag "nist": ["AU-4", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(conf_path)
+  nginx_conf_handle = nginx_conf(input('conf_path'))
 
   describe nginx_conf_handle do
     its ('params') { should_not be_empty }
   end
 
   # Verify that access_log and error_log is enabled
-  Array(nginx_conf_handle.params['http']).each do |http|
+  nginx_conf_handle.params['http'].each do |http|
     describe 'Each http context' do
       it 'should include an access_log directive.' do
         expect(http).to(include "access_log")
       end
     end
-    Array(http["access_log"]).each do |access_log|
-      Array(access_log).each do |access_value|
+    http["access_log"].each do |access_log|
+      access_log.each do |access_value|
         if access_value.include? "access.log"
           describe file(access_value) do
             it 'The access log should exist.' do
@@ -81,8 +79,8 @@ storage dependent on the impact of the web server.
       end
     end
   end
-  Array(nginx_conf_handle.params['error_log']).each do |error_log|
-    Array(error_log).each do |error_value|
+  nginx_conf_handle.params['error_log'].each do |error_log|
+    error_log.each do |error_value|
       if error_value.include? "error.log"
         describe file(error_value) do
           it 'The error log should exist.' do
@@ -93,8 +91,12 @@ storage dependent on the impact of the web server.
     end       
   end
 
-  describe "Manual Step" do
-    skip "Work with SIEM administrator to determine log storage capacity.
+  describe "This test requires a Manual Review: Work with SIEM administrator 
+  to determine log storage capacity.
+  If there is no setting within a SIEM to accommodate enough a large logging 
+  capacity, this is a finding." do
+    skip "This test requires a Manual Review: Work with SIEM administrator 
+    to determine log storage capacity.
     If there is no setting within a SIEM to accommodate enough a large logging 
     capacity, this is a finding."
   end
