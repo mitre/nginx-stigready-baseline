@@ -195,3 +195,6 @@ tramp
 /.envrc
 results/
 contrib/*
+
+# Test Results (.json)
+*.json

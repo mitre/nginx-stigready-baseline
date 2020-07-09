@@ -51,7 +51,7 @@ control "V-41699" do
   input('nginx_disallowed_mime_type').each do |mime_type|
     describe "The MIME type: #{mime_type}" do
       it 'should not be enabled in the configuration' do
-        expect(command("grep -w #{mime_type}" + input('mime_type_path')).stdout).to(eq "")
+        expect(command("grep -w #{mime_type} " + input('mime_type_path')).stdout).to(eq "")
       end
     end
   end
