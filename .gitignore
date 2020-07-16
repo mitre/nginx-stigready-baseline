@@ -198,3 +198,9 @@ contrib/*
 
 # Test Results (.json)
 *.json
+
+# Kitchen logs 
+.kitchen
+
+# Gem
+Gemfile.lock

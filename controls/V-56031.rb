@@ -50,6 +50,5 @@ control "V-56031" do
     user identifiers and passwords are being encrypted by the web server. If the
     user information is not being encrypted when stored, this is a finding."
   end
-  
 end
 

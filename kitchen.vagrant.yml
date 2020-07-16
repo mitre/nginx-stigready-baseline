@@ -1,0 +1,51 @@
+---
+driver:
+  name: vagrant
+  driver_config:
+    ssl_verify_mode: ":verify_none"
+
+provisioner:
+  name: ansible_playbook
+  hosts: all
+  require_ansible_repo: false
+  require_ansible_omnibus: true
+  require_chef_for_busser: false
+  require_ruby_for_busser: false
+  ansible_verbose: true
+  roles_path: ./spec/ansible/nginx-hardening
+  requirements_path: ./spec/ansible/nginx-hardening/requirements.yml
+  playbook: ./spec/ansible/nginx-hardening/playbook.yml
+  galaxy_ignore_certs: true
+
+verifier:
+  name: inspec
+  sudo: true
+  load_plugins: true
+  reporter:
+    - cli
+    - json:./results/nginx-vanilla-results.json
+  inspec_tests:
+    - path: ./
+  input_files:
+    - ./srg-inputs.yml
+
+platforms:
+  - name: ubuntu-18.04
+    lifecycle:
+      post_create:
+        - remote: sudo touch /etc/apt/sources.list.d/nginx.list
+        - remote: echo 'deb [arch=amd64] http://nginx.org/packages/mainline/ubuntu/ bionic nginx' | sudo tee -a /etc/apt/sources.list.d/nginx.list
+        - remote: echo 'deb-src http://nginx.org/packages/mainline/ubuntu/ bionic nginx' |  sudo tee -a /etc/apt/sources.list.d/nginx.list
+        - remote: sudo wget http://nginx.org/keys/nginx_signing.key
+        - remote: sudo apt-key add nginx_signing.key
+        - remote: sudo apt update
+        - remote: sudo apt install nginx
+        - remote: sudo systemctl start nginx
+        
+    driver:
+      box: bento/ubuntu-18.04 
+
+suites:
+  - name: nginx
+
+

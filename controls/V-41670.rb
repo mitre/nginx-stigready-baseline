@@ -63,18 +63,20 @@ control "V-41670" do
     its('mode')  { should cmp '0750'}
   end
 
-  # nginx access log file should have 640 permissions
-  describe file(input('access_log_path')) do
-    its('owner') { should be_in authorized_sa_user_list }
-    its('group') { should be_in authorized_sa_group_list }
-    its('mode')  { should cmp '0640'}
-  end
+  if virtualization.system != 'docker'
+    # nginx access log file should have 640 permissions
+    describe file(input('access_log_path')) do
+      its('owner') { should be_in authorized_sa_user_list }
+      its('group') { should be_in authorized_sa_group_list }
+      its('mode')  { should cmp '0640'}
+    end
 
-  # nginx error log file should have 640 permissions
-  describe file(input('error_log_path')) do
-    its('owner') { should be_in authorized_sa_user_list }
-    its('group') { should be_in authorized_sa_group_list }
-    its('mode')  { should cmp '0640'} 
-  end
+    # nginx error log file should have 640 permissions
+    describe file(input('error_log_path')) do
+      its('owner') { should be_in authorized_sa_user_list }
+      its('group') { should be_in authorized_sa_group_list }
+      its('mode')  { should cmp '0640'} 
+    end
+  end 
 end
 

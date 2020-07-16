@@ -19,7 +19,7 @@ control "V-41694" do
 
   Verify the ‘nginx_http_proxy_module’ module is not installed.
 
-    # grep the 'proxy_pass' directive in the location context of the  nginx.conf and any 
+    # grep the 'proxy_pass' directive in the location context of the nginx.conf and any 
     separated include configuration file.
 
   If the 'nginx_http_proxy_module' module is installed and the 'proxy_pass' directive exists, 

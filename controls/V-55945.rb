@@ -53,11 +53,11 @@ roles to make changes to the production system."
     auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
   end
   # This list should not be empty or auth_request is not being implemented
-  describe "The auth_uri list" do
-    it "should not be empty." do
-      expect(auth_uris).not_to(be_empty)
-    end  
-  end
+  # describe "The auth_uri list" do
+  #   it "should not be empty." do
+  #     expect(auth_uris).not_to(be_empty)
+  #   end  
+  # end
 
   auth_uris.flatten!
   auth_uris.uniq!

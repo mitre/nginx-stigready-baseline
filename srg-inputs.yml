@@ -46,10 +46,10 @@ nginx_owner: 'nginx'
 nginx_group: 'nginx'
 
 #description: The system adminstrator
-sys_admin : ['root']
+sys_admin : ['root', 'vagrant']
 
 #description: The system adminstrator group
-sys_admin_group: ['root']
+sys_admin_group: ['root', 'adm', 'vagrant']
 
 
 #description: List of non admin user accounts

@@ -24,17 +24,19 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   Review the NGINX web server documentation and deployed configuration to determine
   whether the web server is logging security-relevant events.
 
-  Execute the following commands to verify that the NGINX web server is producing 
-  logs and linking them to stdout and stderr:
-  # readlink <access_log_path>/access.log
-  # readlink <error_log_path>/error.log
-
-  If the access.log and error.log files are not linked to stdout and stderr, 
-  this is a finding.
-
   Work with the SIEM administrator to determine current security integrations.
 
   If the SIEM is not integrated with security, this is a finding.
+
+  Verify the following only if in Docker environment - 
+
+    Execute the following commands to verify that the NGINX web server is producing 
+    logs and linking them to stdout and stderr:
+    # readlink <access_log_path>/access.log
+    # readlink <error_log_path>/error.log
+
+    If the access.log and error.log files are not linked to stdout and stderr, 
+    this is a finding.
   "
   desc  "fix", "Execute the following command on the NGINX web server to link logs 
   to stdout and stderr:
@@ -54,14 +56,15 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   tag "cci": ["CCI-001851"]
   tag "nist": ["AU-4 (1)", "Rev_4"]
 
-
-  # Ensure access log is linked to stdout
-  describe command('readlink ' + input('access_log_path')) do
-    its('stdout') { should eq "/dev/stdout\n" }
-  end
-  # Ensure error log is linked to stderror
-  describe command('readlink ' + input('error_log_path'))do
-    its('stdout') { should eq "/dev/stderr\n" }
+  if virtualization.system == 'docker'
+    # Ensure access log is linked to stdout
+    describe command('readlink ' + input('access_log_path')) do
+      its('stdout') { should eq "/dev/stdout\n" }
+    end
+    # Ensure error log is linked to stderror
+    describe command('readlink ' + input('error_log_path'))do
+      its('stdout') { should eq "/dev/stderr\n" }
+    end
   end
   
   describe "This test requires a Manual Review: Work with the SIEM administrator 

@@ -36,7 +36,7 @@ information and limits accidental changes to the web server."
   
   -The Web Manager or the SA should own all the system files and directories.
   -The configurable directories can be owned by the WebManager or equivalent user.
-  -Permissions on these files should be 660 or more restrictive.
+  -Permissions on these files should be 640 or more restrictive.
 
   If root or an authorized user does not own the web system files and the permission are 
   not correct, this is a finding.
@@ -51,7 +51,7 @@ information and limits accidental changes to the web server."
    
     # cd <'key server file location'>/
     # chown <'authorized user'>:<'authorized group'>  <'key server file'> 
-    # chmod 660 <'key server file'>  
+    # chmod 640 <'key server file'>  
   "
   impact 0.5
   tag "severity": "medium"
@@ -74,7 +74,7 @@ information and limits accidental changes to the web server."
     end
 
     input('access_control_files').each do |file|
-      file_path = command("find / -name #{file}").stdout.chomp
+      file_path = command("find / -name #{file} ! -path '/tmp/*'").stdout.chomp
 
       if file_path.empty?
         describe "Skip Message" do
@@ -86,7 +86,7 @@ information and limits accidental changes to the web server."
         describe file(file) do
         its('owner') { should be_in authorized_sa_user_list }
         its('group') { should be_in authorized_sa_group_list }
-        its('mode') { should cmp '0660'}
+        its('mode') { should cmp '0640'}
         end
       end
     end
@@ -95,7 +95,7 @@ information and limits accidental changes to the web server."
       describe file(file) do
         its('owner') { should be_in authorized_sa_user_list }
         its('group') { should be_in authorized_sa_group_list }
-        its('mode') { should cmp '0660'}
+        its('mode') { should cmp '0640'}
       end
     end
 
