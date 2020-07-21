@@ -42,14 +42,12 @@ dedicated log tool that meets this requirement.
   tag "cci": ["CCI-001855"]
   tag "nist": ["AU-5 (1)", "Rev_4"]
 
-  describe "This test requires a Manual Review: Work with the SIEM administrator to determine 
-  if an alert is configured when allocated record storage volume reaches 75% of maximum log 
-  record storage capacity.
-  If there is no alert configured, this is a finding." do
-    skip "This test requires a Manual Review: Work with the SIEM administrator to determine 
-    if an alert is configured when allocated record storage volume reaches 75% of maximum log 
-    record storage capacity.
-    If there is no alert configured, this is a finding."
+  describe "This test requires a Manual Review: Work with the SIEM admin to determine 
+  if an alert is configured when allocated record storage volume reaches 75% of 
+  maximum log record storage capacity." do
+    skip "This test requires a Manual Review: Work with the SIEM admin to determine 
+    if an alert is configured when allocated record storage volume reaches 75% of 
+    maximum log record storage capacity."
   end
 end
 

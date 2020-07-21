@@ -44,13 +44,7 @@ control "V-41704" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.locations.each do |location|
+  nginx_conf.locations.each do |location|
     location.params["_"].each do |value|
       if (value == '/') 
         deny_values = []
@@ -63,5 +57,12 @@ control "V-41704" do
       end
     end
   end
+
+  if nginx_conf.locations.empty?
+    describe 'Test skipped because the locations context does not exist.' do
+      skip 'This test is skipped since the locations context was not found.'
+    end
+  end
+
 end
 

@@ -23,7 +23,7 @@ verifier:
   load_plugins: true
   reporter:
     - cli
-    - json:./results/nginx-vanilla-results.json
+    - json:./results/nginx-results-secure-vm.json
   inspec_tests:
     - path: ./
   input_files:

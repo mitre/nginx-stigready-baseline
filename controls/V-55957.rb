@@ -29,17 +29,10 @@ acting as a single access point."
   tag "cci": ["CCI-001844"]
   tag "nist": ["AU-3 (2)", "Rev_4"]
 
-  describe "This test requires a Manual Review: Review the web server documentation and 
-  configuration to determine if the web server is part of a cluster.
-  If the web server is not part of a cluster, then this check is Not Applicable.
-  If the web server is part of a cluster and is not centrally managed, then
-  this is a finding." do
-    skip "This test requires a Manual Review: Review the web server documentation and 
-    configuration to determine if the web server is part of a cluster.
-    If the web server is not part of a cluster, then this check is Not Applicable.
-    If the web server is part of a cluster and is not centrally managed, then
-    this is a finding."
+  describe "This test requires a Manual Review: Determine if the web server is part 
+  of a cluster. If it is, verify that it is being centrally managed." do
+    skip "This test requires a Manual Review: Determine if the web server is part 
+    of a cluster. If it is, verify that it is being centrally managed."
   end
-  
 end
 

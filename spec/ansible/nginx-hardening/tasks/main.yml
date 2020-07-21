@@ -18,6 +18,15 @@
   template:
     src: "hardening.conf.j2"
     dest: "/etc/nginx/conf.d/90.hardening.conf"
+    mode: "0660"
+    owner: "root"
+    group: "root"
+  notify: restart nginx
+
+- name: set permissions on nginx root directory
+  file:
+    path: "{{ nginx_root }}"
+    mode: "1660"
     owner: "root"
     group: "root"
   notify: restart nginx
@@ -90,20 +99,12 @@
     insertafter: "http {"
   notify: restart nginx
 
-- name: add ssl_protocols in main nginx.conf
+- name: add ssl_client_certificate in main nginx.conf
   lineinfile:
     dest: "/etc/nginx/nginx.conf"
-    regexp: '^\s*ssl_protocols'
-    line: "    ssl_protocols {{ nginx_ssl_protocols }};"
+    regexp: '^\s*ssl_client_certificate'
+    line: "    ssl_client_certificate {{ nginx_ssl_client_cert }};"
     insertafter: "http {"
-  notify: restart nginx
-
-- name: add ssl_prefer_server_ciphers in main nginx.conf
-  lineinfile:
-     dest: "/etc/nginx/nginx.conf"
-     regexp: '^\s*ssl_prefer_server_ciphers'
-     line: "    ssl_prefer_server_ciphers {{ nginx_ssl_prefer_server_ciphers }};"
-     insertafter: "http {"
   notify: restart nginx
 
 - name: add client_max_body_size in main nginx.conf
@@ -130,12 +131,60 @@
     insertafter: "http {"
   notify: restart nginx
 
-- name: add ssl_client_certificate in main nginx.conf
+- name: add ssl_protocols in main nginx.conf
   lineinfile:
-    dest: "/etc/nginx/nginx.conf"
-    regexp: '^\s*ssl_client_certificate'
-    line: "    ssl_client_certificate {{ nginx_ssl_client_cert }};"
-    insertafter: "http {"
+    dest: "/etc/nginx/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_protocols'
+    line: "    ssl_protocols {{ nginx_ssl_protocols }};"
+    insertafter: "server {"
+  notify: restart nginx
+
+- name: add ssl_prefer_server_ciphers in main nginx.conf
+  lineinfile:
+     dest: "/etc/nginx/conf.d/90.hardening.conf"
+     regexp: '^\s*ssl_prefer_server_ciphers'
+     line: "    ssl_prefer_server_ciphers {{ nginx_ssl_prefer_server_ciphers }};"
+     insertafter: "server {"
+  notify: restart nginx
+
+- name: add ssl_certificate in main nginx.conf
+  lineinfile:
+    dest: "/etc/nginx/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_certificate'
+    line: "    ssl_certificate {{ nginx_ssl_cert }};"
+    insertafter: "server {"
+  notify: restart nginx
+
+- name: add ssl_certificate_key in main nginx.conf
+  lineinfile:
+    dest: "/etc/nginx/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_certificate_key'
+    line: "    ssl_certificate_key {{ nginx_ssl_cert_key }};"
+    insertafter: "server {"
+  notify: restart nginx
+
+- name: add ssl_verify_client in main nginx.conf
+  lineinfile:
+    dest: "/etc/nginx/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_verify_client'
+    line: "    ssl_verify_client {{ nginx_ssl_verify_client }};"
+    insertafter: "server {"
+  notify: restart nginx
+
+- name: add ssl_verify_depth in main nginx.conf
+  lineinfile:
+    dest: "/etc/nginx/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_verify_depth'
+    line: "    ssl_verify_depth {{ nginx_ssl_verify_depth }};"
+    insertafter: "server {"
+  notify: restart nginx
+
+- name: add listen in main nginx.conf
+  lineinfile:
+     dest: "/etc/nginx/conf.d/90.hardening.conf"
+     regexp: '^\s*listen'
+     line: "    listen {{ nginx_listen }};"
+     insertafter: "server {"
   notify: restart nginx
 
 - name: remove default.conf
@@ -154,12 +203,33 @@
     creates: "/etc/nginx/dh{{ nginx_dh_size }}.pem"
   notify: restart nginx
 
-- name: generate self-signed ssl certificate
+- name: generate self-signed client ssl certificate
   command: "openssl req -nodes -x509 -subj '/C=US/O=U.S. Government/OU=DoD/CN=DoD' \
   -newkey rsa:4096 -keyout /etc/ssl/nginx-selfsigned-key.pem -out /etc/ssl/nginx-selfsigned.pem -days 365"
   args:
     creates: "/etc/ssl/nginx-selfsigned.pem"
   notify: restart nginx
+
+- name: generate self-signed ssl certificate and key
+  command: "openssl req -nodes -x509 -subj '/C=US/O=U.S. Government/OU=DoD/CN=DoD' \
+  -newkey rsa:4096 -keyout /etc/ssl/nginx-selfsigned.key -out /etc/ssl/nginx-selfsigned.crt -days 365"
+  args:
+    creates: "/etc/ssl/nginx-selfsigned.crt"
+  notify: restart nginx
+
+- name: the private key should only be readable by owner
+  file:
+    path: "/etc/ssl/nginx-selfsigned.key"
+    mode: "0400"
+    owner: "root"
+    group: "root"
+
+- name: the crt should only be readable by owner
+  file:
+    path: "/etc/ssl/nginx-selfsigned.crt"
+    mode: "0400"
+    owner: "root"
+    group: "root"
 
 - name: change configuration in passwd file
   lineinfile:

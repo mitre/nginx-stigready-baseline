@@ -36,18 +36,10 @@ control "V-41812" do
   tag "cci": ["CCI-001190"]
   tag "nist": ["SC-24", "Rev_4"]
   
-  describe "This test requires a Manual Review: Review the NGINX web server documentation, deployed configuration, 
-  and risk analysis documentation to verify that the web server is configured to provide
-  clustering functionality, if the web server is a high-availability web server.
-  If the NGINX web server is not a high-availability web server, this finding is 
-  Not Applicable.If the web server is not configured to provide clustering or some form of failover 
-  functionality and the web server is a high-availability server, this is a finding." do
-    skip "This test requires a Manual Review: Review the NGINX web server documentation, deployed configuration, 
-    and risk analysis documentation to verify that the web server is configured to provide
-    clustering functionality, if the web server is a high-availability web server.
-    If the NGINX web server is not a high-availability web server, this finding is 
-    Not Applicable.If the web server is not configured to provide clustering or some form of failover 
-    functionality and the web server is a high-availability server, this is a finding."
+  describe "This test requires a Manual Review: Verify that the web server is configured to provide
+  clustering functionality, if the web server is a high-availability web server." do
+    skip "This test requires a Manual Review: Verify that the web server is configured to provide
+    clustering functionality, if the web server is a high-availability web server."
   end
 end
 

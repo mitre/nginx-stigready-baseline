@@ -102,5 +102,12 @@ need to have passwords set or changed.
       end
     end
   end
+
+  if service_accounts.empty?
+    describe 'Test skipped because the service accounts list is empty.' do
+      skip 'This test is skipped since the service accounts list is empty.'
+    end
+  end
+
 end
 

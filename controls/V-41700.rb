@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-nginx_allowed_script_list = input('nginx_allowed_script_list')
-
 control "V-41700" do
   title "The web server must allow the mappings to unused and vulnerable
   scripts to be removed."
@@ -29,7 +27,7 @@ control "V-41700" do
   cgi-bin scripts with the following command:
     # ls <fastcgi_param directory>
   
-  If the 'fastcgi_param' directive exists and if there are any scripts are 
+  If the 'fastcgi_params' directive exists and if there are any scripts are 
   present that are unused or vulnerable, this is a finding.
   
   If this is not documented and approved by the Information System Security 
@@ -49,26 +47,33 @@ control "V-41700" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
+  nginx_conf.locations.each do |location|
+    if location.params["fastcgi_param"].nil?
+      describe 'Test skipped because the fastcgi_param directive does not exist.' do
+        skip 'This test is skipped since the fastcgi_param directive was not found.'
+      end
+    else
+      location.params["fastcgi_param"].each do |value|
+        if (value[0] == "SCRIPT_FILENAME")
+          cgi_script_path = command("echo #{value[1]} | cut -d '$' -f 1").stdout
+          cgi_scripts = command("ls #{cgi_script_path}").stdout.split("\n")
+          cgi_scripts.uniq!
 
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.locations.each do |location|
-    location.params["fastcgi_params"].each do |value|
-      if (value[0] == "SCRIPT_FILENAME")
-        cgi_script_path = command("echo #{value[1]} | cut -d '$' -f 1").stdout
-        cgi_scripts = command("ls #{cgi_script_path}").stdout.split("\n")
-        cgi_scripts.uniq!
-
-        cgi_scripts.each do |script|
-          describe (script) do
-           it { should be_in nginx_allowed_script_list }
+          cgi_scripts.each do |script|
+            describe (script) do
+            it { should be_in input('nginx_allowed_script_list') }
+            end
           end
-        end
-      end 
-    end unless location.params["fastcgi_params"].nil?
+        end 
+      end
+    end
   end
+
+  if nginx_conf.locations.empty?
+    describe 'Test skipped because the locations context does not exist.' do
+      skip 'This test is skipped since the locations context was not found.'
+    end
+  end
+  
 end
 

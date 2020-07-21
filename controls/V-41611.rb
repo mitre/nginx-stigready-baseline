@@ -33,13 +33,7 @@ control "V-41611" do
   tag "nist": ["AU-14 (1)", "Rev_4"]
 
   # Verify that access_log and error_log is enabled
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     describe 'Each http context' do
       it 'should include an access_log directive.' do
         expect(http).to(include "access_log")
@@ -57,7 +51,7 @@ control "V-41611" do
       end
     end
   end
-  nginx_conf_handle.params['error_log'].each do |error_log|
+  nginx_conf.params['error_log'].each do |error_log|
     error_log.each do |error_value|
       if error_value.include? "error.log"
         describe file(error_value) do

@@ -52,14 +52,10 @@ needed by the NGINX web server for operation."
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  describe "This test requires a Manual Review: Check the directory structure of the server and ensure that additional, unintended, or 
-  unneeded applications are not loaded on the system.
-  If, after review of the application on the system, there is no justification for the 
-  identified software, this is a finding." do
-    skip "This test requires a Manual Review: Check the directory structure of the server and ensure that additional, unintended, or 
-    unneeded applications are not loaded on the system.
-    If, after review of the application on the system, there is no justification for the 
-    identified software, this is a finding."
+  describe "This test requires a Manual Review: Check the directory structure of the server and 
+  ensure that additional, unintended, or unneeded applications are not loaded on the system." do
+    skip "This test requires a Manual Review: Check the directory structure of the server and 
+  ensure that additional, unintended, or unneeded applications are not loaded on the system."
   end
 end
 

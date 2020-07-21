@@ -48,25 +48,31 @@ control "V-56015" do
   tag "cci": ["CCI-002422"]
   tag "nist": ["SC-8 (2)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'Each server context' do
       it 'should include a ssl_protocols directive.' do
         expect(server.params).to(include "ssl_protocols")
       end
     end
-    server.params["ssl_protocols"].each do |protocol|
-      describe 'Each protocol' do
-        it 'should be included in the list of protocols approved to encrypt data' do
-          expect(protocol).to(be_in input('approved_ssl_protocols'))
+    if server.params["ssl_protocols"].nil?
+      describe 'Test skipped because the ssl_protocols directive does not exist.' do
+        skip 'This test is skipped since the ssl_protocols directive was not found.'
+      end
+    else
+      server.params["ssl_protocols"].each do |protocol|
+        describe 'Each protocol' do
+          it 'should be included in the list of protocols approved to encrypt data' do
+            expect(protocol).to(be_in input('approved_ssl_protocols'))
+          end
         end
       end
-    end unless server.params["ssl_protocols"].nil?
-  end 
+    end
+  end
+
+  if nginx_conf.servers.empty?
+    describe 'Test skipped because the server context does not exist.' do
+      skip 'This test is skipped since the server context was not found.'
+    end
+  end
 end
 

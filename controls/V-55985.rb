@@ -49,27 +49,34 @@ control requirements.
   tag "cci": ["CCI-000366"]
   tag "nist": ["CM-6 b", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-  
-  nginx_conf_handle.servers.entries.each do |server|
-    server.params['listen'].each do |listen|
-      describe "The listen directive" do
-        listen_address = listen.join
-        it "should include the specific IP address and port" do
-          expect(listen_address).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
-        end 
+  nginx_conf.servers.entries.each do |server|
+    if server.params['listen'].nil?
+      describe 'Test skipped because the listen directive does not exist.' do
+        skip 'This test is skipped since the listen directive was not found.'
       end
-      describe "The listening port" do
-        listen_port = listen.join.split(':')[1]
+    else
+      server.params['listen'].each do |listen|
+        describe "The listen directive" do
+          listen_address = listen.join
+          it "should include the specific IP address and port" do
+            expect(listen_address).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
+          end 
+        end
+        describe "The listening port" do
+          listen_port = listen.join.split(':')[1]
+          listen_port = listen_port.tr('ssl','') unless listen_port.nil?
           it "should be an approved port." do
             expect(listen_port).to(be_in input('authorized_ports'))
           end 
+        end
       end
-    end unless server.params['listen'].nil?
+    end
+  end 
+
+  if nginx_conf.servers.empty?
+    describe 'Test skipped because the server context does not exist.' do
+      skip 'This test is skipped since the server context was not found.'
+    end
   end 
 end
 

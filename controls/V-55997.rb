@@ -39,14 +39,8 @@ handle the expected traffic for the hosted applications."
   tag "cci": ["CCI-002385"]
   tag "nist": ["SC-5", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # Within http
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     describe 'The http context client_header_timeout value' do
       it 'should exist and should be set to 10 (seconds) or less.' do
         expect(http).to(include "client_header_timeout")
@@ -66,18 +60,16 @@ handle the expected traffic for the hosted applications."
   end
 
   # Within server
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'The server context client_header_timeout value' do
-      it 'should exist and should be set to 10 (seconds) or less.' do
-        expect(server.params).to(include "client_header_timeout")
+      it 'should be set to 10 (seconds) or less, if found.' do
         server.params["client_header_timeout"].each do |server_client_header|
           expect(server_client_header[0].to_i).to(be <= 10)
         end unless server.params["client_header_timeout"].nil?
       end
     end
     describe 'The server context client_body_timeout value' do
-      it 'should exist and should be set to 10 (seconds) or less.' do
-        expect(server.params).to(include "client_body_timeout")
+      it 'should be set to 10 (seconds) or less, if found' do
         server.params["client_body_timeout"].each do |server_client_body|
           expect(server_client_body[0].to_i).to(be <= 10)
         end unless server.params["client_body_timeout"].nil?

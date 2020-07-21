@@ -73,18 +73,12 @@ capability of stopping the server, whether intentionally or unintentionally.
   authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
   authorized_sa_group_list = input('sys_admin_group').clone << input('nginx_group')
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  describe file(nginx_conf_handle.params['pid'].join) do
+  describe file(nginx_conf.params['pid'].join) do
     it { should exist }
     its('owner') { should be_in authorized_sa_user_list }
     its('group') { should be_in authorized_sa_group_list }
     its('mode')  { should cmp '0644'}
-  end unless nginx_conf_handle.params['pid'].nil?
+  end unless nginx_conf.params['pid'].nil?
 
   describe file('/usr/sbin/nginx') do
     it { should exist }

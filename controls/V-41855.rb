@@ -35,13 +35,7 @@ does not need to cause an error condition to gain this information."
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.params['error_log'].each do |error_log|
+  nginx_conf.params['error_log'].each do |error_log|
     error_log.each do |error_value|
       describe "The error log level" do
         it 'should not be set to debug.' do

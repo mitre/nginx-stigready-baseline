@@ -41,16 +41,11 @@ control "V-41694" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
   describe nginx do
     its('modules') { should_not include 'http_proxy' }
   end
 
-  nginx_conf_handle.locations.each do |location|
+  nginx_conf.locations.each do |location|
     describe 'proxy_pass' do
       it 'should not exist in the location context.' do
         expect(location.params).to_not(include "proxy_pass")

@@ -44,27 +44,34 @@ control "V-41706" do
   tag "cci": ["CCI-000382"]
   tag "nist": ["CM-7 b", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'The listen directive' do
       it 'should exist.' do
         expect(server.params).to(include "listen")
       end
-      server.params["listen"].each do |listen|
-        it 'should include both the IP and port number.' do
-          expect(listen.join).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
+      if server.params["listen"].nil?
+        describe 'Test skipped because the listen directive does not exist.' do
+          skip 'This test is skipped since the listen directive does not exist.'
         end
-        it 'should not be 0.0.0.0:80 or [::ffff:0.0.0.0]:80.' do
-          expect(listen.join.split(':').first).not_to(cmp '0.0.0.0')
-          expect(listen.join.split(':').first).not_to(cmp '[::ffff:0.0.0.0]')
+      else 
+        server.params["listen"].each do |listen|
+          it 'should include both the IP and port number.' do
+            expect(listen.join).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
+          end
+          it 'should not be 0.0.0.0:80 or [::ffff:0.0.0.0]:80.' do
+            expect(listen.join.split(':').first).not_to(cmp '0.0.0.0')
+            expect(listen.join.split(':').first).not_to(cmp '[::ffff:0.0.0.0]')
+          end
         end
-      end unless server.params["listen"].nil?
+      end 
+    end
+  end
+  
+  if nginx_conf.servers.empty?
+    describe 'Test skipped because the server context does not exist.' do
+      skip 'This test is skipped since the server context was not found.'
     end
   end 
+
 end
 

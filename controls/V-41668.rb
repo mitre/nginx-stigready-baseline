@@ -47,13 +47,7 @@ control "V-41668" do
   tag "cci": ["CCI-000159"]
   tag "nist": ["AU-8 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-  
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     http["log_format"].each do |log_format|
       describe 'time_local' do
         it 'should be part of every log format in http.' do

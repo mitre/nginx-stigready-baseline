@@ -33,14 +33,8 @@ to a granularity of one second.
   tag "cci": ["CCI-001889"]
   tag "nist": ["AU-8 b", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # log_format - Context:	http
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     http["log_format"].each do |log_format|
       describe 'time_local' do
         it 'should be part of every log format in the http context.' do

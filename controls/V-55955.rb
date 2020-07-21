@@ -58,20 +58,12 @@ log data is conserved for later forensic analysis.
   tag "cci": ["CCI-002322"]
   tag "nist": ["AC-17 (9)", "Rev_4"]
 
-  describe "This test requires a Manual Review.
-  In a command line, enter the following command:
-
-  # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`
-
-  If NGINX is not capable of or cannot be configured to disconnect or disable remote 
-  access to the hosted applications when necessary, this is a finding." do
-    skip "This test requires a Manual Review.
-    In a command line, enter the following command:
-
-    # kill -TERM `cat <'INSTALLED PATH'>/nginx.pid`
-  
-    If NGINX is not capable of or cannot be configured to disconnect or disable remote 
-    access to the hosted applications when necessary, this is a finding."
+  describe "This test requires a Manual Review: Interview the SA and Web Manager and ask 
+  for documentation.Verify there are documented procedures for shutting down an NGINX website 
+  in the event of an attack." do
+    skip "This test requires a Manual Review: Interview the SA and Web Manager and ask 
+    for documentation.Verify there are documented procedures for shutting down an NGINX website 
+    in the event of an attack."
   end
 end
 

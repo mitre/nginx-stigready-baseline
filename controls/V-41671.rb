@@ -33,7 +33,7 @@ control "V-41671" do
   and service accounts running the server should have permissions to the directory and files.
     - The SA or service account should own the directory and files
     - Permissions on the directory should be 750 or more restrictive
-    - Permissions on these files should be 640 or more restrictive
+    - Permissions on these files should be 660 or more restrictive
 
   If any users other than those authorized have permission to modify log files, this is a finding.
   "
@@ -62,18 +62,34 @@ control "V-41671" do
     its('mode')  { should cmp '0750'}
   end
 
-  # nginx access log file should have 640 permissions
-  describe file(input('access_log_path')) do
-    its('owner') { should be_in authorized_sa_user_list }
-    its('group') { should be_in authorized_sa_group_list }
-    its('mode')  { should cmp '0640'}
-  end
+  # log file in docker are symlinks
+  if virtualization.system.eql?('docker') 
+    # nginx access log file should have 660 permissions
+    describe file(input('access_log_path')) do
+      its('owner') { should be_in authorized_sa_user_list }
+      its('group') { should be_in authorized_sa_group_list }
+    end
 
-  # nginx error log file should have 640 permissions
-  describe file(input('error_log_path')) do
-    its('owner') { should be_in authorized_sa_user_list }
-    its('group') { should be_in authorized_sa_group_list }
-    its('mode')  { should cmp '0640'} 
-  end
+    # nginx error log file should have 660 permissions
+    describe file(input('error_log_path')) do
+      its('owner') { should be_in authorized_sa_user_list }
+      its('group') { should be_in authorized_sa_group_list }
+    end
+  else
+    # nginx access log file should have 660 permissions
+    describe file(input('access_log_path')) do
+      its('owner') { should be_in authorized_sa_user_list }
+      its('group') { should be_in authorized_sa_group_list }
+      it { should_not be_more_permissive_than('0660') } 
+    end
+
+    # nginx error log file should have 660 permissions
+    describe file(input('error_log_path')) do
+      its('owner') { should be_in authorized_sa_user_list }
+      its('group') { should be_in authorized_sa_group_list }
+      it { should_not be_more_permissive_than('0660') }
+    end
+  end 
+
 end
 

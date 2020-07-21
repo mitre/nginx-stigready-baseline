@@ -41,21 +41,16 @@ exhaustion."
   
     # collect root directores from nginx_conf
     webserver_roots = []
-    nginx_conf_handle = nginx_conf(input('conf_path'))
 
-    describe nginx_conf_handle do
-      its ('params') { should_not be_empty }
-    end
-
-    nginx_conf_handle.http.entries.each do |http|
+    nginx_conf.http.entries.each do |http|
       webserver_roots.push(http.params['root']) unless http.params['root'].nil?
     end
 
-    nginx_conf_handle.servers.entries.each do |server|
+    nginx_conf.servers.entries.each do |server|
       webserver_roots.push(server.params['root']) unless server.params['root'].nil?
     end
 
-    nginx_conf_handle.locations.entries.each do |location|
+    nginx_conf.locations.entries.each do |location|
       webserver_roots.push(location.params['root']) unless location.params['root'].nil?
     end
 
@@ -67,5 +62,11 @@ exhaustion."
         it { should_not cmp '/'}
       end
     end
+
+    if webserver_roots.empty?
+      describe 'Test skipped because the nginx root directory list is empty.' do
+        skip 'This test is skipped since the nginx root directory list is empty.'
+      end
+    end 
 end
 

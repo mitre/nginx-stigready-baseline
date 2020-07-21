@@ -36,14 +36,12 @@ control "V-56021" do
   tag "cci": ["CCI-001185"]
   tag "nist": ["SC-23 (1)", "Rev_4"]
 
-  describe "This test requires a Manual Review: If it is determined that the web server 
-  is not required to perform session management, this check is Not Applicable. 
-  If the web server does not invalidate session identifiers when a session is
-  terminated, this is a finding." do
-    skip "This test requires a Manual Review: If it is determined that the web server 
-    is not required to perform session management, this check is Not Applicable. 
-    If the web server does not invalidate session identifiers when a session is
-    terminated, this is a finding."
+  describe "This test requires a Manual Review: Determine whether the web server is required
+  to perform session management. If so, verify it invalidates session identifiers when a 
+  session is terminated." do
+    skip "This test requires a Manual Review: Determine whether the web server is required
+    to perform session management. If so, verify it invalidates session identifiers when a 
+    session is terminated."
   end
 end
 

@@ -24,8 +24,6 @@ properly to only allow privileged users access.
   the web service process.
 
   If it exists, the following file need to be owned by a privileged account:
-    - .htaccess  
-    - .htpasswd 
     - nginx.conf and its included configuration files
     - Application directories
     
@@ -44,7 +42,7 @@ properly to only allow privileged users access.
    
   -The Web Manager or the SA should own all the system files and directories.
   -The configurable directories can be owned by the WebManager or equivalent user.
-      -Permissions on these files should be 640 or more restrictive.
+      -Permissions on these files should be 660 or more restrictive.
   
   If root or an authorized user does not own the web system files and directories, and the 
   permission are not correct, this is a finding.
@@ -60,7 +58,7 @@ properly to only allow privileged users access.
    
     # cd <'key server file location'>/
     # chown <'authorized user'>:<'authorized group'>  <'key server file'> 
-    # chmod 640 <'key server file'>  
+    # chmod 660 <'key server file'>  
   
   Determine where the application directories are located by running the following command:
   
@@ -82,15 +80,8 @@ properly to only allow privileged users access.
   authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
   authorized_sa_group_list = input('sys_admin_group').clone << input('nginx_group')
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-  nginx_conf_handle.params
-  
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   input('access_control_files').each do |file|
-    file_path = command("find / -name #{file} ! -path '/tmp/*'").stdout.chomp
+    file_path = command("find / -name #{file}").stdout.chomp
 
     if file_path.empty?
       describe "Skip Message" do
@@ -102,20 +93,20 @@ properly to only allow privileged users access.
       describe file(file) do
       its('owner') { should be_in authorized_sa_user_list }
       its('group') { should be_in authorized_sa_group_list }
-      its('mode') { should cmp '0640'}
+      it { should_not be_more_permissive_than('0660') }
       end
     end
   end
 
-  nginx_conf_handle.contents.keys.each do |file|
+  nginx_conf.contents.keys.each do |file|
     describe file(file) do
       its('owner') { should be_in authorized_sa_user_list }
       its('group') { should be_in authorized_sa_group_list }
-      its('mode') { should cmp '0640'}
+      it { should_not be_more_permissive_than('0660') }
     end
   end
 
-  if nginx_conf_handle.contents.keys.empty?
+  if nginx_conf.contents.keys.empty?
     describe "Skip Message" do
       skip "Skipped: no conf files included."
     end
@@ -123,15 +114,15 @@ properly to only allow privileged users access.
 
   webserver_roots = []
 
-  nginx_conf_handle.http.entries.each do |http|
+  nginx_conf.http.entries.each do |http|
     webserver_roots.push(http.params['root']) unless http.params['root'].nil?
   end
 
-  nginx_conf_handle.servers.entries.each do |server|
+  nginx_conf.servers.entries.each do |server|
     webserver_roots.push(server.params['root']) unless server.params['root'].nil?
   end
 
-  nginx_conf_handle.locations.entries.each do |location|
+  nginx_conf.locations.entries.each do |location|
     webserver_roots.push(location.params['root']) unless location.params['root'].nil?
   end
 

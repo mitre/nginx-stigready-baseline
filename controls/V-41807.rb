@@ -47,8 +47,9 @@ control "V-41807" do
 # NGINX versions after 1.11.0 have the $request_id embedded variable by default
 # This variable is a unique request identifier generated from 16 random bytes, in hexadecimal
 
+# Check if version is the latest supported version
   describe nginx do
-    its('version') { should cmp > '1.11.0' }
+    its('version') { should cmp == input('nginx_version') }
   end
 
 end

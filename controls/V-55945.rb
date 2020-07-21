@@ -41,36 +41,29 @@ roles to make changes to the production system."
   tag "cci": ["CCI-000213"]
   tag "nist": ["AC-3", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # List of all auth_request uris in the configuration files
   auth_uris = []
-  nginx_conf_handle.locations.entries.each do |location|
+  nginx_conf.locations.entries.each do |location|
     auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
   end
-  # This list should not be empty or auth_request is not being implemented
-  # describe "The auth_uri list" do
-  #   it "should not be empty." do
-  #     expect(auth_uris).not_to(be_empty)
-  #   end  
-  # end
 
   auth_uris.flatten!
   auth_uris.uniq!
 
   # Make sure all locations include an auth_request directive except the location the auth_request gets sent to
-  nginx_conf_handle.locations.each do |location|
-    auth_uris.each do |uri|
-      describe "Each location context" do
-        it 'should include an auth_request directive.' do
-          puts location
-          expect(location.params).to(include "auth_request")
-        end
-      end unless location.params["_"].flatten.include?(uri)  
+  if auth_uris.empty?
+    describe 'Test skipped because the auth_request directive values are emtpy' do
+        skip 'This test is skipped since the auth_request directive values are empty.'
+    end
+  else
+    nginx_conf.locations.each do |location|
+      auth_uris.each do |uri|
+        describe "Each location context" do
+          it 'should include an auth_request directive.' do
+            expect(location.params).to(include "auth_request")
+          end
+        end unless location.params["_"].flatten.include?(uri)  
+      end
     end
   end
 end

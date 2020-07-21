@@ -38,16 +38,10 @@ control "V-55989" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # auth_basic - Context:	http, server, location, limit_except
   # auth_basic_user_file - Context:	http, server, location, limit_except
   # Within http
- nginx_conf_handle.params['http'].each do |http|
+ nginx_conf.params['http'].each do |http|
     describe 'http context:' do
       it 'There should not be an auth_basic directive.' do
         expect(http).to_not(include "auth_basic")
@@ -58,7 +52,7 @@ control "V-55989" do
     end
   end
   # Within server
-  nginx_conf_handle.servers.each do |server| 
+  nginx_conf.servers.each do |server| 
     describe 'server context:' do
       it 'There should not be an auth_basic directive.' do
         expect(server.params).to_not(include "auth_basic")
@@ -69,7 +63,7 @@ control "V-55989" do
     end
   end
   # Within location
- nginx_conf_handle.locations.each do |location|
+ nginx_conf.locations.each do |location|
     describe "location context:" do
       it 'There should not be an auth_basic directive.' do
         expect(location.params).to_not(include "auth_basic")

@@ -37,11 +37,9 @@ warning to the ISSO and SA at a minimum.
   tag "nist": ["AU-5 a", "Rev_4"]
 
   describe "This test requires a Manual Review: Work with the SIEM administrator to determine 
-  if an alert is configured when audit data is no longer received as expected. 
-  If there is no alert configured, this is a finding." do
+  if an alert is configured when audit data is no longer received as expected." do
     skip "This test requires a Manual Review: Work with the SIEM administrator to determine 
-    if an alert is configured when audit data is no longer received as expected. 
-    If there is no alert configured, this is a finding."
+    if an alert is configured when audit data is no longer received as expected."
   end
 end
 

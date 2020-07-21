@@ -55,14 +55,9 @@ control "V-40799" do
   tag "cci": ["CCI-000067"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
 
   # Verify that access_log and error_log is enabled
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     describe 'Each http context' do
       it 'should include an access_log directive.' do
         expect(http).to(include "access_log")
@@ -80,7 +75,7 @@ control "V-40799" do
       end
     end
   end
-  nginx_conf_handle.params['error_log'].each do |error_log|
+  nginx_conf.params['error_log'].each do |error_log|
     error_log.each do |error_value|
       if error_value.include? "error.log"
         describe file(error_value) do
@@ -92,6 +87,7 @@ control "V-40799" do
     end       
   end
 
+  # Logs are symlinks in docker container
   if virtualization.system == 'docker'
     # Ensure access log is linked to stdout
     describe command('readlink ' + input('access_log_path')) do

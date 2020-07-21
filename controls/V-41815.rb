@@ -44,21 +44,12 @@ the information's confidentiality and integrity."
   tag "cci": ["CCI-001199"]
   tag "nist": ["SC-28", "Rev_4"]
 
-  describe "This test requires a Manual Review: Review the NGINX web server documentation and 
-  deployed configuration to locate where potential data at rest is stored.
+  describe "This test requires a Manual Review: Locate where potential data at rest is stored.
   Verify that the data is encrypted using a DoD-accepted algorithm to protect
-  the confidentiality and integrity of the information.
-  If the web server host utilizes a DoD-accepted algorithm to protect the 
-  confidentiality and integrity of the information, this is not a finding. 
-  If the data is not encrypted using a DoD-accepted algorithm, this is a finding." do
-    skip "This test requires a Manual Review: Review the NGINX web server documentation and 
-    deployed configuration to locate where potential data at rest is stored.
+  the confidentiality and integrity of the information." do
+    skip "This test requires a Manual Review: Locate where potential data at rest is stored.
     Verify that the data is encrypted using a DoD-accepted algorithm to protect
-    the confidentiality and integrity of the information.
-    If the web server host utilizes a DoD-accepted algorithm to protect the 
-    confidentiality and integrity of the information, this is not a finding. 
-    If the data is not encrypted using a DoD-accepted algorithm, this is a finding."
+    the confidentiality and integrity of the information."
   end
-  
 end
 

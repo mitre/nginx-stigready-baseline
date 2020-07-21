@@ -50,8 +50,9 @@ not also be compressed.
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
+# Check if version is the latest supported version
   describe nginx do
-    its('version') { should cmp >= '1.3.2' }
+    its('version') { should cmp == input('nginx_version') }
   end
   
 end

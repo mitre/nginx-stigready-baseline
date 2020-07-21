@@ -39,34 +39,39 @@ legitimate users."
   tag "cci": ["CCI-002470"]
   tag "nist": ["SC-23 (5)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.http.entries.each do |http|
+  nginx_conf.http.entries.each do |http|
     describe http.params['ssl_client_certificate'] do
       it { should_not be_nil }
     end
-    http.params['ssl_client_certificate'].each do |cert|
-      describe x509_certificate(cert.join) do
-        it { should_not be_nil }
-
-        its('subject.C') { should cmp 'US' }
-        its('subject.O') { should cmp 'U.S. Government' }
+    if http.params['ssl_client_certificate'].nil?
+      describe 'Test skipped because the ssl_client_certificate directive does not exist.' do
+        skip 'This test is skipped since the ssl_client_certificate directive does not exist.'
       end
-      describe x509_certificate(cert.join).subject.CN[0..2] do
-        it { should be_in input('dod_approved_pkis') }
+    else
+      http.params['ssl_client_certificate'].each do |cert|
+        describe x509_certificate(cert.join) do
+          it { should_not be_nil }
+          its('subject.C') { should cmp 'US' }
+          its('subject.O') { should cmp 'U.S. Government' }
+        end
+        describe x509_certificate(cert.join).subject.CN[0..2] do
+          it { should be_in input('dod_approved_pkis') }
+        end
       end
-    end unless http.params['ssl_client_certificate'].nil?
+    end
   end
 
-  nginx_conf_handle.servers.entries.each do |server|
+  if nginx_conf.http.entries.empty?
+    describe 'Test skipped because the http context does not exist.' do
+      skip 'This test is skipped since the http context was not found.'
+    end
+  end 
+
+
+  nginx_conf.servers.entries.each do |server|
     server.params['ssl_client_certificate'].each do |cert|
       describe x509_certificate(cert.join) do
         it { should_not be_nil }
-
         its('subject.C') { should cmp 'US' }
         its('subject.O') { should cmp 'U.S. Government' }
       end
@@ -75,5 +80,11 @@ legitimate users."
       end
     end unless server.params['ssl_client_certificate'].nil?
   end
+
+  if nginx_conf.servers.empty?
+    describe 'Test skipped because the server context does not exist.' do
+      skip 'This test is skipped since the server context was not found.'
+    end
+  end 
 end
 

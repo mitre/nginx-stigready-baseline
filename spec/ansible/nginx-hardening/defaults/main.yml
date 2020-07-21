@@ -1,9 +1,5 @@
 ---
-access_control_files: [ 
-  '.htaccess',
-  '.htpasswd', 
-  'nginx.conf' 
-]
+nginx_root: '/usr/share/nginx/html'
 nginx_client_body_buffer_size: '1k'
 nginx_remove_default_site: true
 nginx_client_max_body_size: '1k'
@@ -16,7 +12,9 @@ nginx_client_header_timeout: "10"
 nginx_send_timeout: "10"
 nginx_limit_conn_zone: "$binary_remote_addr zone=default:10m"
 nginx_limit_conn: "default 5"
+nginx_limit_rate: "50k"
 nginx_time_stamp_format: "UTC"
+nginx_listen: "127.0.0.1:443 ssl"
 nginx_add_header: [
 # vvoid clickjacking
 "X-Frame-Options SAMEORIGIN",
@@ -30,9 +28,13 @@ nginx_add_header: [
 nginx_set_cookie_flag: "* HttpOnly secure"
 nginx_ssl_prefer_server_ciphers: "on"
 nginx_ssl_protocols: "TLSv1.2"
-nginx_ssl_ciphers: "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256"
+nginx_ssl_ciphers: "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:HIGH:!RC4:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS"
 nginx_ssl_session_tickets: "off"
+nginx_ssl_verify_client: "on"
+nginx_ssl_verify_depth: "1"
 nginx_dh_size: "2048"
+nginx_ssl_cert: "/etc/ssl/nginx-selfsigned.crt"
+nginx_ssl_cert_key: "/etc/ssl/nginx-selfsigned.key"
 nginx_ssl_client_cert: "/etc/ssl/nginx-selfsigned.pem"
 
 nginx_disallowed_mime_type: [

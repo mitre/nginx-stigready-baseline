@@ -33,22 +33,12 @@ control "V-56031" do
   tag "cci": ["CCI-002476"]
   tag "nist": ["SC-28 (1)", "Rev_4"]
 
-  describe "This test requires a Manual Review: Review the NGINX web server documentation 
-  and deployed configuration to determine whether the web server is authorizing and 
-  managing users.
-  If the NGINX web server is not authorizing and managing users, this is check is Not
-  Applicable.
-  If the NGINX web server is the user authenticator and manager, verify that stored
-  user identifiers and passwords are being encrypted by the web server. If the
-  user information is not being encrypted when stored, this is a finding." do
-    skip "This test requires a Manual Review: Review the NGINX web server documentation 
-    and deployed configuration to determine whether the web server is authorizing and 
-    managing users.
-    If the NGINX web server is not authorizing and managing users, this is check is Not
-    Applicable.
-    If the NGINX web server is the user authenticator and manager, verify that stored
-    user identifiers and passwords are being encrypted by the web server. If the
-    user information is not being encrypted when stored, this is a finding."
+  describe "This test requires a Manual Review: Determine whether the web server is 
+  authorizing and managing users. If so, verify that user identifiers and passwords 
+  are being encrypted by the web server." do
+    skip "This test requires a Manual Review: Determine whether the web server is 
+    authorizing and managing users. If so, verify that user identifiers and passwords 
+    are being encrypted by the web server."
   end
 end
 

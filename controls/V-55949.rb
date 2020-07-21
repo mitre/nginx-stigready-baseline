@@ -54,14 +54,8 @@ medium-value applications, and 20 minutes for low-value applications.
   tag "cci": ["CCI-002361"]
   tag "nist": ["AC-12", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # Within http
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     describe 'The http context client_header_timeout value' do
       it 'should exist and should be set to 10 (seconds) or less.' do
         expect(http).to(include "client_header_timeout")
@@ -90,26 +84,23 @@ medium-value applications, and 20 minutes for low-value applications.
   end
 
   # Within server
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'The server context client_header_timeout value' do
-      it 'should exist and should be set to 10 (seconds) or less.' do
-        expect(server.params).to(include "client_header_timeout")
+      it 'should be set to 10 (seconds) or less, if found.' do
         server.params["client_header_timeout"].each do |server_client_header|
           expect(server_client_header[0].to_i).to(be <= 10)
         end unless server.params["client_header_timeout"].nil?
       end
     end
     describe 'The server context client_body_timeout value' do
-      it 'should exist and should be set to 10 (seconds) or less.' do
-        expect(server.params).to(include "client_body_timeout")
+      it 'should be set to 10 (seconds) or less, if found' do
         server.params["client_body_timeout"].each do |server_client_body|
           expect(server_client_body[0].to_i).to(be <= 10)
         end unless server.params["client_body_timeout"].nil?
       end
     end
     describe 'The server context keep-alive value' do
-      it 'should exist and should be set to 5 (seconds) or less.' do
-        expect(server.params).to(include "keepalive_timeout")
+      it 'should be set to 5 (seconds) or less, if found.' do
         server.params["keepalive_timeout"].each do |server_alive|
           expect(server_alive[0].to_i).to(be <= 5)
           expect(server_alive[1].to_i).to(be <= 5)
@@ -119,10 +110,9 @@ medium-value applications, and 20 minutes for low-value applications.
   end
 
   # Within location
-  nginx_conf_handle.locations.each do |location|
+  nginx_conf.locations.each do |location|
     describe 'The location context keep-alive value' do
-      it 'should exist and should be set to 5 (seconds) or less.' do
-        expect(location.params).to(include "keepalive_timeout")
+      it 'should be set to 5 (seconds) or less, if found.' do
         location.params["keepalive_timeout"].each do |location_alive|
           expect(location_alive[0].to_i).to(be <= 5)
           expect(location_alive[1].to_i).to(be <= 5)

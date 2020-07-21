@@ -51,14 +51,8 @@ control "V-41600" do
   tag "cci": ["CCI-000169"]
   tag "nist": ["AU-12 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # Verify that the log_format directive exists
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     describe 'Each http context' do
       it 'should include a log_format directive for logging minimum logable events.' do
         expect(http).to(include "log_format")

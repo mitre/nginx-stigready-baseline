@@ -45,14 +45,8 @@ to not aid in the blueprinting of the web server.
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # Within http
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     describe 'server_tokens directive' do
       it 'should exist and be off in the http context.' do
         expect(http).to(include "server_tokens")
@@ -64,7 +58,7 @@ to not aid in the blueprinting of the web server.
   end 
     
   # Within server
-  Array(nginx_conf_handle.servers).each do |server|
+  Array(nginx_conf.servers).each do |server|
     describe 'server_tokens' do
       it 'should be off if found in the server context.' do
         server.params["server_tokens"].each do |server_token|       
@@ -75,7 +69,7 @@ to not aid in the blueprinting of the web server.
   end
 
   # Within location
-  Array(nginx_conf_handle.locations).each do |location|
+  Array(nginx_conf.locations).each do |location|
     describe 'server_tokens' do
       it 'should be off if found in the location context.' do
         location.params["server_tokens"].each do |server_token|       

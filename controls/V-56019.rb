@@ -43,14 +43,12 @@ control "V-56019" do
   tag "cci": ["CCI-001166"]
   tag "nist": ["SC-18 (1)", "Rev_4"]
 
-  describe "This test requires a Manual Review: If the web server does not implement 
-  mobile code, this check is Not Applicable.  
-  If the web server does implement mobile code but is not configured to follow 
-  the DoD policies on mobile code, this is a finding." do
-    skip "This test requires a Manual Review: If the web server does not implement 
-    mobile code, this check is Not Applicable.  
-    If the web server does implement mobile code but is not configured to follow 
-    the DoD policies on mobile code, this is a finding."
+  describe "This test requires a Manual Review: Determine if the web server implements 
+  mobile code. If so, verify the web server is configured to follow DoD policies on mobile 
+  code." do
+    skip "This test requires a Manual Review: Determine if the web server implements 
+    mobile code.If so, verify the web server is configured to follow DoD policies on mobile 
+    code." 
   end
 end
 

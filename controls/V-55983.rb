@@ -33,17 +33,10 @@ files, before installation, are valid.
   tag "cci": ["CCI-001749"]
   tag "nist": ["CM-5 (3)", "Rev_4"]
 
-  describe "This test requires a Manual Review: Review the NGINX web server documentation 
-  and deployment configuration to determine if the web server validates files before the 
-  files are implemented into the running configuration.
-  If the NGINX web server does not meet this requirement and an external facility
-  is not available for use, this is a finding." do
-    skip "This test requires a Manual Review: Review the NGINX web server documentation 
-    and deployment configuration to determine if the web server validates files before the 
-    files are implemented into the running configuration.
-    If the NGINX web server does not meet this requirement and an external facility
-    is not available for use, this is a finding."
+  describe "This test requires a Manual Review: Determine if the web server or external 
+  facility validates files before the files are implemented into the running configuration." do
+    skip "This test requires a Manual Review: Determine if the web server or external 
+    facility validates files before the files are implemented into the running configuration." 
   end
-  
 end
 

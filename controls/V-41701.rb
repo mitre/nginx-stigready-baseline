@@ -47,5 +47,12 @@ control "V-41701" do
       end
     end
   end
+  
+  if input('nginx_disallowed_mime_type').empty?
+    describe 'Test skipped because the disallow mime type list is empty.' do
+      skip 'This test is skipped since the disallow mime type list is empty.'
+    end
+  end 
+
 end
 

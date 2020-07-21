@@ -47,7 +47,7 @@ control "V-56023" do
   tag "nist": ["SC-23 (3)", "Rev_4"]
 
   describe nginx do
-    its('version') { should cmp > '1.11.0' }
+    its('version') { should cmp == input('nginx_version') }
   end
   
 end

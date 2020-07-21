@@ -74,5 +74,12 @@ control "V-41695" do
       it { should_not exist }
     end
   end
+
+  if input('nginx_disallowed_file_list').empty?
+    describe 'Test skipped because the disallowed files list is empty.' do
+      skip 'This test is skipped since the disallowed files list is empty.'
+    end
+  end
+
 end
 

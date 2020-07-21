@@ -48,14 +48,8 @@ control "V-41615" do
   tag "cci": ["CCI-000133"]
   tag "nist": ["AU-3", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # log_format - Context:	http
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     http["log_format"].each do |log_format|
       describe 'remote_addr' do
         it 'should be part of every log format in http.' do

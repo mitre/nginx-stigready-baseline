@@ -43,20 +43,10 @@ control "V-41745" do
   tag "cci": ["CCI-000803"]
   tag "nist": ["IA-7", "Rev_4"]
 
-  describe "This test requires a Manual Review: Review NGINX web server documentation and deployed configuration to determine
-  whether the encryption modules utilized for storage of data are FIPS 140-2
-  compliant.
-  If the web server host utilizes FIPS 140-2 compliant encryption modules for 
-  storage of data, this is not a finding. 
-  If the encryption modules used for storage of data are not FIPS 140-2
-  validated, this is a finding." do
-    skip "This test requires a Manual Review: Review NGINX web server documentation and deployed configuration to determine
-    whether the encryption modules utilized for storage of data are FIPS 140-2
-    compliant.
-    If the web server host utilizes FIPS 140-2 compliant encryption modules for 
-    storage of data, this is not a finding. 
-    If the encryption modules used for storage of data are not FIPS 140-2
-    validated, this is a finding."
+  describe "This test requires a Manual Review: Determine whether the encryption modules utilized 
+  for storage of data are FIPS 140-2 compliant." do
+    skip "This test requires a Manual Review: Determine whether the encryption modules utilized 
+    for storage of data are FIPS 140-2 compliant."
   end
 end
 

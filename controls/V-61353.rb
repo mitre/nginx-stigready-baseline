@@ -43,47 +43,52 @@ session becomes easy for the attacker to break, often within minutes to hours."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   # ssl_prefer_server_ciphers - Context:	http, server
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'Each server context' do
       it 'should include the ssl_prefer_server_ciphers directive.' do
         expect(server.params).to(include "ssl_prefer_server_ciphers")
       end
     end
-    server.params["ssl_prefer_server_ciphers"].each do |prefer_ciphers|
-      describe 'The ssl_prefer_server_cipher' do
-        it 'should be set to on.' do
-          expect(prefer_ciphers).to(cmp 'on')
-        end
+    if server.params["ssl_prefer_server_ciphers"].nil?
+      describe 'Test skipped because the ssl_prefer_server_ciphers directive does not exist.' do
+        skip 'This test is skipped since the ssl_prefer_server_ciphers directive was not found.'
       end
-      # Create an array with all of the ciphers found in the server section of the config file.
-      ciphers_found = []
-      server.params["ssl_ciphers"].each do |ciphers|
-        ciphers[0].to_s.split("\:").each do |cipher|
-          # puts "Found this cipher: " + cipher
-          ciphers_found << cipher
+    else
+      server.params["ssl_prefer_server_ciphers"].each do |prefer_ciphers|
+        describe 'The ssl_prefer_server_cipher' do
+          it 'should be set to on.' do
+            expect(prefer_ciphers).to(cmp 'on')
+          end
         end
-      end
+        # Create an array with all of the ciphers found in the server section of the config file.
+        ciphers_found = []
+        server.params["ssl_ciphers"].each do |ciphers|
+          ciphers[0].to_s.split("\:").each do |cipher|
+            # puts "Found this cipher: " + cipher
+            ciphers_found << cipher
+          end
+        end
 
-      # Remove all duplicates
-      ciphers_found.uniq
-      approved_ssl_ciphers.uniq
+        # Remove all duplicates
+        ciphers_found.uniq!
 
-      # Ensure only approved ciphers are enabled in the configuration
-     ciphers_found.each do |cipher|
-        describe 'Each cipher' do
-          it 'found in configuration should be included in the list of ciphers approved to encrypt data' do
-            expect(cipher).to(be_in input('approved_ssl_ciphers'))
+        # Ensure only approved ciphers are enabled in the configuration
+      ciphers_found.each do |cipher|
+          describe 'Each cipher' do
+            it 'found in configuration should be included in the list of ciphers approved to encrypt data' do
+              expect(cipher).to(be_in input('approved_ssl_ciphers'))
+            end
           end
         end
       end
-    end unless server.params["ssl_prefer_server_ciphers"].nil?
-  end 
+    end
+  end
+
+  if nginx_conf.servers.empty?
+    describe 'Test skipped because the server context does not exist.' do
+      skip 'This test is skipped since the server context was not found.'
+    end
+  end
 end
 

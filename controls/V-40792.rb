@@ -23,12 +23,13 @@ control "V-40792" do
   desc  "check", "Review the NGINX web server documentation and configuration to determine if
   server-side session management is configured.
 
-  If it is determined that the web server is not required to perform session management, this check is Not Applicable. 
+  If it is determined that the web server is not required to perform session management, 
+  this check is Not Applicable. 
 
   If it is not configured, this is a finding.
   "
   desc  "fix", "Configure the NGINX web server to perform server-side session
-management."
+  management."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000001-WSR-000002"
@@ -39,14 +40,10 @@ management."
   tag "cci": ["CCI-000054"]
   tag "nist": ["AC-10", "Rev_4"]
 
-  describe "This test requires a Manual Review: Review the NGINX web server documentation and configuration to determine if
-  server-side session management is configured. If it is determined that the web 
-  server is not required to perform session management, this check is Not Applicable.
-  If it is not configured, this is a finding." do
-    skip "This test requires a Manual Review: Review the NGINX web server documentation and configuration to determine if
-    server-side session management is configured. If it is determined that the web 
-    server is not required to perform session management, this check is Not Applicable.
-    If it is not configured, this is a finding."
+  describe "This test requires a Manual Review: Determine if server-side session management 
+  is required. If it is required, verify that it is configured." do
+    skip "This test requires a Manual Review: Determine if server-side session management 
+    is required. If it is required, verify that it is configured."
   end
 end
 

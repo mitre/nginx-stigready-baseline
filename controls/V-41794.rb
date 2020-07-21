@@ -31,15 +31,10 @@ control "V-41794" do
   tag "cci": ["CCI-001082"]
   tag "nist": ["SC-2", "Rev_4"]
 
-  describe "This test requires a Manual Review: Review the NGINX web server documentation and 
-  deployed configuration to determine whether hosted application functionality is 
-  separated from web server management functions.
-  If the functions are not separated, this is a finding." do
-    skip "This test requires a Manual Review: Review the NGINX web server documentation and 
-    deployed configuration to determine whether hosted application functionality is 
-    separated from web server management functions.
-    If the functions are not separated, this is a finding."
+  describe "This test requires a Manual Review: Determine whether hosted application functionality is 
+  separated from web server management functions." do
+    skip "This test requires a Manual Review: Determine whether hosted application functionality is 
+    separated from web server management functions."
   end
-  
 end
 

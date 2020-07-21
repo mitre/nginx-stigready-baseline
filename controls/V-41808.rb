@@ -2,17 +2,17 @@
 
 control "V-41808" do
   title "The NGINX web server must generate a session ID long enough that it cannot
-be guessed through brute force."
+  be guessed through brute force."
   desc  "Generating a session identifier (ID) that is not easily guessed
-through brute force is essential to deter several types of session attacks.  By
-knowing the session ID, an attacker can hijack a user session that has already
-been user authenticated by the hosted application.  The attacker does not need
-to guess user identifiers and passwords or have a secure token since the user
-session has already been authenticated.
+  through brute force is essential to deter several types of session attacks.  By
+  knowing the session ID, an attacker can hijack a user session that has already
+  been user authenticated by the hosted application.  The attacker does not need
+  to guess user identifiers and passwords or have a secure token since the user
+  session has already been authenticated.
 
     Generating session IDs that are at least 128 bits (16 bytes) in length will
-cause an attacker to take a large amount of time and resources to guess,
-reducing the likelihood of an attacker guessing a session ID.
+  cause an attacker to take a large amount of time and resources to guess,
+  reducing the likelihood of an attacker guessing a session ID.
   "
   
   desc  "check", "Review the NGINX web server documentation and deployed configuration 
@@ -47,9 +47,10 @@ reducing the likelihood of an attacker guessing a session ID.
 # NGINX versions after 1.11.0 have the $request_id embedded variable by default
 # This variable is a unique request identifier generated from 16 random bytes, in hexadecimal
 
-  describe nginx do
-    its('version') { should cmp > '1.11.0' }
-  end
+# Check if version is the latest supported version
+describe nginx do
+  its('version') { should cmp == input('nginx_version') }
+end
   
 end
 

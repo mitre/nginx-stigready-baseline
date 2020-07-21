@@ -40,14 +40,8 @@ trap efforts to bypass security checks or to compromise an application.
   tag "cci": ["CCI-001310"]
   tag "nist": ["SI-10", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   #  charset - Context:	http, server, location
-  nginx_conf_handle.params['http'].each do |http|
+  nginx_conf.params['http'].each do |http|
     # Within http
     describe 'Charset directive' do
       it 'should exist and be configured to the expected value in the http context.' do
@@ -60,7 +54,7 @@ trap efforts to bypass security checks or to compromise an application.
   end
 
   # Within server
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'Charset' do
       it 'should be configured to the expected value if found in the server context.' do
         server.params["charset"].each do |charset|       
@@ -71,7 +65,7 @@ trap efforts to bypass security checks or to compromise an application.
   end
 
   # Within location
-  nginx_conf_handle.locations.each do |location|
+  nginx_conf.locations.each do |location|
     describe 'Charset' do
       it 'should be configured to the expected value if found in the location context.' do
         location.params["charset"].each do |charset|       

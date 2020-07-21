@@ -43,21 +43,15 @@ control "V-41696" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
  # This test assumes that NGINX has been configured to run with the account "nginx".
   # Thus there should be at least one user parameter, and the only value of that parameter
   # should be "nginx".
   describe 'At least one user directive' do
     it 'should exist.' do
-      expect(nginx_conf_handle.params['user']).to_not(be_nil)
+      expect(nginx_conf.params['user']).to_not(be_nil)
     end
   end
-  nginx_conf_handle.params['user'].each do |user|
+  nginx_conf.params['user'].each do |user|
     user.each do |value|
       describe 'The value of user' do
         it 'should be the default nginx user or other authorized user.' do

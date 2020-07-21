@@ -48,30 +48,45 @@ control "V-41730" do
   tag "cci": ["CCI-000185"]
   tag "nist": ["IA-5 (2) (a)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'The directive' do
       it 'ssl_verify_client should exist in the server context.' do
         expect(server.params).to(include "ssl_verify_client")
       end 
       it 'ssl_verify_depth should exist in the server context.' do
         expect(server.params).to(include "ssl_verify_depth")
-      end 
-      server.params["ssl_verify_client"].each do |ssl_verify_client|
-        it "ssl_verify_client should be set to 'on'." do
-          expect(ssl_verify_client).to(cmp 'on')
+      end
+
+      if server.params["ssl_verify_client"].nil?
+        describe 'Test skipped because the ssl_verify_client directive does not exist.' do
+          skip 'This test is skipped since the ssl_verify_client directive does not exist.'
         end
-      end unless server.params["ssl_verify_client"].nil?
-      server.params["ssl_verify_depth"].each do |ssl_verify_client|
-        it "ssl_verify_depth should not equal '0'." do
-          expect(ssl_verify_client).not_to(cmp '0')
+      else
+        server.params["ssl_verify_client"].each do |ssl_verify_client|
+          it "ssl_verify_client should be set to 'on'." do
+            expect(ssl_verify_client).to(cmp 'on')
+          end
         end
-      end unless server.params["ssl_verify_depth"].nil?
+      end
+
+      if server.params["ssl_verify_depth"].nil?
+        describe 'Test skipped because the ssl_verify_depth directive does not exist.' do
+          skip 'This test is skipped since the ssl_verify_depth directive does not exist.'
+        end
+      else
+        server.params["ssl_verify_depth"].each do |ssl_verify_depth|
+          it "ssl_verify_depth should not equal '0'." do
+            expect(ssl_verify_depth).not_to(cmp '0')
+          end
+        end
+      end
     end
   end 
+
+  if nginx_conf.servers.empty?
+    describe 'Test skipped because the server context does not exist.' do
+      skip 'This test is skipped since the server context was not found.'
+    end
+  end 
+  
 end

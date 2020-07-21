@@ -42,15 +42,10 @@ control "V-56029" do
   tag "cci": ["CCI-001190"]
   tag "nist": ["SC-24", "Rev_4"]
 
-  describe "This test requires a Manual Review: Interview the System Administrator for the NGINX web server.
-  Ask for documentation on the disaster recovery methods tested and planned for the 
-  NGINX web server in the event of the necessity for rollback.
-  If documentation for a disaster recovery has not been established, this is a finding." do
-    skip "This test requires a Manual Review: Interview the System Administrator for the NGINX web server.
-    Ask for documentation on the disaster recovery methods tested and planned for the 
-    NGINX web server in the event of the necessity for rollback.
-    If documentation for a disaster recovery has not been established, this is a finding."
+  describe "This test requires a Manual Review: Interview the SA and ask for documentation on the 
+  disaster recovery methods for the NGINX web server in the event of the necessity for rollback." do
+    skip "This test requires a Manual Review: Interview the SA and ask for documentation on the 
+    disaster recovery methods for the NGINX web server in the event of the necessity for rollback."
   end
-  
 end
 

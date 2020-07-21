@@ -49,14 +49,7 @@ control "V-41731" do
   tag "cci": ["CCI-000186"]
   tag "nist": ["IA-5 (2) (b)", "Rev_4"]
 
-
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'The directive' do
       it 'ssl_certificate should exist in the server context.' do
         expect(server.params).to(include "ssl_certificate")
@@ -66,23 +59,43 @@ control "V-41731" do
       end  
     end
     describe 'The private key should have the following permissions:' do
-      server.params["ssl_certificate"].each do |certificate|
-        certificate_string = certificate.to_s
-        describe file(certificate.join) do
-          its('owner') { should be_in input('sys_admin') }
-          its('group') { should be_in input('sys_admin_group') }
-          its('mode') { should cmp '0400' }
+      if server.params["ssl_certificate"].nil?
+        describe 'Test skipped because the ssl_certificate directive does not exist.' do
+          skip 'This test is skipped since the ssl_certificate directive does not exist.'
         end
-      end unless server.params["ssl_certificate"].nil?
-      server.params["ssl_certificate_key"].each do |certificate_key|
-        describe file(certificate_key.join) do
-          its('owner') { should be_in input('sys_admin') }
-          its('group') { should be_in input('sys_admin_group') }
-          its('mode') { should cmp '0400' }
+      else
+        server.params["ssl_certificate"].each do |certificate|
+          certificate_string = certificate.to_s
+          describe file(certificate.join) do
+            its('owner') { should be_in input('sys_admin') }
+            its('group') { should be_in input('sys_admin_group') }
+            its('mode') { should cmp '0400' }
+          end
         end
-      end unless server.params["ssl_certificate_key"].nil?
+      end
+      
+      if server.params["ssl_certificate_key"].nil?
+        describe 'Test skipped because the ssl_certificate_key directive does not exist.' do
+          skip 'This test is skipped since the ssl_certificate_key directive does not exist.'
+        end
+      else
+        server.params["ssl_certificate_key"].each do |certificate_key|
+          describe file(certificate_key.join) do
+            its('owner') { should be_in input('sys_admin') }
+            its('group') { should be_in input('sys_admin_group') }
+            its('mode') { should cmp '0400' }
+          end
+        end
+      end
     end
   end 
+
+  if nginx_conf.servers.empty?
+    describe 'Test skipped because the server context does not exist.' do
+      skip 'This test is skipped since the server context was not found.'
+    end
+  end 
+
 end
 
 

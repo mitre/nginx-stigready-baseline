@@ -43,8 +43,9 @@ control "V-56033" do
   tag "cci": ["CCI-002605"]
   tag "nist": ["SI-2 c", "Rev_4"]
 
+  # Verify Nginx is up to the latest supported version
   describe nginx do
-    its('version') { should cmp >= input('nginx_min_ver') }
+    its('version') { should cmp == input('nginx_version') }
   end
 end
 

@@ -58,33 +58,46 @@ website code revealing business logic, or other user personal information.
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.servers.each do |server|
+  nginx_conf.servers.each do |server|
     describe 'The listen directive' do
       it 'should be included in the configuration.' do
         expect(server.params).to(include "listen")
       end
-      it 'should be configured with SSL enabled.' do
-        expect(server.params["listen"].to_s).to(include "ssl")
+      if server.params["listen"].nil?
+        describe 'Test skipped because the listen directive does not exist.' do
+          skip 'This test is skipped since the listen directive does not exist.'
+        end
+      else
+        it 'should be configured with SSL enabled.' do
+          expect(server.params["listen"].to_s).to(include "ssl")
+        end
       end
     end
+
     describe 'The ssl_protocols directive' do
       it 'should be included in the configuration.' do
         expect(server.params).to(include "ssl_protocols")
       end
     end
-    server.params["ssl_protocols"].each do |protocol|
-      describe 'Each protocol' do
-        it 'should be included in the list of protocols approved to encrypt data' do
-          expect(protocol).to(be_in input('approved_ssl_protocols'))
+    if server.params["ssl_protocols"].nil?
+      describe 'Test skipped because the ssl_protocols directive does not exist.' do
+        skip 'This test is skipped since the ssl_protocols directive does not exist.'
+      end
+    else
+      server.params["ssl_protocols"].each do |protocol|
+        describe 'Each protocol' do
+          it 'should be included in the list of protocols approved to encrypt data' do
+            expect(protocol).to(be_in input('approved_ssl_protocols'))
+          end
         end
       end
-    end unless server.params["ssl_protocols"].nil?
+    end 
   end
+
+  if nginx_conf.servers.empty?
+    describe 'Test skipped because the server context does not exist.' do
+      skip 'This test is skipped since the server context was not found.'
+    end
+  end 
 end
 

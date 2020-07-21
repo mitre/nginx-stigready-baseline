@@ -36,8 +36,8 @@ error_log_path: '/var/log/nginx/error.log'
 #description: Path for the private key
 key_file_path: '/etc/ssl/key.pem'
 
-#description: Minimum Web vendor-supported version
-nginx_min_ver: '1.19.0'
+#description: Latest supported Nginx version
+nginx_version: '1.19.0'
 
 #description: Nginx owner
 nginx_owner: 'nginx'
@@ -46,10 +46,10 @@ nginx_owner: 'nginx'
 nginx_group: 'nginx'
 
 #description: The system adminstrator
-sys_admin : ['root', 'vagrant']
+sys_admin : ['root']
 
 #description: The system adminstrator group
-sys_admin_group: ['root', 'adm', 'vagrant']
+sys_admin_group: ['root']
 
 
 #description: List of non admin user accounts
@@ -65,8 +65,6 @@ authorized_ports: [
 
 #description: List of the access control files
 access_control_files: [ 
-  '.htaccess',
-  '.htpasswd', 
   'nginx.conf' 
 ]
 
@@ -82,24 +80,26 @@ dod_approved_pkis:
 #description: List of approved and FIPS compliant SSL Ciphers
 # NOTE: Some sites show +'s in the cipher names, while others use -'s. 
 approved_ssl_ciphers: [
-  'ECDH-AESGCM', 
-  'DH-AESGCM', 
-  'ECDH-AES256', 
-  'DH-AES256', 
-  'ECDH-AES128', 
-  'DH-AES', 
-  'ECDH-3DES', 
-  'DH-3DES', 
-  'RSA-AESGCM', 
-  'RSA-AES', 
-  'RSA-3DES', 
-  '!aNULL', 
-  '!eNULL', 
-  '!EXPORT', 
-  '!DES', 
-  '!PSK', 
-  '!RC4', 
-  '!MD5'
+  'EECDH+ECDSA+AESGCM', 
+  'EECDH+aRSA+AESGCM', 
+  'EECDH+ECDSA+SHA384', 
+  'EECDH+ECDSA+SHA256',
+  'EECDH+aRSA+SHA384', 
+  'EECDH+aRSA+SHA256',
+  'EECDH+aRSA+RC4', 
+  'EECDH', 
+  'EDH+aRSA', 
+  'HIGH',
+  '!RC4',
+  '!aNULL',
+  '!eNULL',
+  '!LOW',
+  '!3DES',
+  '!MD5',
+  '!EXP',
+  '!PSK',
+  '!SRP',
+  '!DSS'
 ]
 
 #description: List of approved and FIPS compliant TSL protocols. 

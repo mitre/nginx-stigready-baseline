@@ -51,27 +51,35 @@ control "V-56025" do
   tag "cci": ["CCI-001664"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
-  nginx_conf_handle.locations.each do |location|
+  nginx_conf.locations.each do |location|
     values = []
-    values.push(location.params['proxy_cookie_path'])
-    describe "The 'proxy_cookie_path'" do
-      it 'should be configured to HTTPOnly and Secure' do
-        expect(values.to_s).to(include "/; HTTPOnly; Secure") 
-      end unless location.params['proxy_cookie_path'].nil?
-    end
-    describe "The 'proxy_cookie_domain" do
-      it 'should be set to off if found' do
-        location.params["proxy_cookie_domain"].each do |cookie_domain|
-          expect(cookie_domain).to(cmp 'off')
+    if location.params['proxy_cookie_path'].nil? 
+      describe 'Test skipped because the proxy_cookie_path directive does not exist.' do
+        skip 'This test is skipped since the proxy_cookie_path directive directive was not found.'
+      end
+    else
+      values.push(location.params['proxy_cookie_path'])
+
+      describe "The 'proxy_cookie_path'" do
+        it 'should be configured to HTTPOnly and Secure' do
+          expect(values.to_s).to(include "/; HTTPOnly; Secure") 
         end
-      end unless location.params['proxy_cookie_domain'].nil?
+      end
+      describe "The 'proxy_cookie_domain" do
+        it 'should be set to off if found' do
+          location.params["proxy_cookie_domain"].each do |cookie_domain|
+            expect(cookie_domain).to(cmp 'off')
+          end
+        end
+      end
     end
   end
+
+  if nginx_conf.locations.empty?
+    describe 'Test skipped because the locations context does not exist.' do
+      skip 'This test is skipped since the locations context was not found.'
+    end
+  end 
+
 end
 

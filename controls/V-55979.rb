@@ -39,31 +39,31 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   tag "cci": ["CCI-001890"]
   tag "nist": ["AU-8 b", "Rev_4"]
 
-  nginx_conf_handle = nginx_conf(input('conf_path'))
-
-  describe nginx_conf_handle do
-    its ('params') { should_not be_empty }
-  end
-
   found_utc_gmt = false;
   describe "In the nginx.conf file" do
     it 'the TZ environment variable should be set.' do
-      expect(nginx_conf_handle.params['env']).to_not(cmp nil)
+      expect(nginx_conf.params['env']).to_not(cmp nil)
     end
   end
 
-  nginx_conf_handle.params['env'].each do |env|
-    found_utc_gmt = false
-    env.each do |value|
-      if (value == "TZ=UTC" || value == "TZ=GMT")
-        found_utc_gmt = true
-      end
+  if nginx_conf.params['env'].nil?
+    describe 'Test skipped because the env directive does not exist.' do
+      skip 'This test is skipped since the env directive was not found.'
     end
-    describe "The TZ environment variable" do
-      it 'should be set to UTC or GMT time.' do
-        expect(found_utc_gmt).to(cmp true)
+  else
+    nginx_conf.params['env'].each do |env|
+      found_utc_gmt = false
+      env.each do |value|
+        if (value == "TZ=UTC" || value == "TZ=GMT")
+          found_utc_gmt = true
+        end
       end
-    end
-  end unless nginx_conf_handle.params['env'].nil?
+      describe "The TZ environment variable" do
+        it 'should be set to UTC or GMT time.' do
+          expect(found_utc_gmt).to(cmp true)
+        end
+      end
+    end 
+  end
 end
 

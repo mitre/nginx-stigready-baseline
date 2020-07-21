@@ -56,6 +56,7 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   tag "cci": ["CCI-001851"]
   tag "nist": ["AU-4 (1)", "Rev_4"]
 
+  # Logs are symlinks in docker container
   if virtualization.system == 'docker'
     # Ensure access log is linked to stdout
     describe command('readlink ' + input('access_log_path')) do

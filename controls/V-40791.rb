@@ -34,60 +34,67 @@ control "V-40791" do
   tag "cci": ["CCI-000054"]
   tag "nist": ["AC-10", "Rev_4"]
 
-nginx_conf_handle = nginx_conf(input('conf_path'))
-
-describe nginx_conf_handle do
-  its ('params') { should_not be_empty }
-end
-
 # limit_conn_zone - Context:	http
-nginx_conf_handle.params['http'].each do |http|
+nginx_conf.params['http'].each do |http|
   describe 'The HTTP context' do
     it 'should include a limit_conn_zone.' do
       expect(http).to(include "limit_conn_zone")
     end
   end
-  http["limit_conn_zone"].each do |limit_conn_zone|
-    describe 'The limit_conn_zone' do
-      it 'should include a client address.' do
-        expect(limit_conn_zone.to_s).to(include "$binary_remote_addr")
-      end
+
+  if http["limit_conn_zone"].nil?
+    describe 'Test skipped because the limit_conn_zone directive does not exist.' do
+      skip 'This test is skipped since the limit_conn_zone directive was not found.'
     end
-    describe 'The limit_conn_zone' do
-      it 'should include a zone.' do
-        expect(limit_conn_zone.to_s).to(include "zone=")
+  else
+    http["limit_conn_zone"].each do |limit_conn_zone|
+      describe 'The limit_conn_zone' do
+        it 'should include a client address.' do
+          expect(limit_conn_zone.to_s).to(include "$binary_remote_addr")
+        end
       end
-    end
-    limit_conn_zone.each do |value|
-      if value.start_with?("zone")
-        zone = value.split(":").last
-        describe 'The zone in limit_conn_zone' do
-          it 'should match this regex: .*?[0-9]{1,3}.*?' do
-            expect(zone).to(match /.*?[0-9]{1,3}.*?/)
+      describe 'The limit_conn_zone' do
+        it 'should include a zone.' do
+          expect(limit_conn_zone.to_s).to(include "zone=")
+        end
+      end
+      limit_conn_zone.each do |value|
+        if value.start_with?("zone")
+          zone = value.split(":").last
+          describe 'The zone in limit_conn_zone' do
+            it 'should match this regex: .*?[0-9]{1,3}.*?' do
+              expect(zone).to(match /.*?[0-9]{1,3}.*?/)
+            end
           end
         end
       end
     end
-  end unless http["limit_conn_zone"].nil?
+  end
 end
 
   # limit_conn - Context:	http, server, location
 
-  nginx_conf_handle.locations.each do |location|
+  nginx_conf.locations.each do |location|
     describe 'Each location context' do
       it 'should include a limit_conn directive.' do
         expect(location.params).to(include "limit_conn")
       end
     end
-    location.params["limit_conn"].each do |limit_conn|
-      limit_conn.each do |value|
-        describe 'The limit_conn setting' do
-          it 'should match this regex: [a-zA-Z0-9]' do
-            expect(value).to(match /^[0-9a-zA-Z]*$/)          
+    if location.params["limit_conn"].nil?
+      describe 'Test skipped because the limit_conn directive does not exist.' do
+        skip 'This test is skipped since the limit_conn directive was not found.'
+      end
+    else
+      location.params["limit_conn"].each do |limit_conn|
+        limit_conn.each do |value|
+          describe 'The limit_conn setting' do
+            it 'should match this regex: [a-zA-Z0-9]' do
+              expect(value).to(match /^[0-9a-zA-Z]*$/)          
+            end
           end
         end
       end
-    end unless location.params["limit_conn"].nil?
+    end
   end
 end
 

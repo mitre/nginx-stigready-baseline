@@ -15,6 +15,8 @@ provisioner:
   require_chef_for_busser: false
   require_ruby_for_busser: false
   ansible_verbose: true
+  ansible_diff: true
+
   roles_path: ./spec/ansible/nginx-hardening
   requirements_path: ./spec/ansible/nginx-hardening/requirements.yml
   playbook: ./spec/ansible/nginx-hardening/playbook.yml
@@ -26,23 +28,22 @@ verifier:
   load_plugins: true
   reporter:
     - cli
-    - json:./results/nginx-results-docker.json
+    - json:./results/nginx-results-secure-docker.json
   inspec_tests:
     - path: ./
   input_files:
     - ./srg-inputs.yml
 
 platforms:
-- name: debian
+- name: debian10-nginx-latest
   driver:
-    image: nginx:latest
-    run_command: /sbin/init
+    image: nginx:1.19.0
+    platform: debian
     provision_command:
       - apt update
-      - apt install -y wget python systemd-sysv dnsutils
+      - apt install -y systemd-sysv
       - systemctl enable ssh.service
       
-
 suites:
   - name: nginx
 
