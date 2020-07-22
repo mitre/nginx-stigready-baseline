@@ -60,7 +60,7 @@ control "V-41670" do
   describe file(input('nginx_log_path')) do
     its('owner') { should be_in authorized_sa_user_list }
     its('group') { should be_in authorized_sa_group_list }
-    its('mode')  { should cmp '0750'}
+    it { should_not be_more_permissive_than('0750') }
   end
 
   # log file in docker are symlinks
