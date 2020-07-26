@@ -23,3 +23,4 @@ jobs:
       env:
         CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.docker.yml
+        KITCHEN_YAML: kitchen.docker.yml
