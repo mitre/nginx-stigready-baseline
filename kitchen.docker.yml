@@ -16,19 +16,14 @@ provisioner:
   require_ruby_for_busser: false
   ansible_verbose: true
   ansible_diff: true
-
   roles_path: ./spec/ansible/nginx-hardening
   requirements_path: ./spec/ansible/nginx-hardening/requirements.yml
-  playbook: ./spec/ansible/nginx-hardening/playbook.yml
   galaxy_ignore_certs: true
 
 verifier:
   name: inspec
   sudo: true
   load_plugins: true
-  reporter:
-    - cli
-    - json:./results/nginx-results-secure-docker.json
   inspec_tests:
     - path: ./
   input_files:
@@ -45,6 +40,21 @@ platforms:
       - systemctl enable ssh.service
       
 suites:
-  - name: nginx
+  - name: hardened-nginx
+    provisioner:
+      playbook: ./spec/ansible/nginx-hardening/hardening-playbook.yml
+    verifier:
+      reporter:
+        - cli
+        - json:./results/nginx-results-secure-docker-2.json
+  - name: vanilla-nginx
+    provisioner:
+      playbook: ./spec/ansible/nginx-hardening/vanilla-playbook.yml
+    verifier:
+      reporter:
+        - cli
+        - json:./results/nginx-results-vanilla-docker-2.json
+
+    
 
 
