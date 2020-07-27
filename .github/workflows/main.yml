@@ -3,7 +3,7 @@ name: Test the profile vanilla and hardened
 on: [push, pull_request, release]
 
 jobs:
-  docker:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -13,6 +13,10 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@master
+    - name: Install Sudo
+      run: |
+        apt-get update && \
+        apt-get -y install sudo
     - name: Install Chef
       uses: actionshub/chef-install@master
     - name: accept the chef license
