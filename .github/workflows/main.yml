@@ -42,7 +42,7 @@ jobs:
         export CHEF_LICENSE=accept
         chef env 
     - name: Test-Kitchen
-      run: chef exec kitchen verify || true
+      run: chef exec bundle exec kitchen verify || true
       env:
         KITCHEN_LOCAL_YAML: kitchen.docker.yml
         KITCHEN_YAML: kitchen.docker.yml
