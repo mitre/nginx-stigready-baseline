@@ -16,7 +16,7 @@ jobs:
     - name: Install Chef
       uses: actionshub/chef-install@master
     - name: accept the chef license
-      run: chef env --chef-license accpet
+      run: export CHEF_LICENSE=accept-silent
     - name: configure the chef env
       run: echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
     - name: Source our new bash env
