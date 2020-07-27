@@ -20,8 +20,6 @@ jobs:
       run: export CHEF_LICENSE=accept-silent
     - name: configure the chef env
       run: echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
-    - name: Add Ruby to PATH
-      run: echo 'export PATH="/opt/chef-workstation/embedded/bin:$PATH"' >> ~/.bash_profile
     - name: Source our new bash env
       run: source ~/.bash_profile
     - name: ruby?
@@ -37,6 +35,8 @@ jobs:
         key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-gems-
+    - name: Add Ruby to PATH
+      run: export PATH="/home/runner/.chefdk/gem/ruby/2.7.0/bin:$PATH"
     - name: Bundle install
       run: |
         export CHEF_LICENSE=accept
