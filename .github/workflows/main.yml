@@ -1,6 +1,6 @@
-name: kitchen
+name: Test the profile vanilla and hardened
 
-on: [push]
+on: [push, pull_request, release]
 
 jobs:
   docker:
@@ -15,6 +15,16 @@ jobs:
       uses: actions/checkout@master
     - name: Install Chef
       uses: actionshub/chef-install@master
+    - name: Install Ruby Deps
+    - name: Setup Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: "2.6"
+    - name: Bundle install
+      run: |
+        gem install bundler
+        bundle config --global jobs 8
+        bundle install   
     - name: Test-Kitchen
       uses: actionshub/test-kitchen@master
       with:
