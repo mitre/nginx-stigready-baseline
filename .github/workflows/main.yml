@@ -6,6 +6,7 @@ jobs:
   my-job:
     name: Validate profile
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.suite }}
     strategy:
       matrix:
         os: ['debian10-nginx-latest']
