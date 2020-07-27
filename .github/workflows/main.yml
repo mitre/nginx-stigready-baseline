@@ -43,6 +43,6 @@ jobs:
     - name: Display our results summary
       run: chef exec bundle exec inspec_tools summary -j ./results/${{ matrix.suite }}-test-result.json --json-counts | jq .
     - name: Ensure the scan meets our threshold
-      run: chef exec bundle exec inspec_tools compliance -j test-result.json -f ${{ matrix.suite }}.threshold.yml
+      run: chef exec bundle exec inspec_tools compliance -j ./results/${{ matrix.suite }}-test-result.json -f ${{ matrix.suite }}.threshold.yml
 
       
