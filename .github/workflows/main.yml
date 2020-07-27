@@ -18,6 +18,8 @@ jobs:
       uses: actions/checkout@master
     - name: Install Chef
       uses: actionshub/chef-install@master
+    - name: configure the chef env
+      run: echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
     - name: Setup caching
       uses: actions/cache@v2
       with:
@@ -26,8 +28,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gems-
     - name: Bundle install
+      shell: bash {0} -l
       run: |
-        export PATH="/home/runner/.chefdk/gem/ruby/2.7.0/bin:$PATH"
         chef gem install bundler
         chef bundle config path vendor/bundle
         chef bundle install
