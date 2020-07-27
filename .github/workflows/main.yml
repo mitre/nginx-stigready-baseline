@@ -31,11 +31,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gems-
     - name: Bundle install
-      shell: bash {0} -l
       run: |
-        echo $PATH
-        eval "$(chef shell-init bash)"
-        echo $PATH
         chef gem install bundler
         chef exec bundle config path vendor/bundle
         chef exec bundle install
