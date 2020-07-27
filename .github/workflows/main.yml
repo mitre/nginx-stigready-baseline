@@ -39,6 +39,7 @@ jobs:
       run: |
         mkdir results
         chef exec bundle exec kitchen verify || true
+        ls -laR
       env:
         KITCHEN_YAML: kitchen.docker.yml
     - name: Display our results summary
