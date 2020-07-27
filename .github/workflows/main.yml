@@ -39,6 +39,7 @@ jobs:
       run: export PATH="/home/runner/.chefdk/gem/ruby/2.7.0/bin:$PATH"
     - name: Bundle install
       run: |
+        export PATH="/home/runner/.chefdk/gem/ruby/2.7.0/bin:$PATH"
         export CHEF_LICENSE=accept
         chef gem install bundler
         bundle config path vendor/bundle
