@@ -30,6 +30,9 @@ jobs:
     - name: Bundle install
       shell: bash {0} -l
       run: |
+        echo $PATH
+        eval "$(chef shell-init bash)"
+        echo $PATH
         chef gem install bundler
         chef bundle config path vendor/bundle
         chef bundle install
