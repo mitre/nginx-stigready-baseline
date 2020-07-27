@@ -13,10 +13,6 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@master
-    - name: Install Sudo
-      run: |
-        apt-get update && \
-        apt-get -y install sudo
     - name: Install Chef
       uses: actionshub/chef-install@master
     - name: accept the chef license
