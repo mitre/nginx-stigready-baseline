@@ -34,8 +34,8 @@ jobs:
         eval "$(chef shell-init bash)"
         echo $PATH
         chef gem install bundler
-        chef bundle config path vendor/bundle
-        chef bundle install
+        chef exec bundle config path vendor/bundle
+        chef exec bundle install
     - name: look around
       run: |
         ls -alh 
