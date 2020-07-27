@@ -4,6 +4,9 @@ on: [push, pull_request, release]
 
 jobs:
   my-job:
+    defaults:
+      run:
+        shell: bash -l {0}
     name: Validate profile
     runs-on: ubuntu-latest
     env:
@@ -43,7 +46,7 @@ jobs:
         export CHEF_LICENSE=accept
         chef env 
     - name: Test-Kitchen
-      run: chef kitchen verify || true
+      run: kitchen verify || true
       env:
         KITCHEN_LOCAL_YAML: kitchen.docker.yml
         KITCHEN_YAML: kitchen.docker.yml
