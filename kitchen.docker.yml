@@ -40,14 +40,14 @@ platforms:
       - systemctl enable ssh.service
       
 suites:
-  - name: hardened-nginx
+  - name: hardened
     provisioner:
       playbook: ./spec/ansible/nginx-hardening/hardening-playbook.yml
     verifier:
       reporter:
         - cli
         - json:./results/nginx-results-secure-docker-2.json
-  - name: vanilla-nginx
+  - name: vanilla
     provisioner:
       playbook: ./spec/ansible/nginx-hardening/vanilla-playbook.yml
     verifier:

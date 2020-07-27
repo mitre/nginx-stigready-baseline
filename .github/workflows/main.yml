@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: ['debian-9']
-        suite: ['hardened-nginx', 'vanilla-nginx']
+        os: ['debian10-nginx-latest']
+        suite: ['vanilla', 'hardened']
       fail-fast: false
     steps:
     - name: Check out code
@@ -19,11 +19,18 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: "2.6"
+   - name: Setup caching
+     uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
     - name: Bundle install
       run: |
         gem install bundler
-        bundle config --global jobs 8
-        bundle install   
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3 --no-document   
     - name: Test-Kitchen
       uses: actionshub/test-kitchen@master
       with:
