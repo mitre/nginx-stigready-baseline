@@ -45,4 +45,9 @@ jobs:
     - name: Ensure the scan meets our threshold
       run: chef exec bundle exec inspec_tools compliance -j ./results/${{ matrix.suite }}-test-result.json -f ${{ matrix.suite }}.threshold.yml
 
+    - name: Save Test Result JSON
+      uses: actions/upload-artifact@v2
+      with:
+        path: results
+
       
