@@ -35,7 +35,7 @@ jobs:
       run: |
         ls -alh 
         echo $PATH
-        chef env
+        chef env --chef-license accept
     - name: Test-Kitchen
       uses: actionshub/test-kitchen@master
       with:
