@@ -15,10 +15,6 @@ jobs:
       uses: actions/checkout@master
     - name: Install Chef
       uses: actionshub/chef-install@master
-<<<<<<< HEAD
-=======
-    - name: Install Ruby Deps
->>>>>>> 2c3c2a8af0e8089ffdc3d13470477bd3d8f79d61
     - name: Setup Ruby
       uses: actions/setup-ruby@v1
       with:
