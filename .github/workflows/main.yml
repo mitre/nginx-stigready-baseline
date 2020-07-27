@@ -19,8 +19,8 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: "2.6"
-   - name: Setup caching
-     uses: actions/cache@v2
+    - name: Setup caching
+      uses: actions/cache@v2
       with:
         path: vendor/bundle
         key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
