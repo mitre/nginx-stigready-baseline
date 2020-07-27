@@ -45,20 +45,20 @@
         box: bento/ubuntu-18.04 
   
   suites:
-    - name: hardened-nginx
+    - name: hardened
       provisioner:
         playbook: ./spec/ansible/nginx-hardening/hardening-playbook.yml
       verifier:
         reporter:
           - cli
-          - json:./results/nginx-results-secure-vm-2.json
-    - name: vanilla-nginx
+          - json:./results/hardened-test-results.json
+    - name: vanilla
       provisioner:
         playbook: ./spec/ansible/nginx-hardening/vanilla-playbook.yml
       verifier:
         reporter:
           - cli
-          - json:./results/nginx-results-vanilla-vm-2.json
+          - json:./results/vanilla-test-results.json
   
   
   

@@ -35,14 +35,14 @@ jobs:
         chef gem install bundler
         chef exec bundle config path vendor/bundle
         chef exec bundle install
-    - name: look around
-      run: |
-        ls -alh 
-        echo $PATH
-        export CHEF_LICENSE=accept
-        chef env 
     - name: Test-Kitchen
       run: chef exec bundle exec kitchen verify || true
       env:
-        KITCHEN_LOCAL_YAML: kitchen.docker.yml
         KITCHEN_YAML: kitchen.docker.yml
+
+    - name: Display our results summary
+      run: chef exec bundle exec inspec_tools summary -j ./results/${{ matrix.suite }}-test-result.json --json-counts | jq .
+    - name: Ensure the scan meets our threshold
+      run: chef exec bundle exec inspec_tools compliance -j test-result.json -f ${{ matrix.suite }}.threshold.yml
+
+      

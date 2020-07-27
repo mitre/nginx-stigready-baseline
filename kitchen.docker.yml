@@ -46,14 +46,14 @@ suites:
     verifier:
       reporter:
         - cli
-        - json:./results/nginx-results-secure-docker-2.json
+        - json:./results/hardened-test-result.json
   - name: vanilla
     provisioner:
       playbook: ./spec/ansible/nginx-hardening/vanilla-playbook.yml
     verifier:
       reporter:
         - cli
-        - json:./results/nginx-results-vanilla-docker-2.json
+        - json:./results/vanilla-test-results.json
 
     
 
