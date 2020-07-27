@@ -53,7 +53,7 @@ suites:
     verifier:
       reporter:
         - cli
-        - json:./results/vanilla-test-results.json
+        - json:./results/vanilla-test-result.json
 
     
 
