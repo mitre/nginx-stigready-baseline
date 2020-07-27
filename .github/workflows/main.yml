@@ -36,7 +36,9 @@ jobs:
         chef exec bundle config path vendor/bundle
         chef exec bundle install
     - name: Test-Kitchen
-      run: chef exec bundle exec kitchen verify || true
+      run: |
+        mkdir results
+        chef exec bundle exec kitchen verify || true
       env:
         KITCHEN_YAML: kitchen.docker.yml
     - name: Display our results summary
