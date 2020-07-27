@@ -28,14 +28,15 @@ jobs:
           ${{ runner.os }}-gems-
     - name: Bundle install
       run: |
-        gem install bundler
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
+        chef --chef-license accept
+        chef gem install bundler
+        chef bundle config path vendor/bundle
+        chef bundle install --jobs 4 --retry 3
     - name: look around
       run: |
         ls -alh 
         echo $PATH
-        chef env --chef-license accept
+        chef env
     - name: Test-Kitchen
       uses: actionshub/test-kitchen@master
       with:
