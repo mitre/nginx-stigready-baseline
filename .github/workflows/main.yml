@@ -35,15 +35,11 @@ jobs:
         key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-gems-
-    - name: Add Ruby to PATH
-      run: export PATH="/home/runner/.chefdk/gem/ruby/2.7.0/bin:$PATH"
     - name: Bundle install
       run: |
         export PATH="/home/runner/.chefdk/gem/ruby/2.7.0/bin:$PATH"
         export CHEF_LICENSE=accept
-        chef gem install bundler
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
+        chef gem install test-kitchen kitchen-ansible kitchen-docker kitchen-inspec kitchen-transport-rsync kitchen-sharedtests inspec-bin inspec_tools
     - name: look around
       run: |
         ls -alh 
