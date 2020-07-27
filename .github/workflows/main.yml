@@ -7,7 +7,7 @@ jobs:
     name: Validate profile
     runs-on: ubuntu-latest
     env:
-      CHEF_LICENSE: accept-slient
+      CHEF_LICENSE: accept-silent
     strategy:
       matrix:
         os: ['debian10-nginx-latest']
