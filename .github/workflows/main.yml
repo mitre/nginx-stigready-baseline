@@ -20,6 +20,8 @@ jobs:
       run: export CHEF_LICENSE=accept-silent
     - name: configure the chef env
       run: echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
+    - name: Add Ruby to PATH
+      run: echo 'export PATH="/opt/chef-workstation/embedded/bin:$PATH"' >> ~/.bash_profile
     - name: Source our new bash env
       run: source ~/.bash_profile
     - name: ruby?
