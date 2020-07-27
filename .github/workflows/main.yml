@@ -27,6 +27,7 @@ jobs:
           ${{ runner.os }}-gems-
     - name: Bundle install
       run: |
+        export PATH="/home/runner/.chefdk/gem/ruby/2.7.0/bin:$PATH"
         chef gem install bundler
         chef bundle config path vendor/bundle
         chef bundle install
