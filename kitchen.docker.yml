@@ -32,7 +32,7 @@ verifier:
 platforms:
 - name: debian10-nginx-latest
   driver:
-    image: nginx:1.19.0
+    image: nginx:latest
     platform: debian
     provision_command:
       - apt update

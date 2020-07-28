@@ -37,7 +37,7 @@ error_log_path: '/var/log/nginx/error.log'
 key_file_path: '/etc/ssl/key.pem'
 
 #description: Latest supported Nginx version
-nginx_version: '1.19.0'
+nginx_version: '1.19.1'
 
 #description: Nginx owner
 nginx_owner: 'nginx'
@@ -46,10 +46,10 @@ nginx_owner: 'nginx'
 nginx_group: 'nginx'
 
 #description: The system adminstrator
-sys_admin : ['root']
+sys_admin : ['root', 'adm', 'ubuntu']
 
 #description: The system adminstrator group
-sys_admin_group: ['root']
+sys_admin_group: ['root', 'adm', 'ubuntu']
 
 
 #description: List of non admin user accounts
