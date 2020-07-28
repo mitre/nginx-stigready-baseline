@@ -1,6 +1,13 @@
 name: Test the profile vanilla and hardened
 
-on: [push, pull_request, release]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  release:
+    types:
+      - published
 
 jobs:
   my-job:
