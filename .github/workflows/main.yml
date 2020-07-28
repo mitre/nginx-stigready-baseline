@@ -102,7 +102,7 @@ jobs:
     - name: Test-Kitchen
       run: |
         mkdir results
-        chef exec bundle exec kitchen test ${{ matrix.suite }}-debian10-nginx-latest || true
+        chef exec bundle exec kitchen test ${{ matrix.suite }}-ubuntu-18.04 || true
       env:
         KITCHEN_YAML: kitchen.vagrant.yml
     - name: Display our results summary

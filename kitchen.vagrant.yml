@@ -51,14 +51,14 @@
       verifier:
         reporter:
           - cli
-          - json:./results/hardened-test-results.json
+          - json:./results/hardened-test-result.json
     - name: vanilla
       provisioner:
         playbook: ./spec/ansible/nginx-hardening/vanilla-playbook.yml
       verifier:
         reporter:
           - cli
-          - json:./results/vanilla-test-results.json
+          - json:./results/vanilla-test-result.json
   
   
   
