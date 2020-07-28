@@ -105,7 +105,7 @@ jobs:
     - name: Test-Kitchen
       run: |
         mkdir results
-        chef exec bundle exec kitchen test ${{ matrix.suite }}-ubuntu-1804 || true
+        chef exec bundle exec kitchen test ${{ matrix.suite }}-ubuntu-1804 --destroy=always || true
       env:
         KITCHEN_YAML: kitchen.ec2.yml
     - name: Display our results summary
