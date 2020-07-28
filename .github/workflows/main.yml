@@ -89,7 +89,11 @@ jobs:
         chef exec bundle install
     - name: Install VirtualBox
       run: |
-        sudo apt install virtualbox  
+        wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - 
+        wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+        sudo apt update
+        sudo apt install virtualbox-6.1
     - name: Install vagrant
       run: |
         curl -O https://releases.hashicorp.com/vagrant/2.2.9/vagrant_2.2.9_x86_64.deb
