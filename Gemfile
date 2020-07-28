@@ -12,4 +12,5 @@ gem 'kitchen-transport-rsync'
 gem 'kitchen-sharedtests'
 gem 'kitchen-dokken'
 gem 'kitchen-docker'
+gem 'kitchen-ec2'
 
