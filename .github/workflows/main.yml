@@ -13,12 +13,11 @@ jobs:
       CHEF_LICENSE: accept-silent
     strategy:
       matrix:
-        os: ['debian10-nginx-latest']
         suite: ['vanilla', 'hardened']
       fail-fast: false
     steps:
     - name: Check out code
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
     - name: Install Chef
       uses: actionshub/chef-install@master
     - name: configure the chef env
@@ -38,8 +37,7 @@ jobs:
     - name: Test-Kitchen
       run: |
         mkdir results
-        chef exec bundle exec kitchen verify || true
-        ls -laR
+        chef exec bundle exec kitchen test ${{ matrix.suite }}-debian10-nginx-latest || true
       env:
         KITCHEN_YAML: kitchen.docker.yml
     - name: Display our results summary
