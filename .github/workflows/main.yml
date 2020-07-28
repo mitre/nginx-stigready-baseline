@@ -3,7 +3,7 @@ name: Test the profile vanilla and hardened
 on: [push, pull_request, release]
 
 jobs:
-  my-job:
+  my-docker:
     defaults:
       run:
         shell: bash -l {0}
@@ -38,10 +38,63 @@ jobs:
     - name: Test-Kitchen
       run: |
         mkdir results
-        chef exec bundle exec kitchen verify || true
-        ls -laR
+        chef exec bundle exec kitchen test ${{ matrix.suite }}-debian10-nginx-latest || true
       env:
         KITCHEN_YAML: kitchen.docker.yml
+    - name: Display our results summary
+      run: chef exec bundle exec inspec_tools summary -j ./results/${{ matrix.suite }}-test-result.json --json-counts | jq .
+    - name: Ensure the scan meets our threshold
+      run: chef exec bundle exec inspec_tools compliance -j ./results/${{ matrix.suite }}-test-result.json -f ${{ matrix.suite }}.threshold.yml
+    - name: Save Test Result JSON
+      uses: actions/upload-artifact@v2
+      with:
+        path: results
+  my-vm:
+    defaults:
+      run:
+        shell: bash -l {0}
+    name: Validate profile
+    runs-on: ubuntu-latest
+    env:
+      CHEF_LICENSE: accept-silent
+    strategy:
+      matrix:
+        os: ['debian10-nginx-latest']
+        suite: ['vanilla', 'hardened']
+      fail-fast: false
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+    - name: Install Chef
+      uses: actionshub/chef-install@master
+    - name: configure the chef env
+      run: echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
+    - name: Setup caching
+      uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+    - name: Bundle install
+      run: |
+        chef gem install bundler
+        chef exec bundle config path vendor/bundle
+        chef exec bundle install
+    - name: Install VirtualBox
+      run: |
+        sudo apt install virtualbox  
+    - name: Install vagrant
+      run: |
+        curl -O https://releases.hashicorp.com/vagrant/2.2.9/vagrant_2.2.9_x86_64.deb
+        sudo apt install ./vagrant_2.2.6_x86_64.deb
+        vagrant --version
+    - name: Test-Kitchen
+      run: |
+        mkdir results
+        chef exec bundle exec kitchen test ${{ matrix.suite }}-debian10-nginx-latest || true
+      env:
+        KITCHEN_YAML: kitchen.vagrant.yml
     - name: Display our results summary
       run: chef exec bundle exec inspec_tools summary -j ./results/${{ matrix.suite }}-test-result.json --json-counts | jq .
     - name: Ensure the scan meets our threshold
