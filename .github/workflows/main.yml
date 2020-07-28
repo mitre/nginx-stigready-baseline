@@ -1,6 +1,13 @@
 name: Test the profile vanilla and hardened
 
-on: [push, pull_request, release]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  release:
+    types:
+      - published
 
 jobs:
   my-docker:
@@ -13,12 +20,11 @@ jobs:
       CHEF_LICENSE: accept-silent
     strategy:
       matrix:
-        os: ['debian10-nginx-latest']
         suite: ['vanilla', 'hardened']
       fail-fast: false
     steps:
     - name: Check out code
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
     - name: Install Chef
       uses: actionshub/chef-install@master
     - name: configure the chef env
