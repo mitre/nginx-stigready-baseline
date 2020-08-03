@@ -15,7 +15,7 @@ jobs:
     runs-on: macos-latest
     env:
       CHEF_LICENSE: accept-silent
-      KITCHEN_LOCAL_YAML: kitchen.vagrant.yml
+      KITCHEN_YAML: kitchen.vagrant.yml
     strategy:
       matrix:
         suite: ['vanilla', 'hardened']

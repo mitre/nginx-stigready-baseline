@@ -52,10 +52,6 @@ control "V-41745" do
     its('exit_status') { should eq 0}
   end 
 
-  # describe nginx do
-  #   its('openssl_version.version') { should match /-fips/ }
-  # end
-
   describe command('nginx -V 2>&1').stdout do
     it { should match /-fips/ } 
   end
