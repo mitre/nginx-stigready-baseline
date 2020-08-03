@@ -1,4 +1,5 @@
-name: Test the profile vanilla and hardened
+name: Verify the Baseline using Docker
+
 on:
   push:
     branches: [ master ]
