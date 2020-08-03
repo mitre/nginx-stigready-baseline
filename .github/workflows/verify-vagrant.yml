@@ -43,6 +43,9 @@ jobs:
           gem install bundler
           bundle config path vendor/bundle
           bundle install
+      - name: Regenerate current `profile.json`
+        run: |
+          bundle exec inspec json . | jq . > profile.json
       - name: Lint the Inspec profile
         run: bundle exec inspec check .
       - name: Run kitchen test

@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-dod_approved_pkis = input('dod_approved_pkis')
-
 control "V-56027" do
   title "The web server must only accept client certificates issued by DoD PKI
 or DoD-approved PKI Certification Authorities (CAs)."
@@ -68,8 +66,6 @@ legitimate users."
       end
     end
   end
-
-
   if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do

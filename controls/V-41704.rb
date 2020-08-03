@@ -43,22 +43,25 @@ control "V-41704" do
   tag "fix_id": "F-47163r2_fix"
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
-
-  if nginx_conf.locations.nil?
+  
+  if nginx_conf.locations.empty?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'
     end
   else
     nginx_conf.locations.each do |location|
-      location.params["_"].each do |value|
-        if (value == '/') 
-          deny_values = []
-          deny_values.push(location.params['deny']) unless location.params['deny'].nil?
-          describe "Each root directory location context" do
-            it 'should include an deny all directive.' do
-              expect(deny_values.to_s).to(include "all")
-            end
+      deny_values = []
+      deny_values.push(location.params['deny']) unless location.params['deny'].nil?
+      if deny_values.empty?
+        impact 0.0
+        describe 'This check is NA because the deny directive has not been configured in locations.' do
+          skip 'This check is NA because the deny directive has not been configured in locations.'
+        end
+      else
+        describe "Each location context" do
+          it 'should include an deny all directive.' do
+            expect(deny_values.to_s).to(include "all")
           end
         end
       end

@@ -16,8 +16,8 @@ provisioner:
   require_ruby_for_busser: false
   ansible_verbose: true
   ansible_diff: true
-  roles_path: ./spec/ansible/nginx-hardening
-  requirements_path: ./spec/ansible/nginx-hardening/requirements.yml
+  roles_path: spec/ansible/nginx-hardening
+  requirements_path: spec/ansible/nginx-hardening/requirements.yml
   galaxy_ignore_certs: true
 
 verifier:
@@ -42,18 +42,18 @@ platforms:
 suites:
   - name: hardened
     provisioner:
-      playbook: ./spec/ansible/nginx-hardening/hardening-playbook.yml
+      playbook: spec/ansible/nginx-hardening/hardening-playbook.yml
     verifier:
       reporter:
         - cli
-        - json:.spec/results/hardened-test-result.json
+        - json:spec/results/hardened-test-result.json
   - name: vanilla
     provisioner:
-      playbook: ./spec/ansible/nginx-hardening/vanilla-playbook.yml
+      playbook: spec/ansible/nginx-hardening/vanilla-playbook.yml
     verifier:
       reporter:
         - cli
-        - json:.spec/results/vanilla-test-result.json
+        - json:spec/results/vanilla-test-result.json
 
     
 
