@@ -64,22 +64,18 @@ control "V-41695" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  # Default installation does not include example code 
-  # but this allows other files to be checked. 
-
-  # Add files to check for in the 'nginx_disallowed_file_list' input
-
-  input('nginx_disallowed_file_list').each do |file|
-    describe file(file) do
-      it { should_not exist }
-    end
-  end
 
   if input('nginx_disallowed_file_list').empty?
-    describe 'Test skipped because the disallowed files list is empty.' do
-      skip 'This test is skipped since the disallowed files list is empty.'
+    impact 0.0
+    describe 'This check is NA because the disallowed files list should not be empty.' do
+      skip 'This check is NA because the disallowed files list should not be empty.'
+    end
+  else
+    input('nginx_disallowed_file_list').each do |file|
+      describe file(file) do
+        it { should_not exist }
+      end
     end
   end
-
 end
 

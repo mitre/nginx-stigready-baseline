@@ -21,18 +21,22 @@ control "V-41745" do
   to determine whether the encryption modules utilized for storage of data are FIPS 140-2
   compliant.
 
-    Reference the following NIST site to identify validated encryption modules:
+  Verify the Operating System and OpenSSL are in FIPS Mode -
+  Execute the following command to check the OS:
+    
+    # sudo sysctl –a | grep fips
 
-    http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm
+  If crypto.fips_enabled is set to 0, this is a finding.
 
-  If the web server host utilizes FIPS 140-2 compliant encryption modules for 
-  storage of data, this is not a finding. 
-
-  If the encryption modules used for storage of data are not FIPS 140-2
-  validated, this is a finding.
+  Execute the following command to check OpenSSL:
+    # nginx -V 
+  
+  The version of OpenSSL specified should include a '-fips'. If NGINX is not build with 
+  a version of OpenSSL that is FIPS compliant, this is a finding.
   "
   desc  "fix", "Configure the web server to utilize FIPS 140-2 approved
   encryption modules when the web server is storing data."
+  
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000179-WSR-000110"
@@ -43,10 +47,18 @@ control "V-41745" do
   tag "cci": ["CCI-000803"]
   tag "nist": ["IA-7", "Rev_4"]
 
-  describe "This test requires a Manual Review: Determine whether the encryption modules utilized 
-  for storage of data are FIPS 140-2 compliant." do
-    skip "This test requires a Manual Review: Determine whether the encryption modules utilized 
-    for storage of data are FIPS 140-2 compliant."
+  describe command('sysctl –a | grep fips') do
+    its('stdout') { should eq "crypto.fips_enabled = 1\n" }
+    its('exit_status') { should eq 0}
+  end 
+
+  # describe nginx do
+  #   its('openssl_version.version') { should match /-fips/ }
+  # end
+
+  describe command('nginx -V 2>&1').stdout do
+    it { should match /-fips/ } 
   end
+
 end
 

@@ -37,7 +37,7 @@ error_log_path: '/var/log/nginx/error.log'
 key_file_path: '/etc/ssl/key.pem'
 
 #description: Latest supported Nginx version
-nginx_version: '1.19.1'
+nginx_latest_version: '1.19.1'
 
 #description: Nginx owner
 nginx_owner: 'nginx'
@@ -46,10 +46,10 @@ nginx_owner: 'nginx'
 nginx_group: 'nginx'
 
 #description: The system adminstrator
-sys_admin : ['root', 'adm', 'ubuntu']
+sys_admin : ['root', 'adm', 'ubuntu', 'kitchen']
 
 #description: The system adminstrator group
-sys_admin_group: ['root', 'adm', 'ubuntu']
+sys_admin_group: ['root', 'adm', 'ubuntu', 'kitchen']
 
 
 #description: List of non admin user accounts
@@ -64,8 +64,8 @@ authorized_ports: [
 ]
 
 #description: List of the access control files
-access_control_files: [ 
-  'nginx.conf' 
+access_control_files: [
+  'nginx.conf'
 ]
 
 #description: Charset required
@@ -181,3 +181,28 @@ nginx_disallowed_mime_type: [
   'application/x-xpinstall',  
   'application/octet-stream'
 ]
+
+#description: true/false - NGINX performs session management
+performs_session_management: 'true'
+
+#description: true/false - NGINX performs session management
+manages_auth: 'false'
+
+#description: true/false - NGINX implements mobile code
+implements_mobile_code: 'false'
+
+#description: true/false - NGINX is a proxy server
+proxy_server: 'false'
+
+#description: true/false - NGINX is a high-availability server
+high_availability: 'false'
+
+#description: true/false - NGINX is part of a cluster
+is_cluster: 'false'
+
+#description: true/false - NGINX is the cluster master
+is_cluster_master: 'false'
+
+#description: Minimum size of log file
+minimum_log_file_size: '25G'
+

@@ -47,33 +47,33 @@ control "V-41700" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  nginx_conf.locations.each do |location|
-    if location.params["fastcgi_param"].nil?
-      describe 'Test skipped because the fastcgi_param directive does not exist.' do
-        skip 'This test is skipped since the fastcgi_param directive was not found.'
-      end
-    else
-      location.params["fastcgi_param"].each do |value|
-        if (value[0] == "SCRIPT_FILENAME")
-          cgi_script_path = command("echo #{value[1]} | cut -d '$' -f 1").stdout
-          cgi_scripts = command("ls #{cgi_script_path}").stdout.split("\n")
-          cgi_scripts.uniq!
+  if nginx_conf.locations.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.locations.each do |location|
+      if location.params["fastcgi_param"].nil?
+        describe 'Test skipped because the fastcgi_param directive does not exist.' do
+          skip 'This test is skipped since the fastcgi_param directive was not found.'
+        end
+      else
+        location.params["fastcgi_param"].each do |value|
+          if (value[0] == "SCRIPT_FILENAME")
+            cgi_script_path = command("echo #{value[1]} | cut -d '$' -f 1").stdout
+            cgi_scripts = command("ls #{cgi_script_path}").stdout.split("\n")
+            cgi_scripts.uniq!
 
-          cgi_scripts.each do |script|
-            describe (script) do
-            it { should be_in input('nginx_allowed_script_list') }
+            cgi_scripts.each do |script|
+              describe (script) do
+              it { should be_in input('nginx_allowed_script_list') }
+              end
             end
-          end
-        end 
+          end 
+        end
       end
     end
   end
-
-  if nginx_conf.locations.empty?
-    describe 'Test skipped because the locations context does not exist.' do
-      skip 'This test is skipped since the locations context was not found.'
-    end
-  end
-  
 end
 

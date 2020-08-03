@@ -39,28 +39,33 @@ control "V-56009" do
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  nginx_conf.locations.each do |location|
-    values = []
-    if location.params['proxy_cookie_path'].nil? 
-      describe 'Test skipped because the proxy_cookie_path directive does not exist.' do
-        skip 'This test is skipped since the proxy_cookie_path directive directive was not found.'
+  if input('performs_session_management') == "false"
+    impact 0.0
+    describe 'This check is NA because session management is not required.' do
+      skip 'This check is NA because session management is not required.'
+    end
+  else
+    if nginx_conf.servers.empty?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
       end
     else
-      values.push(location.params['proxy_cookie_path'])
-      describe "The 'proxy_cookie_path'" do
-        it 'should be configured to HTTPOnly and Secure' do
-          expect(values.to_s).to(include "/; HTTPOnly; Secure") 
+      nginx_conf.locations.each do |location|
+        if location.params['proxy_cookie_path'].nil? 
+          impact 0.0
+          describe 'This check is NA because the proxy_cookie_path directive is not configured.' do
+            skip 'This check is NA because the proxy_cookie_path directive is not configured.'
+          end
+        else
+          describe "The 'proxy_cookie_path'" do
+            it 'should be configured to HTTPOnly and Secure' do
+              expect(location.params['proxy_cookie_path'].join).to(include "/; HTTPOnly; Secure") 
+            end
+          end
         end
       end
     end
   end
-
-
-  if nginx_conf.locations.empty?
-    describe 'Test skipped because the locations context does not exist.' do
-      skip 'This test is skipped since the locations context was not found.'
-    end
-  end 
-
 end
 

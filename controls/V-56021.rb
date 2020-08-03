@@ -36,12 +36,17 @@ control "V-56021" do
   tag "cci": ["CCI-001185"]
   tag "nist": ["SC-23 (1)", "Rev_4"]
 
-  describe "This test requires a Manual Review: Determine whether the web server is required
-  to perform session management. If so, verify it invalidates session identifiers when a 
-  session is terminated." do
-    skip "This test requires a Manual Review: Determine whether the web server is required
-    to perform session management. If so, verify it invalidates session identifiers when a 
-    session is terminated."
+  if input('performs_session_management') == "false"
+    impact 0.0
+    describe 'This check is NA because session management is not required.' do
+      skip 'This check is NA because session management is not required.'
+    end
+  else
+    describe "This test requires a Manual Review: Verify it invalidates session identifiers when a 
+    session is terminated by reviewing the NGINX documentation." do
+      skip "This test requires a Manual Review: Verify it invalidates session identifiers when a 
+      session is terminated by reviewing the NGINX documentation."
+    end
   end
 end
 

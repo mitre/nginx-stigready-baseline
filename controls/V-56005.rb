@@ -50,10 +50,15 @@ not also be compressed.
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-# Check if version is the latest supported version
-  describe nginx do
-    its('version') { should cmp == input('nginx_version') }
+  if input('performs_session_management') == "false"
+    impact 0.0
+    describe 'This check is NA because session management is not required.' do
+      skip 'This check is NA because session management is not required.'
+    end
+  else
+    describe nginx do
+      its('version') { should cmp >= '1.3.2' }
+    end
   end
-  
 end
 

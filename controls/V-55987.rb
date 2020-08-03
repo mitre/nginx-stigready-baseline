@@ -78,36 +78,32 @@ need to have passwords set or changed.
     service_accounts = input('sys_admin').clone << input('nginx_owner')
   end
 
-  service_accounts.flatten!
-  service_accounts.uniq!
-
-  service_accounts.each do |account|
-    # Verify no there's no valid login shell for account
-    describe.one do 
-      describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
-        its('stdout') { should match /\/sbin\/nologin/}
-      end
-      describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
-        its('stdout') { should match /\/bin\/false/}
-      end
-    end
-    #Verify there's no password set for account
-    describe.one do
-      describe command("cut -d: -f1,2 /etc/shadow | grep -i '#{account}'") do
-        its('stdout') { should match "#{account}:!"}
-      end
-      
-      describe command("cut -d: -f1,2 /etc/shadow | grep -i '#{account}'") do
-        its('stdout') { should match "#{account}:\\*" }
-      end
-    end
-  end
-
   if service_accounts.empty?
-    describe 'Test skipped because the service accounts list is empty.' do
-      skip 'This test is skipped since the service accounts list is empty.'
+    impact 0.0
+    describe 'This test is NA because the no service accounts were found.' do
+      skip 'This test is NA because the service accounts were found.'
+    end
+  else
+    service_accounts.flatten!.uniq!
+    service_accounts.each do |account|
+      describe.one do 
+        describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
+          its('stdout') { should match /\/sbin\/nologin/}
+        end
+        describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
+          its('stdout') { should match /\/bin\/false/}
+        end
+      end
+      describe.one do
+        describe command("cut -d: -f1,2 /etc/shadow | grep -i '#{account}'") do
+          its('stdout') { should match "#{account}:!"}
+        end
+        
+        describe command("cut -d: -f1,2 /etc/shadow | grep -i '#{account}'") do
+          its('stdout') { should match "#{account}:\\*" }
+        end
+      end
     end
   end
-
 end
 

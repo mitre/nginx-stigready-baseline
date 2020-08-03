@@ -35,11 +35,29 @@ control "V-41812" do
   tag "fix_id": "F-47271r2_fix"
   tag "cci": ["CCI-001190"]
   tag "nist": ["SC-24", "Rev_4"]
-  
-  describe "This test requires a Manual Review: Verify that the web server is configured to provide
-  clustering functionality, if the web server is a high-availability web server." do
-    skip "This test requires a Manual Review: Verify that the web server is configured to provide
-    clustering functionality, if the web server is a high-availability web server."
-  end
+
+  if input('high_availability') == 'false'
+    impact 0.0
+    describe 'This check is NA because NGINX is not a high-availability web server.' do
+      skip 'This check is NA because NGINX is not a high-availability web server.'
+    end
+  else
+    if input('is_cluster_master') == 'false'
+      describe nginx do
+        its('modules') { should include 'ngx_stream_zone_sync_module' }
+      end
+    else
+      describe nginx do
+        its('modules') { should include 'ngx_stream_zone_sync_module' }
+      end
+      describe package('nginx-sync') do
+        it { should be_installed }
+      end
+      describe parse_config_file('/etc/nginx-sync.conf') do
+        its('NODES') { should_not be nil }
+        its('CONFPATHS') { should_not be nil }
+      end
+    end
+  end 
 end
 

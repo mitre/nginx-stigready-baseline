@@ -43,26 +43,31 @@ roles to make changes to the production system."
 
   # List of all auth_request uris in the configuration files
   auth_uris = []
-  nginx_conf.locations.entries.each do |location|
-    auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
-  end
 
-  auth_uris.flatten!
-  auth_uris.uniq!
-
-  # Make sure all locations include an auth_request directive except the location the auth_request gets sent to
-  if auth_uris.empty?
-    describe 'Test skipped because the auth_request directive values are emtpy' do
-        skip 'This test is skipped since the auth_request directive values are empty.'
+  if nginx_conf.locations.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
     end
   else
-    nginx_conf.locations.each do |location|
-      auth_uris.each do |uri|
-        describe "Each location context" do
-          it 'should include an auth_request directive.' do
-            expect(location.params).to(include "auth_request")
-          end
-        end unless location.params["_"].flatten.include?(uri)  
+    nginx_conf.locations.entries.each do |location|
+      auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
+    end
+    if auth_uris.empty?
+      impact 0.0
+      describe 'This test is NA because the auth_request directive has not been configured for the location.' do
+        skip 'This test is NA because the auth_request directive has not been configured for the location.'
+      end
+    else
+      auth_uris.flatten!.uniq!
+      nginx_conf.locations.each do |location|
+        auth_uris.each do |uri|
+          describe "Each location context" do
+            it 'should include an auth_request directive.' do
+              expect(location.params).to(include "auth_request")
+            end
+          end unless location.params["_"].flatten.include?(uri)  
+        end
       end
     end
   end

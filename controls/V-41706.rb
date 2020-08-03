@@ -44,34 +44,32 @@ control "V-41706" do
   tag "cci": ["CCI-000382"]
   tag "nist": ["CM-7 b", "Rev_4"]
 
-  nginx_conf.servers.each do |server|
-    describe 'The listen directive' do
-      it 'should exist.' do
-        expect(server.params).to(include "listen")
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.each do |server|
+      describe 'The listen directive' do
+        if server.params["listen"].nil?
+          impact 0.0
+          describe 'This test is NA because the listen directive has not been configured.' do
+            skip 'This test is NA because the listen directive has not been configured.'
+          end
+        else 
+          server.params["listen"].each do |listen|
+            it 'should include both the IP and port number.' do
+              expect(listen.join).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
+            end
+            it 'should not be 0.0.0.0:80 or [::ffff:0.0.0.0]:80.' do
+              expect(listen.join.split(':').first).not_to(cmp '0.0.0.0')
+              expect(listen.join.split(':').first).not_to(cmp '[::ffff:0.0.0.0]')
+            end
+          end
+        end 
       end
-      if server.params["listen"].nil?
-        describe 'Test skipped because the listen directive does not exist.' do
-          skip 'This test is skipped since the listen directive does not exist.'
-        end
-      else 
-        server.params["listen"].each do |listen|
-          it 'should include both the IP and port number.' do
-            expect(listen.join).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
-          end
-          it 'should not be 0.0.0.0:80 or [::ffff:0.0.0.0]:80.' do
-            expect(listen.join.split(':').first).not_to(cmp '0.0.0.0')
-            expect(listen.join.split(':').first).not_to(cmp '[::ffff:0.0.0.0]')
-          end
-        end
-      end 
     end
   end
-  
-  if nginx_conf.servers.empty?
-    describe 'Test skipped because the server context does not exist.' do
-      skip 'This test is skipped since the server context was not found.'
-    end
-  end 
-
 end
 

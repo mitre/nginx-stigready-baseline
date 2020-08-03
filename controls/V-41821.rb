@@ -38,35 +38,53 @@ exhaustion."
   tag "cci": ["CCI-001084"]
   tag "nist": ["SC-3", "Rev_4"]
 
-  
-    # collect root directores from nginx_conf
-    webserver_roots = []
+  webserver_roots = []
 
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
+    end
+  else 
     nginx_conf.http.entries.each do |http|
       webserver_roots.push(http.params['root']) unless http.params['root'].nil?
     end
+  end
 
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
     nginx_conf.servers.entries.each do |server|
       webserver_roots.push(server.params['root']) unless server.params['root'].nil?
     end
+  end
 
+  if nginx_conf.locations.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
     nginx_conf.locations.entries.each do |location|
       webserver_roots.push(location.params['root']) unless location.params['root'].nil?
     end
-
-    webserver_roots.flatten!
-    webserver_roots.uniq!
-    
+  end 
+  
+  if webserver_roots.empty?
+    impact 0.0
+    describe 'This check is NA because no root directories have been set.' do
+      skip 'This test is NA because no root directories have been set.'
+    end
+  else 
+    webserver_roots.flatten!.uniq!
     webserver_roots.each do |root|
       describe "The root directory #{root}" do
         it { should_not cmp '/'}
       end
     end
-
-    if webserver_roots.empty?
-      describe 'Test skipped because the nginx root directory list is empty.' do
-        skip 'This test is skipped since the nginx root directory list is empty.'
-      end
-    end 
+  end
 end
 

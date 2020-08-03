@@ -58,46 +58,45 @@ website code revealing business logic, or other user personal information.
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  nginx_conf.servers.each do |server|
-    describe 'The listen directive' do
-      it 'should be included in the configuration.' do
-        expect(server.params).to(include "listen")
-      end
-      if server.params["listen"].nil?
-        describe 'Test skipped because the listen directive does not exist.' do
-          skip 'This test is skipped since the listen directive does not exist.'
-        end
-      else
-        it 'should be configured with SSL enabled.' do
-          expect(server.params["listen"].to_s).to(include "ssl")
-        end
-      end
+  if nginx_conf.servers.empty?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
     end
-
-    describe 'The ssl_protocols directive' do
-      it 'should be included in the configuration.' do
-        expect(server.params).to(include "ssl_protocols")
-      end
-    end
-    if server.params["ssl_protocols"].nil?
-      describe 'Test skipped because the ssl_protocols directive does not exist.' do
-        skip 'This test is skipped since the ssl_protocols directive does not exist.'
-      end
-    else
-      server.params["ssl_protocols"].each do |protocol|
-        describe 'Each protocol' do
-          it 'should be included in the list of protocols approved to encrypt data' do
-            expect(protocol).to(be_in input('approved_ssl_protocols'))
+  else
+    nginx_conf.servers.each do |server|
+      describe 'The listen directive' do
+        if server.params["listen"].nil?
+          impact 0.0
+          describe 'This test is NA because the listen directive has not been configured.' do
+            skip 'This test is NA because the listen directive has not been configured.'
+          end
+        else
+          it 'should be configured with SSL enabled.' do
+            expect(server.params["listen"].to_s).to(include "ssl")
           end
         end
       end
-    end 
-  end
-
-  if nginx_conf.servers.empty?
-    describe 'Test skipped because the server context does not exist.' do
-      skip 'This test is skipped since the server context was not found.'
+      describe 'The ssl_protocols directive' do
+      end
+      if server.params["ssl_protocols"].nil?
+        impact 0.0
+        describe 'This test is NA because the ssl_protocols directive has not been configured.' do
+          skip 'This test is NA because the ssl_protocols directive has not been configured.'
+        end
+      else
+        server.params["ssl_protocols"].each do |protocol|
+          describe 'Each protocol' do
+            it 'should be included in the list of protocols approved to encrypt data' do
+              expect(protocol).to(be_in input('approved_ssl_protocols'))
+            end
+          end
+        end
+      end 
     end
   end 
 end
+
+
+
 

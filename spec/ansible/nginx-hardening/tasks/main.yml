@@ -1,11 +1,34 @@
 ---
+
+- name: config should not be worldwide read- or writeable
+  file:
+    path: "/usr/sbin/nginx"
+    mode: "550"
+    owner: "root"
+    group: "root"
+
 - name: config should not be worldwide read- or writeable
   file:
     path: "/etc/nginx"
-    mode: "o-rw"
+    mode: "770"
     owner: "root"
     group: "root"
-    recurse: yes
+
+
+- name: config should not be worldwide read- or writeable
+  file:
+    path: "/etc/nginx/conf.d"
+    mode: "770"
+    owner: "root"
+    group: "root"
+
+
+- name: config should not be worldwide read- or writeable
+  file:
+    path: "/etc/nginx/modules"
+    mode: "770"
+    owner: "root"
+    group: "root"
 
 - name: log directory should not be worldwide read- or writeable
   file:

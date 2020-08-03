@@ -38,50 +38,67 @@ control "V-55989" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  # auth_basic - Context:	http, server, location, limit_except
-  # auth_basic_user_file - Context:	http, server, location, limit_except
-  # Within http
- nginx_conf.params['http'].each do |http|
-    describe 'http context:' do
-      it 'There should not be an auth_basic directive.' do
-        expect(http).to_not(include "auth_basic")
-      end
-      it 'There should not be an auth_basic_user_file directive.' do
-        expect(http).to_not(include "auth_basic_user_file")
-      end
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
     end
-  end
-  # Within server
-  nginx_conf.servers.each do |server| 
-    describe 'server context:' do
-      it 'There should not be an auth_basic directive.' do
-        expect(server.params).to_not(include "auth_basic")
-      end
-      it 'There should not be an auth_basic_user_file directive.' do
-        expect(server.params).to_not(include "auth_basic_user_file")
-      end
-    end
-  end
-  # Within location
- nginx_conf.locations.each do |location|
-    describe "location context:" do
-      it 'There should not be an auth_basic directive.' do
-        expect(location.params).to_not(include "auth_basic")
-      end
-      it 'There should not be an auth_basic_user_file directive.' do
-        expect(location.params).to_not(include "auth_basic_user_file")
-      end
-      location.params["limit_except"].each do |limit_except|
-        # Within limit_except
-        describe "limit_except context:" do
-          it 'There should not be an auth_basic directive.' do
-            expect(limit_except).to_not(include "auth_basic")
-          end
-          it 'There should not be an auth_basic_user_file directive.' do
-            expect(location.params).to_not(include "auth_basic_user_file")
-          end
+  else 
+    nginx_conf.params['http'].each do |http|
+      describe 'http context:' do
+        it 'There should not be an auth_basic directive.' do
+          expect(http).to_not(include "auth_basic")
         end
-      end unless location.params["limit_except"].nil?
+        it 'There should not be an auth_basic_user_file directive.' do
+          expect(http).to_not(include "auth_basic_user_file")
+        end
+      end
+    end
+  end
+
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.each do |server| 
+      describe 'server context:' do
+        it 'There should not be an auth_basic directive.' do
+          expect(server.params).to_not(include "auth_basic")
+        end
+        it 'There should not be an auth_basic_user_file directive.' do
+          expect(server.params).to_not(include "auth_basic_user_file")
+        end
+      end
+    end
+  end
+
+  if nginx_conf.locations.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.locations.each do |location|
+      describe "location context:" do
+        it 'There should not be an auth_basic directive.' do
+          expect(location.params).to_not(include "auth_basic")
+        end
+        it 'There should not be an auth_basic_user_file directive.' do
+          expect(location.params).to_not(include "auth_basic_user_file")
+        end
+        location.params["limit_except"].each do |limit_except|
+          describe "limit_except context:" do
+            it 'There should not be an auth_basic directive.' do
+              expect(limit_except).to_not(include "auth_basic")
+            end
+            it 'There should not be an auth_basic_user_file directive.' do
+              expect(location.params).to_not(include "auth_basic_user_file")
+            end
+          end
+        end unless location.params["limit_except"].nil?
+      end
     end
   end
 end

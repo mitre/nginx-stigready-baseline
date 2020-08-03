@@ -35,14 +35,21 @@ does not need to cause an error condition to gain this information."
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  nginx_conf.params['error_log'].each do |error_log|
-    error_log.each do |error_value|
-      describe "The error log level" do
-        it 'should not be set to debug.' do
-          expect(error_value).not_to(eq 'debug')
+  if nginx_conf.params['error_log'].nil?
+    impact 0.0
+    describe 'This check is NA because the error_log directive is not configured.' do
+      skip 'This check is NA because the error_log directive is not configured.'
+    end
+  else
+    nginx_conf.params['error_log'].each do |error_log|
+      error_log.each do |error_value|
+        describe "The error log level" do
+          it 'should not be set to debug.' do
+            expect(error_value).not_to(eq 'debug')
+          end
         end
-      end
-    end       
+      end       
+    end
   end
 end
 

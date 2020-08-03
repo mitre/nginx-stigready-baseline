@@ -44,38 +44,56 @@ control "V-56035" do
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  # collect root directores from nginx_conf
   webserver_roots = []
 
-  nginx_conf.http.entries.each do |http|
-    webserver_roots.push(http.params['root']) unless http.params['root'].nil?
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
+    end
+  else 
+    nginx_conf.http.entries.each do |http|
+      webserver_roots.push(http.params['root']) unless http.params['root'].nil?
+    end
   end
 
-  nginx_conf.servers.entries.each do |server|
-    webserver_roots.push(server.params['root']) unless server.params['root'].nil?
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.entries.each do |server|
+      webserver_roots.push(server.params['root']) unless server.params['root'].nil?
+    end
   end
 
-  nginx_conf.locations.entries.each do |location|
-    webserver_roots.push(location.params['root']) unless location.params['root'].nil?
-  end
+  if nginx_conf.locations.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.locations.entries.each do |location|
+      webserver_roots.push(location.params['root']) unless location.params['root'].nil?
+    end
+  end 
 
-  webserver_roots.flatten!
-  webserver_roots.uniq!
-   
-  webserver_roots.each do |root|
-    root_files = command("ls #{root}").stdout.split("\n")
-    describe "The root directory #{root}" do
-      it "should include the default index.html file." do
-        expect(root_files).to(include 'index.html')
+  if webserver_roots.empty?
+    impact 0.0
+    describe 'This check is NA because no root directories have been set.' do
+      skip 'This test is NA because no root directories have been set.'
+    end
+  else
+    webserver_roots.flatten!.uniq!  
+    webserver_roots.each do |root|
+      root_files = command("ls #{root}").stdout.split("\n")
+      describe "The root directory #{root}" do
+        it "should include the default index.html file." do
+          expect(root_files).to(include 'index.html')
+        end
       end
     end
   end
-
-  if webserver_roots.empty?
-    describe 'Test skipped because the nginx root directories list is empty.' do
-      skip 'This test is skipped since the nginx root directories list is empty.'
-    end
-  end
-
 end
 

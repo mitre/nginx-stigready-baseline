@@ -48,38 +48,41 @@ control "V-40800" do
   tag "cci": ["CCI-000068"]
   tag "nist": ["AC-17 (2)", "Rev_4"]
   
-  # ssl_prefer_server_ciphers - Context:	http, server
-  nginx_conf.servers.each do |server|
-    describe 'Each server context' do
-      it 'should include the ssl_prefer_server_ciphers directive.' do
-        expect(server.params).to(include "ssl_prefer_server_ciphers")
-      end
+  if nginx_conf.servers.empty?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
     end
-    if server.params["ssl_prefer_server_ciphers"].nil?
-      describe 'Test skipped because the ssl_prefer_server_ciphers directive does not exist.' do
-        skip 'This test is skipped since the ssl_prefer_server_ciphers directive was not found.'
-      end
-    else
-      server.params["ssl_prefer_server_ciphers"].each do |prefer_ciphers|
-        describe 'The ssl_prefer_server_cipher' do
-          it 'should be set to on.' do
-            expect(prefer_ciphers).to(cmp 'on')
+  else
+    nginx_conf.servers.each do |server|
+      if server.params["ssl_prefer_server_ciphers"].nil?
+        impact 0.0
+        describe 'This test is NA because the ssl_prefer_server_ciphers directive has not been configured.' do
+          skip 'This test is NA because the ssl_prefer_server_ciphers directive has not been configured.'
+        end
+      else
+        server.params["ssl_prefer_server_ciphers"].each do |prefer_ciphers|
+          describe 'The ssl_prefer_server_cipher' do
+            it 'should be set to on.' do
+              expect(prefer_ciphers).to(cmp 'on')
+            end
           end
         end
-        # Create an array with all of the ciphers found in the server section of the config file.
+      end
+      if server.params["ssl_ciphers"].nil?
+        impact 0.0
+        describe 'This test is NA because the ssl_ciphers directive has not been configured.' do
+          skip 'This test is NA because the ssl_ciphers directive has not been configured.'
+        end
+      else
         ciphers_found = []
         server.params["ssl_ciphers"].each do |ciphers|
           ciphers[0].to_s.split("\:").each do |cipher|
-            # puts "Found this cipher: " + cipher
             ciphers_found << cipher
           end
         end
-
-        # Remove all duplicates
         ciphers_found.uniq!
-
-        # Ensure only approved ciphers are enabled in the configuration
-      ciphers_found.each do |cipher|
+        ciphers_found.each do |cipher|
           describe 'Each cipher' do
             it 'found in configuration should be included in the list of ciphers approved to encrypt data' do
               expect(cipher).to(be_in input('approved_ssl_ciphers'))
@@ -89,12 +92,6 @@ control "V-40800" do
       end
     end
   end
+end 
 
-  if nginx_conf.servers.empty?
-    describe 'Test skipped because the server context does not exist.' do
-      skip 'This test is skipped since the server context was not found.'
-    end
-  end
-  
-end
 

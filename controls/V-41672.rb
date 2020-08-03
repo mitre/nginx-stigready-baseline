@@ -32,7 +32,7 @@ control "V-41672" do
   and service accounts running the server should have permissions to the directory and files.
     - The SA or service account should own the directory and files
     - Permissions on the directory should be 750 or more restrictive
-    - Permissions on these files should be 660 or more restrictive
+    - Permissions on these files should be 640 or more restrictive
 
   If any users other than those authorized have permission to delete log files, this is a finding.
   "
@@ -50,13 +50,10 @@ control "V-41672" do
   tag "cci": ["CCI-000164"]
   tag "nist": ["AU-9", "Rev_4"]
 
-  authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
-  authorized_sa_group_list = input('sys_admin_group').clone << input('nginx_group')
-
-  # nginx log directory should have 750 permissions
-  describe file(input('nginx_log_path')) do
-    its('owner') { should be_in authorized_sa_user_list }
-    its('group') { should be_in authorized_sa_group_list }
+   # nginx log directory should have 750 permissions
+   describe file(input('nginx_log_path')) do
+    its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
+    its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
     it { should_not be_more_permissive_than('0750') }
   end
 
@@ -64,28 +61,28 @@ control "V-41672" do
   if virtualization.system.eql?('docker') 
     # nginx access log file should have 660 permissions
     describe file(input('access_log_path')) do
-      its('owner') { should be_in authorized_sa_user_list }
-      its('group') { should be_in authorized_sa_group_list }
+      its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
+      its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
     end
 
     # nginx error log file should have 660 permissions
     describe file(input('error_log_path')) do
-      its('owner') { should be_in authorized_sa_user_list }
-      its('group') { should be_in authorized_sa_group_list }
+      its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
+      its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
     end
   else
     # nginx access log file should have 660 permissions
     describe file(input('access_log_path')) do
-      its('owner') { should be_in authorized_sa_user_list }
-      its('group') { should be_in authorized_sa_group_list }
-      it { should_not be_more_permissive_than('0660') } 
+      its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
+      its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
+      it { should_not be_more_permissive_than('0640') } 
     end
 
     # nginx error log file should have 660 permissions
     describe file(input('error_log_path')) do
-      its('owner') { should be_in authorized_sa_user_list }
-      its('group') { should be_in authorized_sa_group_list }
-      it { should_not be_more_permissive_than('0660') }
+      its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
+      its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
+      it { should_not be_more_permissive_than('0640') }
     end
   end 
 end

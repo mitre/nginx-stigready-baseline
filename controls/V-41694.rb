@@ -41,14 +41,27 @@ control "V-41694" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  describe nginx do
-    its('modules') { should_not include 'http_proxy' }
-  end
-
-  nginx_conf.locations.each do |location|
-    describe 'proxy_pass' do
-      it 'should not exist in the location context.' do
-        expect(location.params).to_not(include "proxy_pass")
+  if input('proxy_server') == 'true'
+    impact 0.0
+    describe 'This check is NA because NGINX server is a proxy server and not a web server' do
+      skip 'This check is NA because NGINX server is a proxy server and not a web server'
+    end
+  else 
+    if nginx_conf.locations.nil?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
+      end
+    else
+      describe nginx do
+        its('modules') { should_not include 'http_proxy' }
+      end
+      nginx_conf.locations.each do |location|
+        describe 'proxy_pass' do
+          it 'should not exist in the location context.' do
+            expect(location.params).to_not(include "proxy_pass")
+          end
+        end
       end
     end
   end

@@ -43,25 +43,24 @@ control "V-41696" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
- # This test assumes that NGINX has been configured to run with the account "nginx".
-  # Thus there should be at least one user parameter, and the only value of that parameter
-  # should be "nginx".
-  describe 'At least one user directive' do
-    it 'should exist.' do
-      expect(nginx_conf.params['user']).to_not(be_nil)
+  if nginx_conf.params['user'].nil?
+    impact 0.0
+    describe 'This check is NA because the user directive is not configured properly.' do
+      skip 'This check is NA because the user directive is not configured properly.'
     end
-  end
-  nginx_conf.params['user'].each do |user|
-    user.each do |value|
-      describe 'The value of user' do
-        it 'should be the default nginx user or other authorized user.' do
-          expect(value).to (eq input('nginx_owner')).or (be_in input('authorized_user_list'))
+  else
+    nginx_conf.params['user'].each do |user|
+      user.each do |value|
+        describe 'The value of user' do
+          it 'should be the default nginx user or other authorized user.' do
+            expect(value).to (eq input('nginx_owner')).or (be_in input('authorized_user_list'))
+          end
         end
-      end
-        # /etc/passwd should include the runner account.
-      describe 'The password file' do
-        it 'should include the nginx account.' do
-          expect(command("grep -w #{value} /etc/passwd").stdout).to(match /.*?#{value}.*?/)
+          # /etc/passwd should include the runner account.
+        describe 'The password file' do
+          it 'should include the nginx account.' do
+            expect(command("grep -w #{value} /etc/passwd").stdout).to(match /.*?#{value}.*?/)
+          end
         end
       end
     end

@@ -24,19 +24,12 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   Review the NGINX web server documentation and deployed configuration to determine
   whether the web server is logging security-relevant events.
 
-  Work with the SIEM administrator to determine current security integrations.
+  Check for the following:
+      # grep for 'access_log' and 'error_log' directives in the nginx.conf and 
+      any separated include configuration file.
 
-  If the SIEM is not integrated with security, this is a finding.
-
-  Verify the following only if in Docker environment - 
-
-    Execute the following commands to verify that the NGINX web server is producing 
-    logs and linking them to stdout and stderr:
-    # readlink <access_log_path>/access.log
-    # readlink <error_log_path>/error.log
-
-    If the access.log and error.log files are not linked to stdout and stderr, 
-    this is a finding.
+  If the access_log and error_log directives do not exist and the access.log and 
+  error.log files do not exist, this is a finding. 
   "
   desc  "fix", "Execute the following command on the NGINX web server to link logs 
   to stdout and stderr:
@@ -56,24 +49,50 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   tag "cci": ["CCI-001851"]
   tag "nist": ["AU-4 (1)", "Rev_4"]
 
-  # Logs are symlinks in docker container
-  if virtualization.system == 'docker'
-    # Ensure access log is linked to stdout
-    describe command('readlink ' + input('access_log_path')) do
-      its('stdout') { should eq "/dev/stdout\n" }
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
     end
-    # Ensure error log is linked to stderror
-    describe command('readlink ' + input('error_log_path'))do
-      its('stdout') { should eq "/dev/stderr\n" }
+  else 
+    nginx_conf.params['http'].each do |http|
+      if http["access_log"].nil?
+        impact 0.0
+        describe 'This test is NA because the access_log directive has not been configured.' do
+          skip 'This test is NA because access_log directive has not been configured.'
+        end
+      else
+        http["access_log"].each do |access_log|
+          access_log.each do |access_value|
+            if access_value.include? "access.log"
+              describe file(access_value) do
+                it 'The access log should exist.' do
+                  expect(subject).to(exist)
+                end
+              end
+            end
+          end
+        end
+      end
     end
-  end
-  
-  describe "This test requires a Manual Review: Work with the SIEM administrator 
-  to determine current security integrations.
-  If the SIEM is not integrated with security, this is a finding." do
-    skip "This test requires a Manual Review: Work with the SIEM administrator 
-    to determine current security integrations.
-    If the SIEM is not integrated with security, this is a finding."
+    if nginx_conf.params['error_log'].nil?
+      impact 0.0
+      describe 'This test is NA because the error_log directive has not been configured.' do
+        skip 'This test is NA because error_log directive has not been configured.'
+      end
+    else
+      nginx_conf.params['error_log'].each do |error_log|
+        error_log.each do |error_value|
+          if error_value.include? "error.log"
+            describe file(error_value) do
+              it 'The error log should exist.' do
+                expect(subject).to(exist)
+              end
+            end
+          end
+        end       
+      end
+    end
   end
 end
 

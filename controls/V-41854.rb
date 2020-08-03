@@ -45,36 +45,48 @@ to not aid in the blueprinting of the web server.
   tag "cci": ["CCI-001312"]
   tag "nist": ["SI-11 a", "Rev_4"]
 
-  # Within http
-  nginx_conf.params['http'].each do |http|
-    describe 'server_tokens directive' do
-      it 'should exist and be off in the http context.' do
-        expect(http).to(include "server_tokens")
-        http["server_tokens"].each do |tokens|
-          expect(tokens).to(cmp 'off')
-        end unless http["server_tokens"].nil?
-      end
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
     end
-  end 
+  else
+    nginx_conf.params['http'].each do |http|
+      describe 'server_tokens directive' do
+        it 'should exist and be off in the http context.' do
+          expect(http).to(include "server_tokens")
+          expect(http["server_tokens"].join).to(cmp 'off')
+        end
+      end
+    end 
+  end
     
-  # Within server
-  Array(nginx_conf.servers).each do |server|
-    describe 'server_tokens' do
-      it 'should be off if found in the server context.' do
-        server.params["server_tokens"].each do |server_token|       
-          expect(server_token).to (cmp 'off').or (be nil)
-        end unless server.params["server_tokens"].nil?
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.each do |server|
+      describe 'server_tokens' do
+        it 'should be off if found in the server context.' do     
+          expect(server.params["server_tokens"].join).to (cmp 'off') unless server.params["server_tokens"].nil?
+        end
       end
     end
   end
 
-  # Within location
-  Array(nginx_conf.locations).each do |location|
-    describe 'server_tokens' do
-      it 'should be off if found in the location context.' do
-        location.params["server_tokens"].each do |server_token|       
-          expect(server_token).to (cmp 'off').or (be nil)
-        end unless location.params["server_tokens"].nil?
+  if nginx_conf.locations.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.locations.each do |location|
+      describe 'server_tokens' do
+        it 'should be off if found in the location context.' do     
+          expect(location.params["server_tokens"].join).to (cmp 'off') unless location.params["server_tokens"].nil?
+        end
       end
     end
   end

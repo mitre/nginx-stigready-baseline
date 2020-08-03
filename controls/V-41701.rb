@@ -40,19 +40,20 @@ control "V-41701" do
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
 
-  input('nginx_disallowed_mime_type').each do |mime_type|
-    describe "The MIME type: #{mime_type}" do
-      it 'should not be enabled in the configuration' do
-        expect(command("grep -w #{mime_type} " + input('mime_type_path')).stdout).to(eq "")
+  # Checks for enabled mime types against the disallowed list
+  if input('nginx_disallowed_mime_type').empty?
+    impact 0.0
+    describe 'This check is NA because the disallowed mime list should not be empty.' do
+      skip 'This check is NA because the disallowed mime list should not be empty.'
+    end
+  else
+    input('nginx_disallowed_mime_type').each do |mime_type|
+      describe "The MIME type: #{mime_type}" do
+        it 'should not be enabled in the configuration' do
+          expect(command("grep -w #{mime_type} " + input('mime_type_path')).stdout).to(eq "")
+        end
       end
     end
   end
-  
-  if input('nginx_disallowed_mime_type').empty?
-    describe 'Test skipped because the disallow mime type list is empty.' do
-      skip 'This test is skipped since the disallow mime type list is empty.'
-    end
-  end 
-
 end
 

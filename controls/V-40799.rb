@@ -55,48 +55,60 @@ control "V-40799" do
   tag "cci": ["CCI-000067"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-
-  # Verify that access_log and error_log is enabled
-  nginx_conf.params['http'].each do |http|
-    describe 'Each http context' do
-      it 'should include an access_log directive.' do
-        expect(http).to(include "access_log")
-      end
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
     end
-    http["access_log"].each do |access_log|
-      access_log.each do |access_value|
-        if access_value.include? "access.log"
-          describe file(access_value) do
-            it 'The access log should exist.' do
-              expect(subject).to(exist)
+  else 
+    nginx_conf.params['http'].each do |http|
+      if http["access_log"].nil?
+        impact 0.0
+        describe 'This test is NA because the access_log directive has not been configured.' do
+          skip 'This test is NA because access_log directive has not been configured.'
+        end
+      else
+        http["access_log"].each do |access_log|
+          access_log.each do |access_value|
+            if access_value.include? "access.log"
+              describe file(access_value) do
+                it 'The access log should exist.' do
+                  expect(subject).to(exist)
+                end
+              end
             end
           end
         end
       end
     end
-  end
-  nginx_conf.params['error_log'].each do |error_log|
-    error_log.each do |error_value|
-      if error_value.include? "error.log"
-        describe file(error_value) do
-          it 'The error log should exist.' do
-            expect(subject).to(exist)
-          end
-        end
-      end
-    end       
-  end
 
-  # Logs are symlinks in docker container
-  if virtualization.system == 'docker'
-    # Ensure access log is linked to stdout
-    describe command('readlink ' + input('access_log_path')) do
-      its('stdout') { should eq "/dev/stdout\n" }
+    if nginx_conf.params['error_log'].nil?
+      impact 0.0
+      describe 'This test is NA because the error_log directive has not been configured.' do
+        skip 'This test is NA because error_log directive has not been configured.'
+      end
+    else
+      nginx_conf.params['error_log'].each do |error_log|
+        error_log.each do |error_value|
+          if error_value.include? "error.log"
+            describe file(error_value) do
+              it 'The error log should exist.' do
+                expect(subject).to(exist)
+              end
+            end
+          end
+        end       
+      end
     end
-    # Ensure error log is linked to stderror
-    describe command('readlink ' + input('error_log_path'))do
-      its('stdout') { should eq "/dev/stderr\n" }
+    # Logs are symlinks in docker container
+    if virtualization.system == 'docker'
+      describe command('readlink ' + input('access_log_path')) do
+        its('stdout') { should eq "/dev/stdout\n" }
+      end
+      describe command('readlink ' + input('error_log_path'))do
+        its('stdout') { should eq "/dev/stderr\n" }
+      end
     end
-  end
+  end 
 end
 

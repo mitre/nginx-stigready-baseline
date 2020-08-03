@@ -39,16 +39,45 @@ legitimate users."
   tag "cci": ["CCI-002470"]
   tag "nist": ["SC-23 (5)", "Rev_4"]
 
-  nginx_conf.http.entries.each do |http|
-    describe http.params['ssl_client_certificate'] do
-      it { should_not be_nil }
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
     end
-    if http.params['ssl_client_certificate'].nil?
-      describe 'Test skipped because the ssl_client_certificate directive does not exist.' do
-        skip 'This test is skipped since the ssl_client_certificate directive does not exist.'
+  else 
+    nginx_conf.http.entries.each do |http|
+      describe http.params['ssl_client_certificate'] do
+        it { should_not be_nil }
       end
-    else
-      http.params['ssl_client_certificate'].each do |cert|
+      if http.params['ssl_client_certificate'].nil?
+        impact 0.0
+        describe 'This test is NA because the ssl_client_certificate directive has not been configured.' do
+          skip 'This test is NA because the ssl_client_certificate directive has not been configured.'
+        end
+      else
+        http.params['ssl_client_certificate'].each do |cert|
+          describe x509_certificate(cert.join) do
+            it { should_not be_nil }
+            its('subject.C') { should cmp 'US' }
+            its('subject.O') { should cmp 'U.S. Government' }
+          end
+          describe x509_certificate(cert.join).subject.CN[0..2] do
+            it { should be_in input('dod_approved_pkis') }
+          end
+        end
+      end
+    end
+  end
+
+
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.each do |server|
+      server.params['ssl_client_certificate'].each do |cert|
         describe x509_certificate(cert.join) do
           it { should_not be_nil }
           its('subject.C') { should cmp 'US' }
@@ -57,34 +86,8 @@ legitimate users."
         describe x509_certificate(cert.join).subject.CN[0..2] do
           it { should be_in input('dod_approved_pkis') }
         end
-      end
+      end unless server.params['ssl_client_certificate'].nil?
     end
   end
-
-  if nginx_conf.http.entries.empty?
-    describe 'Test skipped because the http context does not exist.' do
-      skip 'This test is skipped since the http context was not found.'
-    end
-  end 
-
-
-  nginx_conf.servers.entries.each do |server|
-    server.params['ssl_client_certificate'].each do |cert|
-      describe x509_certificate(cert.join) do
-        it { should_not be_nil }
-        its('subject.C') { should cmp 'US' }
-        its('subject.O') { should cmp 'U.S. Government' }
-      end
-      describe x509_certificate(cert.join).subject.CN[0..2] do
-        it { should be_in input('dod_approved_pkis') }
-      end
-    end unless server.params['ssl_client_certificate'].nil?
-  end
-
-  if nginx_conf.servers.empty?
-    describe 'Test skipped because the server context does not exist.' do
-      skip 'This test is skipped since the server context was not found.'
-    end
-  end 
 end
 

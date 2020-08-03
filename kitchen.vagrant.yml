@@ -20,9 +20,6 @@
     name: inspec
     sudo: true
     load_plugins: true
-    reporter:
-      - cli
-      - json:./results/nginx-results-secure-vm.json
     inspec_tests:
       - path: ./
     input_files:
@@ -51,14 +48,14 @@
       verifier:
         reporter:
           - cli
-          - json:./results/hardened-test-result.json
+          - json:.spec/results/hardened-test-result.json
     - name: vanilla
       provisioner:
         playbook: ./spec/ansible/nginx-hardening/vanilla-playbook.yml
       verifier:
         reporter:
           - cli
-          - json:./results/vanilla-test-result.json
+          - json:.spec/results/vanilla-test-result.json
   
   
   

@@ -45,7 +45,7 @@ control "V-56033" do
 
   # Verify Nginx is up to the latest supported version
   describe nginx do
-    its('version') { should cmp == input('nginx_version') }
+    its('version') { should cmp == input('nginx_latest_version') }
   end
 end
 

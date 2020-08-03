@@ -46,45 +46,57 @@ be capable of writing logs to centralized audit log servers."
   tag "nist": ["AU-4 (1)", "Rev_4"]
 
   # Verify that access_log and error_log is enabled
-  nginx_conf.params['http'].each do |http|
-    describe 'Each http context' do
-      it 'should include an access_log directive.' do
-        expect(http).to(include "access_log")
-      end
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
     end
-    http["access_log"].each do |access_log|
-      access_log.each do |access_value|
-        if access_value.include? "access.log"
-          describe file(access_value) do
-            it 'The access log should exist.' do
-              expect(subject).to(exist)
+  else 
+    nginx_conf.params['http'].each do |http|
+      if http["access_log"].nil?
+        impact 0.0
+        describe 'This test is NA because the access_log directive has not been configured.' do
+          skip 'This test is NA because access_log directive has not been configured.'
+        end
+      else
+        http["access_log"].each do |access_log|
+          access_log.each do |access_value|
+            if access_value.include? "access.log"
+              describe file(access_value) do
+                it 'The access log should exist.' do
+                  expect(subject).to(exist)
+                end
+              end
             end
           end
         end
       end
     end
-  end
-  nginx_conf.params['error_log'].each do |error_log|
-    error_log.each do |error_value|
-      if error_value.include? "error.log"
-        describe file(error_value) do
-          it 'The error log should exist.' do
-            expect(subject).to(exist)
-          end
-        end
+    if nginx_conf.params['error_log'].nil?
+      impact 0.0
+      describe 'This test is NA because the error_log directive has not been configured.' do
+        skip 'This test is NA because error_log directive has not been configured.'
       end
-    end       
+    else
+      nginx_conf.params['error_log'].each do |error_log|
+        error_log.each do |error_value|
+          if error_value.include? "error.log"
+            describe file(error_value) do
+              it 'The error log should exist.' do
+                expect(subject).to(exist)
+              end
+            end
+          end
+        end       
+      end
+    end
+    describe "This test requires a Manual Review: Work with SIEM administrator 
+    to determine audit configurations to ensure the ability to write specified 
+    log record content to an audit log server." do
+      skip "This test requires a Manual Review: Work with SIEM administrator 
+      to determine audit configurations to ensure the ability to write specified 
+      log record content to an audit log server."
+    end
   end
-
-  describe "This test requires a Manual Review: Work with SIEM administrator 
-  to determine audit configurations.
-  If there is a setting within the SIEM that could impede the ability to write 
-  specific log record content, this is a finding." do
-    skip "This test requires a Manual Review: Work with SIEM administrator 
-    to determine audit configurations.
-    If there is a setting within the SIEM that could impede the ability to write 
-    specific log record content, this is a finding."
-  end
-
 end
 

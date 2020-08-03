@@ -39,42 +39,47 @@ handle the expected traffic for the hosted applications."
   tag "cci": ["CCI-002385"]
   tag "nist": ["SC-5", "Rev_4"]
 
-  # Within http
-  nginx_conf.params['http'].each do |http|
-    describe 'The http context client_header_timeout value' do
-      it 'should exist and should be set to 10 (seconds) or less.' do
-        expect(http).to(include "client_header_timeout")
-        http["client_header_timeout"].each do |http_client_header|
-          expect(http_client_header[0].to_i).to(be <= 10)
-        end unless http["client_header_timeout"].nil?
-      end
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
     end
-    describe 'The http context client_body_timeout value' do
-      it 'should exist and should be set to 10 (seconds) or less.' do
-        expect(http).to(include "client_body_timeout")
-        http["client_body_timeout"].each do |http_client_body|
-          expect(http_client_body[0].to_i).to(be <= 10)
-        end unless http["client_body_timeout"].nil?
+  else 
+    nginx_conf.params['http'].each do |http|
+      describe 'The http context client_header_timeout value' do
+        it 'should exist and should be set to 10 (seconds) or less.' do
+          expect(http).to(include "client_header_timeout")
+            expect(http["client_header_timeout"].join.to_i).to(be <= 10)
+        end
+      end
+      describe 'The http context client_body_timeout value' do
+        it 'should exist and should be set to 10 (seconds) or less.' do
+          expect(http).to(include "client_body_timeout")
+          expect(http["client_body_timeout"].join.to_i).to(be <= 10)
+        end
       end
     end
   end
 
-  # Within server
-  nginx_conf.servers.each do |server|
-    describe 'The server context client_header_timeout value' do
-      it 'should be set to 10 (seconds) or less, if found.' do
-        server.params["client_header_timeout"].each do |server_client_header|
-          expect(server_client_header[0].to_i).to(be <= 10)
-        end unless server.params["client_header_timeout"].nil?
-      end
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
     end
-    describe 'The server context client_body_timeout value' do
-      it 'should be set to 10 (seconds) or less, if found' do
-        server.params["client_body_timeout"].each do |server_client_body|
-          expect(server_client_body[0].to_i).to(be <= 10)
-        end unless server.params["client_body_timeout"].nil?
+  else
+    nginx_conf.servers.each do |server|
+      describe 'The server context client_header_timeout value' do
+        it 'should be set to 10 (seconds) or less, if found.' do
+          expect(server.params["client_header_timeout"].join.to_i).to(be <= 10) unless server.params["client_header_timeout"].nil?
+        end
+      end
+      describe 'The server context client_body_timeout value' do
+        it 'should be set to 10 (seconds) or less, if found' do
+          expect(server.params["client_body_timeout"].join.to_i).to(be <= 10) unless server.params["client_body_timeout"].nil?
+        end
       end
     end
   end
 end
+
 

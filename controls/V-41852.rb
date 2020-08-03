@@ -40,37 +40,48 @@ trap efforts to bypass security checks or to compromise an application.
   tag "cci": ["CCI-001310"]
   tag "nist": ["SI-10", "Rev_4"]
 
-  #  charset - Context:	http, server, location
-  nginx_conf.params['http'].each do |http|
-    # Within http
-    describe 'Charset directive' do
-      it 'should exist and be configured to the expected value in the http context.' do
-        expect(http).to(include "charset")
-        http["charset"].each do |charset|
-          expect(charset).to(cmp input('charset_required'))
-        end unless http["charset"].nil?
-      end
-    end 
-  end
-
-  # Within server
-  nginx_conf.servers.each do |server|
-    describe 'Charset' do
-      it 'should be configured to the expected value if found in the server context.' do
-        server.params["charset"].each do |charset|       
-          expect(charset).to(cmp input('charset_required'))
-        end unless server.params["charset"].nil?
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
+    end
+  else 
+    nginx_conf.params['http'].each do |http|
+      describe 'Charset directive' do
+        it 'should exist and be configured to the expected value in the http context.' do
+          expect(http).to(include "charset")
+          expect(http["charset"].join).to(cmp input('charset_required'))
+        end 
       end
     end
   end
 
-  # Within location
-  nginx_conf.locations.each do |location|
-    describe 'Charset' do
-      it 'should be configured to the expected value if found in the location context.' do
-        location.params["charset"].each do |charset|       
-          expect(charset).to(cmp input('charset_required'))
-        end unless location.params["charset"].nil?
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.each do |server|
+      describe 'Charset' do
+        it 'should be configured to the expected value if found in the server context.' do      
+          expect(server.params["charset"].join).to(cmp input('charset_required')) unless server.params["charset"].nil?
+        end
+      end
+    end
+  end
+
+  if nginx_conf.locations.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.locations.each do |location|
+      describe 'Charset' do
+        it 'should be configured to the expected value if found in the location context.' do     
+            expect(location.params["charset"].join).to(cmp input('charset_required')) unless location.params["charset"].nil?
+        end
       end
     end
   end

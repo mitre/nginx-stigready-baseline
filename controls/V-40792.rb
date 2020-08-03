@@ -40,10 +40,17 @@ control "V-40792" do
   tag "cci": ["CCI-000054"]
   tag "nist": ["AC-10", "Rev_4"]
 
-  describe "This test requires a Manual Review: Determine if server-side session management 
-  is required. If it is required, verify that it is configured." do
-    skip "This test requires a Manual Review: Determine if server-side session management 
-    is required. If it is required, verify that it is configured."
+  if input('performs_session_management') == "false"
+   impact 0.0
+   describe 'This check is NA because session management is not required.' do
+     skip 'This check is NA because session management is not required.'
+   end
+  else
+    describe "This test requires a Manual Review: Determine if server-side session management 
+    is required. If it is required, verify that it is configured." do
+      skip "This test requires a Manual Review: Determine if server-side session management 
+      is required. If it is required, verify that it is configured."
+    end
   end
 end
 

@@ -42,11 +42,18 @@ control "V-41620" do
   tag "cci": ["CCI-001487"]
   tag "nist": ["AU-3", "Rev_4"]
 
-  nginx_conf.params['http'].each do |http|
-    http["log_format"].each do |log_format|
-      describe 'remote_user' do
-        it 'should be part of every log format in http.' do
-          expect(log_format.to_s).to(match /.*?\$remote_user.*?/)
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
+    end
+  else
+    nginx_conf.params['http'].each do |http|
+      http["log_format"].each do |log_format|
+        describe 'remote_user' do
+          it 'should be part of every log format in http.' do
+            expect(log_format.to_s).to(match /.*?\$remote_user.*?/)
+          end
         end
       end
     end

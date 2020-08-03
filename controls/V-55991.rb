@@ -42,35 +42,36 @@ assessments.
   tag "cci": ["CCI-001762"]
   tag "nist": ["CM-7 (1) (b)", "Rev_4"]
 
-  nginx_conf.servers.entries.each do |server|
-    
-    if server.params['listen'].nil?
-      describe 'Test skipped because the listen directive does not exist.' do
-        skip 'This test is skipped since the listen directive was not found.'
-      end
-    else
-      server.params['listen'].each do |listen|
-        describe "The listen directive" do
-          listen_address = listen.join
-          it "should include the specific IP address and port" do
-            expect(listen_address).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
-          end 
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.entries.each do |server|
+      if server.params['listen'].nil?
+        impact 0.0
+        describe 'This test is NA because the listen directive has not been configured.' do
+          skip 'This test is NA because the listen directive has not been configured.'
         end
-        describe "The listening port" do
-          listen_port = listen.join.split(':')[1]
-          listen_port = listen_port.tr('ssl','') unless listen_port.nil?
-          it "should be an approved port." do
-            expect(listen_port).to(be_in input('authorized_ports'))
-          end 
+      else
+        server.params['listen'].each do |listen|
+          describe "The listen directive" do
+            listen_address = listen.join
+            it "should include the specific IP address and port" do
+              expect(listen_address).to(match %r([0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+) )
+            end 
+          end
+          describe "The listening port" do
+            listen_port = listen.join.split(':')[1]
+            listen_port = listen_port.tr('ssl','') unless listen_port.nil?
+            it "should be an approved port." do
+              expect(listen_port).to(be_in input('authorized_ports'))
+            end 
+          end
         end
       end
     end
   end
-
-  if nginx_conf.servers.empty?
-    describe 'Test skipped because the server context does not exist.' do
-      skip 'This test is skipped since the server context was not found.'
-    end
-  end 
 end
 

@@ -51,11 +51,18 @@ control "V-41616" do
   tag "nist": ["AU-3", "Rev_4"]
 
   # $realip_remote_addr keeps the original client address
-  nginx_conf.params['http'].each do |http|
-    http["log_format"].each do |log_format|
-      describe "realip_remote_addr" do
-        it 'should be part of every log format in http.' do
-          expect(log_format.to_s).to(match /.*?\$realip_remote_addr.*?/)
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
+    end
+  else
+    nginx_conf.params['http'].each do |http|
+      http["log_format"].each do |log_format|
+        describe "realip_remote_addr" do
+          it 'should be part of every log format in http.' do
+            expect(log_format.to_s).to(match /.*?\$realip_remote_addr.*?/)
+          end
         end
       end
     end

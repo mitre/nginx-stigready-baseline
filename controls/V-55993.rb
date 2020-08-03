@@ -43,18 +43,21 @@ forcing a user to authenticate before the changes can be made.
   tag "fix_id": "F-60871r1_fix"
   tag "cci": ["CCI-001082"]
   tag "nist": ["SC-2", "Rev_4"]
-
-  authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
   
-  describe "Unauthorized users" do
-    it "should not have shell access." do
-      expect(users.shells(/bash/).usernames).to(be_in authorized_sa_user_list)
-    end
-  end
+  valid_login_shells = command("grep '^[^#]' /etc/shells").stdout.split("\n")
 
-  if users.shells(/bash/).usernames.empty?
-    describe "Skip Message" do
-      skip "Skipped: no users found with shell acccess."
+  if valid_login_shells.empty?
+    impact 0.0
+    describe 'This check is NA because the there are no valid login shells.' do
+      skip 'This check is NA because the there are no valid login shells.'
+    end
+  else
+    valid_login_shells.each do |shell|
+      describe "Unauthorized users" do
+        it "should not have shell access." do
+          expect(users.shells(/#{shell}/).usernames).to(be_in input('sys_admin').clone << input('nginx_owner'))
+        end
+      end
     end
   end
 end

@@ -47,11 +47,18 @@ control "V-41668" do
   tag "cci": ["CCI-000159"]
   tag "nist": ["AU-8 a", "Rev_4"]
 
-  nginx_conf.params['http'].each do |http|
-    http["log_format"].each do |log_format|
-      describe 'time_local' do
-        it 'should be part of every log format in http.' do
-          expect(log_format.to_s).to(match /.*?\$time_local.*?/)
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
+    end
+  else
+    nginx_conf.params['http'].each do |http|
+      http["log_format"].each do |log_format|
+        describe 'time_local' do
+          it 'should be part of every log format in http.' do
+            expect(log_format.to_s).to(match /.*?\$time_local.*?/)
+          end
         end
       end
     end

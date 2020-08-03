@@ -38,19 +38,24 @@ control "V-41807" do
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000224-WSR-000136"
+  tag "satisfies": ["SRG-APP-000224-WSR-000137", "SRG-APP-000224-WSR-000138", "SRG-APP-000224-WSR-000139",
+  "SRG-APP-000223-WSR-000145", "SRG-APP-000224-WSR-000135"]
   tag "gid": "V-41807"
   tag "rid": "SV-54384r3_rule"
   tag "stig_id": "SRG-APP-000224-WSR-000136"
   tag "fix_id": "F-47266r2_fix"
-  tag "cci": ["CCI-001188"]
+  tag "cci": ["CCI-001188", "CCI-001664"]
   tag "nist": ["SC-23 (3)", "Rev_4"]
-# NGINX versions after 1.11.0 have the $request_id embedded variable by default
-# This variable is a unique request identifier generated from 16 random bytes, in hexadecimal
 
-# Check if version is the latest supported version
-  describe nginx do
-    its('version') { should cmp == input('nginx_version') }
+  if input('performs_session_management') == "false"
+    impact 0.0
+    describe 'This check is NA because session management is not required.' do
+      skip 'This check is NA because session management is not required.'
+    end
+  else
+    describe nginx do
+      its('version') { should cmp > '1.11.0' }
+    end
   end
-
 end
 

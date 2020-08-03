@@ -77,70 +77,94 @@ properly to only allow privileged users access.
   tag "cci": ["CCI-001813"]
   tag "nist": ["CM-5 (1)", "Rev_4"]
 
-  authorized_sa_user_list = input('sys_admin').clone << input('nginx_owner')
-  authorized_sa_group_list = input('sys_admin_group').clone << input('nginx_group')
+  if input('access_control_files').empty?
+    impact 0.0
+    describe 'This check is NA because no configuration files have been specified.' do
+      skip 'This check is NA because no configuration files have been specified.'
+    end
+  else
+    input('access_control_files').each do |file|
+      file_path = command("find / -name #{file}").stdout.chomp
 
-  input('access_control_files').each do |file|
-    file_path = command("find / -name #{file}").stdout.chomp
+      if file_path.empty?
+        describe "Skip Message" do
+          skip "Skipped: Access control file #{file} not found"
+        end
+      end
 
-    if file_path.empty?
-      describe "Skip Message" do
-        skip "Skipped: Access control file #{file} not found"
+      file_path.split.each do |file|
+        describe file(file) do
+        its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
+        its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
+        it { should_not be_more_permissive_than('0660') }
+        end
       end
     end
 
-    file_path.split.each do |file|
+    nginx_conf.contents.keys.each do |file|
       describe file(file) do
-      its('owner') { should be_in authorized_sa_user_list }
-      its('group') { should be_in authorized_sa_group_list }
-      it { should_not be_more_permissive_than('0660') }
+        its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
+        its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
+        it { should_not be_more_permissive_than('0660') }
       end
     end
-  end
 
-  nginx_conf.contents.keys.each do |file|
-    describe file(file) do
-      its('owner') { should be_in authorized_sa_user_list }
-      its('group') { should be_in authorized_sa_group_list }
-      it { should_not be_more_permissive_than('0660') }
+    if nginx_conf.contents.keys.empty?
+      describe "Skip Message" do
+        skip "Skipped: no conf files included."
+      end
     end
-  end
 
-  if nginx_conf.contents.keys.empty?
-    describe "Skip Message" do
-      skip "Skipped: no conf files included."
+    webserver_roots = []
+
+    if nginx_conf.params['http'].nil?
+      impact 0.0
+      describe 'This check is NA because no websites have been configured.' do
+        skip 'This check is NA because no websites have been configured.'
+      end
+    else 
+      nginx_conf.http.entries.each do |http|
+        webserver_roots.push(http.params['root']) unless http.params['root'].nil?
+      end
     end
-  end
-
-  webserver_roots = []
-
-  nginx_conf.http.entries.each do |http|
-    webserver_roots.push(http.params['root']) unless http.params['root'].nil?
-  end
-
-  nginx_conf.servers.entries.each do |server|
-    webserver_roots.push(server.params['root']) unless server.params['root'].nil?
-  end
-
-  nginx_conf.locations.entries.each do |location|
-    webserver_roots.push(location.params['root']) unless location.params['root'].nil?
-  end
-
-  webserver_roots.flatten!
-  webserver_roots.uniq!
-
-  webserver_roots.each do |directory|
-    describe file(directory) do
-      its('owner') { should be_in authorized_sa_user_list }
-      its('group') { should be_in authorized_sa_group_list }
-      its('sticky'){ should be true }
+  
+    if nginx_conf.servers.nil?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
+      end
+    else
+      nginx_conf.servers.entries.each do |server|
+        webserver_roots.push(server.params['root']) unless server.params['root'].nil?
+      end
     end
-  end
-
-  if webserver_roots.empty?
-    describe "Skip Message" do
-      skip "Skipped: no web root directories found."
-    end
+  
+    if nginx_conf.locations.nil?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
+      end
+    else
+      nginx_conf.locations.entries.each do |location|
+        webserver_roots.push(location.params['root']) unless location.params['root'].nil?
+      end
+    end 
+  
+    if webserver_roots.empty?
+      impact 0.0
+      describe 'This check is NA because no root directories have been set.' do
+        skip 'This test is NA because no root directories have been set.'
+      end
+    else
+      webserver_roots.flatten!.uniq!
+      webserver_roots.each do |directory|
+        describe file(directory) do
+          its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
+          its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
+          its('sticky'){ should be true }
+        end
+      end
+    end 
   end
 end
 

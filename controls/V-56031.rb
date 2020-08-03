@@ -33,12 +33,17 @@ control "V-56031" do
   tag "cci": ["CCI-002476"]
   tag "nist": ["SC-28 (1)", "Rev_4"]
 
-  describe "This test requires a Manual Review: Determine whether the web server is 
-  authorizing and managing users. If so, verify that user identifiers and passwords 
-  are being encrypted by the web server." do
-    skip "This test requires a Manual Review: Determine whether the web server is 
-    authorizing and managing users. If so, verify that user identifiers and passwords 
-    are being encrypted by the web server."
-  end
+  if input('manages_auth') == 'false'
+    impact 0.0
+    describe 'This check is NA because NGINX does not manage authentication.' do
+      skip 'This check is NA because NGINX does not manage authentication.'
+    end
+  else
+    describe "This test requires a Manual Review: Verify that user identifiers and passwords 
+    are being encrypted by the web server." do
+      skip "This test requires a Manual Review: Verify that user identifiers and passwords 
+      are being encrypted by the web server."
+    end
+  end 
 end
 

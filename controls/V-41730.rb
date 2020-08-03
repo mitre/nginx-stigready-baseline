@@ -48,18 +48,17 @@ control "V-41730" do
   tag "cci": ["CCI-000185"]
   tag "nist": ["IA-5 (2) (a)", "Rev_4"]
 
-  nginx_conf.servers.each do |server|
-    describe 'The directive' do
-      it 'ssl_verify_client should exist in the server context.' do
-        expect(server.params).to(include "ssl_verify_client")
-      end 
-      it 'ssl_verify_depth should exist in the server context.' do
-        expect(server.params).to(include "ssl_verify_depth")
-      end
-
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.each do |server|
       if server.params["ssl_verify_client"].nil?
-        describe 'Test skipped because the ssl_verify_client directive does not exist.' do
-          skip 'This test is skipped since the ssl_verify_client directive does not exist.'
+        impact 0.0
+        describe 'This check is NA because the ssl_verify_client directive has not been configured.' do
+          skip 'This check is NA because the ssl_verify_client directive has not been configured.'
         end
       else
         server.params["ssl_verify_client"].each do |ssl_verify_client|
@@ -70,8 +69,9 @@ control "V-41730" do
       end
 
       if server.params["ssl_verify_depth"].nil?
-        describe 'Test skipped because the ssl_verify_depth directive does not exist.' do
-          skip 'This test is skipped since the ssl_verify_depth directive does not exist.'
+        impact 0.0
+        describe 'This check is NA because the ssl_verify_depth directive has not been configured.' do
+          skip 'This check is NA because the ssl_verify_depth directive has not been configured.'
         end
       else
         server.params["ssl_verify_depth"].each do |ssl_verify_depth|
@@ -80,13 +80,6 @@ control "V-41730" do
           end
         end
       end
-    end
-  end 
-
-  if nginx_conf.servers.empty?
-    describe 'Test skipped because the server context does not exist.' do
-      skip 'This test is skipped since the server context was not found.'
-    end
-  end 
-  
+    end 
+  end
 end

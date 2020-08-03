@@ -33,15 +33,21 @@ to a granularity of one second.
   tag "cci": ["CCI-001889"]
   tag "nist": ["AU-8 b", "Rev_4"]
 
-  # log_format - Context:	http
-  nginx_conf.params['http'].each do |http|
-    http["log_format"].each do |log_format|
-      describe 'time_local' do
-        it 'should be part of every log format in the http context.' do
-          expect(log_format.to_s).to(match /.*?\$time_local.*?/)
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
+    end
+  else
+    nginx_conf.params['http'].each do |http|
+      http["log_format"].each do |log_format|
+        describe 'time_local' do
+          it 'should be part of every log format in the http context.' do
+            expect(log_format.to_s).to(match /.*?\$time_local.*?/)
+          end
         end
       end
     end
-  end  
+  end 
 end
 

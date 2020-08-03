@@ -48,21 +48,28 @@ implementing secure tokens, and validating users.
   tag "cci": ["CCI-002314"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-  nginx_conf.locations.each do |location|
-    deny_values = []
-    deny_values.push(location.params['deny']) unless location.params['deny'].nil?
-    describe "Each location context" do
-      it 'should include an deny all directive.' do
-        expect(deny_values.to_s).to(include "all")
+  if nginx_conf.locations.empty?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.locations.each do |location|
+      deny_values = []
+      deny_values.push(location.params['deny']) unless location.params['deny'].nil?
+      if deny_values.empty?
+        impact 0.0
+        describe 'This check is NA because the deny directive has not been configured in locations.' do
+          skip 'This check is NA because the deny directive has not been configured in locations.'
+        end
+      else
+        describe "Each location context" do
+          it 'should include an deny all directive.' do
+            expect(deny_values.to_s).to(include "all")
+          end
+        end
       end
     end
   end
-
-  if nginx_conf.locations.empty?
-    describe 'Test skipped because the locations context does not exist.' do
-      skip 'This test is skipped since the locations context was not found.'
-    end
-  end
-
 end
 

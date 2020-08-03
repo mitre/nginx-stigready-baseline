@@ -43,12 +43,17 @@ control "V-56019" do
   tag "cci": ["CCI-001166"]
   tag "nist": ["SC-18 (1)", "Rev_4"]
 
-  describe "This test requires a Manual Review: Determine if the web server implements 
-  mobile code. If so, verify the web server is configured to follow DoD policies on mobile 
-  code." do
-    skip "This test requires a Manual Review: Determine if the web server implements 
-    mobile code.If so, verify the web server is configured to follow DoD policies on mobile 
-    code." 
+  if input('implements_mobile_code') == "false"
+    impact 0.0
+    describe 'This check is NA because NGINX does not implement mobile code.' do
+      skip 'This check is NA because NGINX does not implement mobile code.'
+    end
+  else
+    describe "This test requires a Manual Review: Verify the web server is configured 
+    to follow DoD policies on mobile code by reviewing the NGINX documentation." do
+      skip "This test requires a Manual Review: Verify the web server is configured 
+      to follow DoD policies on mobile code by reviewing the NGINX documentation." 
+    end
   end
 end
 

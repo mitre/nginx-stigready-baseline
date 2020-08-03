@@ -41,82 +41,79 @@ server being used in a DoS attack is bandwidth throttling.
   tag "cci": ["CCI-001094"]
   tag "nist": ["SC-5 (1)", "Rev_4"]
 
-# limit_conn_zone - Context:	http
-  nginx_conf.params['http'].each do |http|
-    describe 'The HTTP context' do
-      it 'should include a limit_conn_zone.' do
-        expect(http).to(include "limit_conn_zone")
-      end
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
     end
-    if http["limit_conn_zone"].nil?
-      describe 'Test skipped because the limit_conn_zone directive does not exist.' do
-        skip 'This test is skipped since the limit_conn_zone directive was not found.'
-      end
-    else
-      http["limit_conn_zone"].each do |limit_conn_zone|
-        describe 'The limit_conn_zone' do
-          it 'should include a client address.' do
-            expect(limit_conn_zone.to_s).to(include "$binary_remote_addr")
-          end
+  else 
+    nginx_conf.params['http'].each do |http|
+      if http["limit_conn_zone"].nil?
+        impact 0.0
+        describe 'This test is NA because the limit_conn_zone directive has not been configured.' do
+          skip 'This test is NA because limit_conn_zone directive has not been configured.'
         end
-        describe 'The limit_conn_zone' do
-          it 'should include a zone.' do
-            expect(limit_conn_zone.to_s).to(include "zone=")
+      else
+        http["limit_conn_zone"].each do |limit_conn_zone|
+          describe 'The limit_conn_zone' do
+            it 'should include a client address.' do
+              expect(limit_conn_zone.to_s).to(include "$binary_remote_addr")
+            end
           end
-        end
-        limit_conn_zone.each do |value|
-          if value.start_with?("zone")
-            zone = value.split(":").last
-            describe 'The zone in limit_conn_zone' do
-              it 'should match this regex: .*?[0-9]{1,3}.*?' do
-                expect(zone).to(match /.*?[0-9]{1,3}.*?/)
+          describe 'The limit_conn_zone' do
+            it 'should include a zone.' do
+              expect(limit_conn_zone.to_s).to(include "zone=")
+            end
+          end
+          limit_conn_zone.each do |value|
+            if value.start_with?("zone")
+              zone = value.split(":").last
+              describe 'The zone in limit_conn_zone' do
+                it 'should match this regex: .*?[0-9]{1,3}.*?' do
+                  expect(zone).to(match /.*?[0-9]{1,3}.*?/)
+                end
               end
             end
           end
         end
       end
     end
-  end
-
-# limit_conn - Context:	http, server, location
-# limit_rate - Context: location
-  nginx_conf.locations.each do |location|
-    describe 'Each location context' do
-      it 'should include a limit_conn directive.' do
-        expect(location.params).to(include "limit_conn")
-      end
+  end 
+  if nginx_conf.locations.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
     end
-    if location.params["limit_conn"].nil?
-      describe 'Test skipped because the limit_conn directive does not exist.' do
-        skip 'This test is skipped since the limit_conn directive was not found.'
-      end
-    else
-      location.params["limit_conn"].each do |limit_conn|
-        Array(limit_conn).each do |value|
-          describe 'The limit_conn setting' do
-            it 'should match this regex: [a-zA-Z0-9]' do
-              expect(value).to(match /^[0-9a-zA-Z]*$/)          
+  else
+    nginx_conf.locations.each do |location|
+      if location.params["limit_conn"].nil?
+        impact 0.0
+        describe 'This test is NA because the limit_conn directive has not been configured.' do
+          skip 'This test is NA because limit_conn directive has not been configured.'
+        end
+      else
+        location.params["limit_conn"].each do |limit_conn|
+          limit_conn.each do |value|
+            describe 'The limit_conn setting' do
+              it 'should match this regex: [a-zA-Z0-9]' do
+                expect(value).to(match /^[0-9a-zA-Z]*$/)          
+              end
             end
           end
         end
       end
-    end
-
-    describe 'Each location context' do
-      it 'should include a limit_rate directive.' do
-        expect(location.params).to(include "limit_rate")
-      end
-    end
-    if location.params["limit_rate"].nil?
-      describe 'Test skipped because the limit_rate directive does not exist.' do
-        skip 'This test is skipped since the limit_rate directive was not found.'
-      end
-    else
-      location.params["limit_rate"].each do |limit_rate|
-        Array(limit_rate).each do |value|
-          describe 'The limit_rate setting' do
-            it 'should match this regex: [a-zA-Z0-9]' do
-              expect(value).to(match /^[0-9a-zA-Z]*$/)          
+      if location.params["limit_rate"].nil?
+        impact 0.0
+        describe 'This test is NA because the limit_rate directive has not been configured.' do
+          skip 'This test is NA because limit_rate directive has not been configured.'
+        end
+      else
+        location.params["limit_rate"].each do |limit_rate|
+          Array(limit_rate).each do |value|
+            describe 'The limit_rate setting' do
+              it 'should match this regex: [a-zA-Z0-9]' do
+                expect(value).to(match /^[0-9a-zA-Z]*$/)          
+              end
             end
           end
         end

@@ -57,12 +57,19 @@ control "V-41612" do
   tag "nist": ["AU-3", "Rev_4"]
 
   # Verify that the log_format directive exists
-  nginx_conf.params['http'].each do |http|
-    describe 'Each http context' do
-      it 'should include a log_format directive for logging sufficient information.' do
-        expect(http).to(include "log_format")
-      end
-    end      
+  if nginx_conf.params['http'].nil?
+    impact 0.0
+    describe 'This check is NA because no websites have been configured.' do
+      skip 'This check is NA because no websites have been configured.'
+    end
+  else
+    nginx_conf.params['http'].each do |http|
+      describe 'Each http context' do
+        it 'should include a log_format directive for logging sufficient information.' do
+          expect(http).to(include "log_format")
+        end
+      end      
+    end
   end
 end
 

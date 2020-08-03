@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 control "V-55957" do
-  title "A web server that is part of a web server cluster must route all
+  title "An NGINX web server that is part of a web server cluster must route all
 remote management through a centrally managed access control point."
   desc  "A web server cluster is a group of independent web servers that are
 managed as a single system for higher availability, easier manageability, and
@@ -29,10 +29,28 @@ acting as a single access point."
   tag "cci": ["CCI-001844"]
   tag "nist": ["AU-3 (2)", "Rev_4"]
 
-  describe "This test requires a Manual Review: Determine if the web server is part 
-  of a cluster. If it is, verify that it is being centrally managed." do
-    skip "This test requires a Manual Review: Determine if the web server is part 
-    of a cluster. If it is, verify that it is being centrally managed."
-  end
+  if input('is_cluster') == 'false'
+    impact 0.0
+    describe 'This check is NA because NGINX is not part of a cluster.' do
+      skip 'This check is NA because NGINX is not part of a cluster.'
+    end
+  else
+    if input('is_cluster_master') == 'false'
+      describe nginx do
+        its('modules') { should include 'ngx_stream_zone_sync_module' }
+      end
+    else
+      describe nginx do
+        its('modules') { should include 'ngx_stream_zone_sync_module' }
+      end
+      describe package('nginx-sync') do
+        it { should be_installed }
+      end
+      describe parse_config_file('/etc/nginx-sync.conf') do
+        its('NODES') { should_not be nil }
+        its('CONFPATHS') { should_not be nil }
+      end
+    end
+  end 
 end
 

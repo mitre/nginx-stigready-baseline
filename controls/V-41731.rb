@@ -49,19 +49,17 @@ control "V-41731" do
   tag "cci": ["CCI-000186"]
   tag "nist": ["IA-5 (2) (b)", "Rev_4"]
 
-  nginx_conf.servers.each do |server|
-    describe 'The directive' do
-      it 'ssl_certificate should exist in the server context.' do
-        expect(server.params).to(include "ssl_certificate")
-      end
-      it 'ssl_certificate_key should exist in the server context.' do
-        expect(server.params).to(include "ssl_certificate_key")
-      end  
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
     end
-    describe 'The private key should have the following permissions:' do
+  else
+    nginx_conf.servers.each do |server|    
       if server.params["ssl_certificate"].nil?
-        describe 'Test skipped because the ssl_certificate directive does not exist.' do
-          skip 'This test is skipped since the ssl_certificate directive does not exist.'
+        impact 0.0
+        describe 'This test is NA because the ssl_certificate directive has not been configured.' do
+          skip 'This test is NA because the ssl_certificate directive has not been configured.'
         end
       else
         server.params["ssl_certificate"].each do |certificate|
@@ -73,10 +71,10 @@ control "V-41731" do
           end
         end
       end
-      
       if server.params["ssl_certificate_key"].nil?
-        describe 'Test skipped because the ssl_certificate_key directive does not exist.' do
-          skip 'This test is skipped since the ssl_certificate_key directive does not exist.'
+        impact 0.0
+        describe 'This test is NA because the ssl_certificate_key directive has not been configured.' do
+          skip 'This test is NA because the ssl_certificate_key directive has not been configured.'
         end
       else
         server.params["ssl_certificate_key"].each do |certificate_key|
@@ -87,15 +85,8 @@ control "V-41731" do
           end
         end
       end
-    end
-  end 
-
-  if nginx_conf.servers.empty?
-    describe 'Test skipped because the server context does not exist.' do
-      skip 'This test is skipped since the server context was not found.'
-    end
-  end 
-
+    end 
+  end
 end
 
 
