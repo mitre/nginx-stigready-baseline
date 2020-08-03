@@ -62,12 +62,13 @@ control "V-41730" do
         end
       else
         server.params["ssl_verify_client"].each do |ssl_verify_client|
-          it "ssl_verify_client should be set to 'on'." do
-            expect(ssl_verify_client).to(cmp 'on')
-          end
+          describe "The ssl_verify_client directive" do
+            it "should be set to 'on'." do
+              expect(ssl_verify_client).to(cmp 'on')
+            end
+          end 
         end
       end
-
       if server.params["ssl_verify_depth"].nil?
         impact 0.0
         describe 'This check is NA because the ssl_verify_depth directive has not been configured.' do
@@ -75,8 +76,10 @@ control "V-41730" do
         end
       else
         server.params["ssl_verify_depth"].each do |ssl_verify_depth|
-          it "ssl_verify_depth should not equal '0'." do
-            expect(ssl_verify_depth).not_to(cmp '0')
+          describe "The ssl_verify_depth directive" do
+            it "should not equal '0'." do
+              expect(ssl_verify_depth).not_to(cmp '0')
+            end
           end
         end
       end
