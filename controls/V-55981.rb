@@ -21,7 +21,7 @@ properly to only allow privileged users access.
   If there are no websites configured or if NGINX is not configured to serve files, 
   this check is Not Applicable.
 
-  If required directive(s) cannot be found in NGINX configuration files, this check 
+  If the 'root' directive cannot be found in NGINX configuration files, this check 
   is Not Applicable. 
 
   This check verifies that the SA or Web Manager controlled account owns the key 

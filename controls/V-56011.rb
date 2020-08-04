@@ -16,15 +16,16 @@ control "V-56011" do
   desc  "check", "Review the NGINX web server documentation and deployed configuration 
   to determine which version of TLS is being used.
 
-  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
-  NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf and any 
     separated include configuration file.
 
-  If the 'ssl_protocols' directive does not exist in the configuration or is not set to 
-  the approved TLS version, this is a finding. 
+  If the 'ssl_protocols' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable.
+
+  If the 'ssl_protocols' directive not set to the approved TLS version, this is a finding. 
   "
   desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) and 
   configure it to use only the approved TLS protocols. 

@@ -16,8 +16,7 @@ decrypt, and use before the session has expired."
   If it is determined that the web server is not required to perform session 
   management, this check is Not Applicable. 
 
-  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
-  NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check if SSL is enabled on the server:
     #grep the 'listen' directive in the server context of the nginx.conf and 
@@ -29,8 +28,10 @@ decrypt, and use before the session has expired."
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
 
-  If the 'ssl_protocols' directive does not exist in the configuration or is not 
-  set to the approved TLS version, this is a finding. 
+  If the 'ssl_protocols' directive is not set to the approved TLS version, this is a finding. 
+
+  If the 'listen' and 'ssl_protocols' directives cannot be found in NGINX configuration files, 
+  this check is Not Applicable.
   "
   desc  "fix", "Configure the 'listen' directive to the NGINX configuration 
   file(s) to enable the use of SSL to ensure the session IDs are encrypted.

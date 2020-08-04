@@ -19,12 +19,12 @@ legitimate users."
   If there are no websites configured or if NGINX is not configured to serve files, 
   this check is Not Applicable.
 
-  If required directive(s) cannot be found in NGINX configuration files, 
-  this check is Not Applicable. 
-
   Check for the following:
-  #grep ”ssl_client_certifcate” directive in the http and server context of the 
+  #grep 'ssl_client_certifcate' directive in the http and server context of the 
   nginx.conf file and any separated include configuration file.
+
+  If the 'ssl_client_certifcate' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable. 
 
   Examine the contents of this file to determine if the trusted Cas are DoD approved. 
   If the trusted CA that is used to authenticate users to the website does not lead 

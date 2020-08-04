@@ -16,8 +16,7 @@ control "V-40800" do
   desc  "check", "Review the NGINX web server documentation and configuration to determine the 
   communication methods that are being used.
 
-  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
-  NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable. 
 
   Check for the following:
   
@@ -35,6 +34,9 @@ control "V-40800" do
   being hosted when remote connections are provided.
   
   If it is not, then this is a finding.
+
+  If the 'ssl_prefer_server_cipher' and 'ssl_ciphers' directives cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
   "
   desc  "fix", "Include the 'ssl_prefer_server_cipher' directive in all server context 
   of the NGINX configuration file(s) and set the directive to 'on'.  

@@ -36,8 +36,7 @@ control "V-56017" do
   identify the encryption modules utilized to protect the compartmentalized 
   data.
 
-  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
-  NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable. 
 
   Check for the followng:
     # grep the 'ssl_prefer_server_cipher' directive in each server context of 
@@ -51,6 +50,9 @@ control "V-56017" do
 
   If the 'ssl_ciphers' directive is configured to include any ciphers that are 
   not compliant with the data, this is a finding. 
+
+  If the 'ssl_prefer_server_cipher' and 'ssl_ciphers' directives cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
   "
   desc  "fix", "Include the 'ssl_prefer_server_cipher' directive in all server 
   context of the NGINX configuration file(s) and set the directive to 'on'.  

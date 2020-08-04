@@ -15,22 +15,24 @@ session becomes easy for the attacker to break, often within minutes to hours."
   Review the web server documentation and deployed configuration to determine
   if export ciphers are removed.
 
-  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
-  NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable. 
 
     Check for the following:
 
     # grep the 'ssl_prefer_server_cipher' directive in each server context of 
     the nginx.conf and any separated include configuration file.
 
-  Verify that the 'ssl_prefer_server_cipher' directive exists and is set to 'on'. 
-  If the directive does not exist or is not set to 'on', this is a finding.
+  Verify that the 'ssl_prefer_server_cipher' directive is set to 'on'. 
+  If the directive is not set to 'on', this is a finding.
 
     # grep the 'ssl_ciphers' directive in each server context of the nginx.conf 
     and any separated include configuration file.
 
   If the 'ssl_ciphers' directive is configured to include any export ciphers, 
   this is a finding. 
+
+  If the 'ssl_prefer_server_cipher' and 'ssl_ciphers' directives cannot be found 
+  in NGINX configuration files, this check is Not Applicable.
 
   "
   desc  "fix", "Include the 'ssl_prefer_server_cipher' directive in all server 

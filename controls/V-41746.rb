@@ -23,12 +23,14 @@ control "V-41746" do
   compliant.  Reference the following NIST site to identify validated encryption
   modules: http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm
   
-  If NGINX is not configured to serve files or if required directive(s) cannot be found 
-  in NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
+
+  If the 'ssl_protocols' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable.
 
   If the 'ssl_protocols' directive is not set to the FIPS comliant TLS versions, 
   this is a finding. 

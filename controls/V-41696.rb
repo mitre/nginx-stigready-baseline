@@ -21,11 +21,11 @@ control "V-41696" do
   desc  "check", "Review the NGINX web server documentation to determine the user 
   accounts created when particular features are installed.
 
-  If required directive(s) cannot be found in NGINX configuration files, 
-  this check is Not Applicable. 
-
   Verify that user specified is an authorized user:
     #grep the 'user' directive in the main context of the nginx.conf file
+  
+  If the 'user' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable. 
 
   Verify the accounts specified in the 'user' directive has an entry in /etc/passwd: 
     # grep -w '<user account>' /etc/passwd' 

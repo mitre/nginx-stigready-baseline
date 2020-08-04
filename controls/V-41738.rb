@@ -17,12 +17,14 @@ control "V-41738" do
   configuration to determine whether passwords are being passed to or from the 
   web server.
   
-  If NGINX is not configured to serve files or if required directive(s) cannot be found 
-  in NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
+
+  If the 'ssl_protocols' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable.  
 
   If TLS is not enabled, then passwords are not encrypted. If the 'ssl_protocols' 
   directive is not set to the approved TLS versions, this is a finding. 

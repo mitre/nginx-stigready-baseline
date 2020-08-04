@@ -17,11 +17,12 @@ control "V-40819" do
   If there are no websites configured or if NGINX is not configured to serve files, 
   this check is Not Applicable.
 
-  If required directive(s) cannot be found in NGINX configuration files, this check is Not Applicable. 
-
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
+
+  If the 'ssl_protocols' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable. 
   
   If the 'ssl_protocols' directive is not set to the approved TLS version, this is a finding. 
   "

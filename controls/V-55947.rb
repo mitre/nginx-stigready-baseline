@@ -19,7 +19,7 @@ information and limits accidental changes to the web server."
   If there are no websites configured or if NGINX is not configured to serve files, 
   this check is Not Applicable.
 
-  If required directive(s) cannot be found in NGINX configuration files, this check 
+  If the 'root' directory cannot be found in NGINX configuration files, this check 
   is Not Applicable. 
 
   This check verifies that the SA or Web Manager controlled account owns the key 

@@ -20,20 +20,26 @@ control "V-41706" do
   configuration to determine whether the web server is configured to listen 
   on a specified IP address and port.
 
-  If NGINX is not configured to serve files or if required directive(s) cannot 
-  be found in NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
-    # grep the 'listen' directive in the server context of the nginx.conf and any separated include configuration file.
+    # grep the 'listen' directive in the server context of the nginx.conf and any 
+    separated include configuration file.
 
-  Verify that any enabled 'listen' directives specify both an IP address and port number.
+  If the 'listen' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable.
 
-  If the 'listen' directive is found with only an IP address or only a port number specified, this is finding.
+  Verify that any enabled 'listen' directives specify both an IP address and 
+  port number.
 
-  If the IP address is all zeros (i.e., 0.0.0.0:80 or [::ffff:0.0.0.0]:80), this is a finding.
+  If the 'listen' directive is found with only an IP address or only a port number 
+  specified, this is finding.
+
+  If the IP address is all zeros (i.e., 0.0.0.0:80 or [::ffff:0.0.0.0]:80), 
+  this is a finding.
   "
-  desc  "fix", "Configure the 'listen' directive in the server context of the NGINX configuration file(s) to listen on a 
-  specific IP address and port."
+  desc  "fix", "Configure the 'listen' directive in the server context of the NGINX 
+  configuration file(s) to listen on a specific IP address and port."
 
   impact 0.5
   tag "severity": "medium"

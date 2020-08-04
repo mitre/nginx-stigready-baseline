@@ -23,12 +23,14 @@ control "V-56015" do
   is using a transmission method that maintains the confidentiality and integrity of
   information during reception.
   
-  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
-  NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
+
+  If the 'ssl_protocols' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable.  
 
   If the 'ssl_protocols' directive is not set to the approved TLS version, 
   this is a finding. 

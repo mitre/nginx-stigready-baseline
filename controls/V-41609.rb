@@ -22,7 +22,7 @@ control "V-41609" do
   Check for the following:
     #grep the 'log_format' directive in the http context of the nginx.conf. 
   
-  If the the 'log_format' directive does not exist or does not include the '$remote_user' variable, this is a finding.
+  If the the 'log_format' does not include the '$remote_user' variable, this is a finding.
   "
   desc  "fix", "Configure the 'log_format' directive in the http context of the nginx.conf to include the '$remote_user' 
   variable to capture and log all content related to a user session."

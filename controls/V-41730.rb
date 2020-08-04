@@ -19,18 +19,20 @@ control "V-41730" do
 
   If PKI is not being used, this is check is Not Applicable.
 
-  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
-  NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
     # grep the 'ssl_verify_client' and 'ssl_verify_depth' directives in the server 
     context of the nginx.conf and any separated include configuration file.
 
-  If the 'ssl_verify_client' directive does not exist or is not set to 'on', 
+  If the 'ssl_verify_client' and 'ssl_verify_depth' directives cannot be found in NGINX 
+  configuration files, this check is Not Applicable.
+  
+  If the 'ssl_verify_client' directive is not set to 'on', 
   this is a finding. 
 
   A 'ssl_very_depth' setting of '0' would allow self-signed CAs to validate client 
-  certificates. If 'ssl_verify_depth' does not exist or is set to '0', this is a finding.
+  certificates. If 'ssl_verify_depth' directive is set to '0', this is a finding.
   "
   desc  "fix", "Ensure that client verification is enabled. For each enabled hosted application 
   on the server, enable and set 'ssl_verify_client' to 'on' and and ensure that the server is 

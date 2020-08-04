@@ -20,15 +20,15 @@ control "V-40791" do
   If there are no websites configured or if NGINX is not configured to serve files, 
   this check is Not Applicable.
 
-  If required directive(s) cannot be found in NGINX configuration files, 
-  this check is Not Applicable. 
-
   Check for the following:
     # grep the 'limit_conn_zone' directive in the http context of the nginx.conf 
     and any separated include configuration file.
   
     # grep the 'limit_conn' directive in the location context of the nginx.conf 
     and any separated include configuration file.
+
+  If the 'limit_conn_zone' and 'limit_conn' directives cannot be found in NGINX 
+  configuration files, this check is Not Applicable. 
   
   If the 'limit_conn_zone' and 'limit_conn' directives are not configured to limit 
   the number of simultanous sessions or is unlimited, this is a finding. 

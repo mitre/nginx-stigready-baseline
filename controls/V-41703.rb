@@ -16,12 +16,12 @@ control "V-41703" do
   desc  "check", "Interview the System Administrator for the NGINX web server 
   or review the NGINX web server documentation and configuration to determine 
   the access to server resources given to hosted applications.
-  
-  If required directive(s) cannot be found in NGINX configuration files, 
-  this check is Not Applicable. 
 
   Verify that the user that runs the NGINX web server is an authorized user:
     #grep the 'user' directive in the main context of the nginx.conf file
+
+  If the 'user' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable. 
 
   If the user specified in the configuration file is not an authorized user,
   this is a finding. 

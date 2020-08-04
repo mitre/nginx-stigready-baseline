@@ -19,12 +19,14 @@ control "V-41700" do
 
   Review the scripts used by the web server and the hosted applications.
 
-  If NGINX is not configured to serve files or if required directive(s) cannot 
-  be found in NGINX configuration files, this check is Not Applicable.
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check the following:
     # grep 'fastcgi_param' directive in the location context of the nginx.conf 
     and any separated include configuration file.
+
+  If the 'fastcgi_param' directive cannot be found in NGINX configuration files, 
+  this check is Not Applicable.
   
   Review the 'fastcgi_param' directive and go into each directory to locate 
   cgi-bin scripts with the following command:

@@ -18,15 +18,17 @@ exhaustion."
   to determine where the document directory is located for each hosted application.
 
   If there are no websites configured or if NGINX is not configured to serve files, 
-  this check is Not Applicable.
-
-  If required directive(s) cannot be found in NGINX configuration files, this check is Not Applicable. 
+  this check is Not Applicable. 
 
   Check for the following:
 
-    #grep the 'root' directive in the http, server, and location context of the nginx.conf and any separated include configuration file.
+    #grep the 'root' directive in the http, server, and location context of the 
+    nginx.conf and any separated include configuration file.
 
-  If the path for any of the directives is on the same partition as the web server operating system files, this is a finding.
+  If the 'root' directive cannot be found in NGINX configuration files, this check is Not Applicable.
+
+  If the path for any of the directives is on the same partition as the web server 
+  operating system files, this is a finding.
   "
   desc  "fix", "Create and mount a new partition. 
   Once partition is created, the directory needs to be copied over using the following command:

@@ -24,15 +24,16 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   Review the NGINX web server documentation and deployed configuration to determine
   whether the web server is logging security-relevant events.
 
-  If there are no websites configured for NGINX or if required directive(s) cannot be found 
-  in NGINX configuration files, this check is Not Applicable.
+  If there are no websites configured for NGINX, this check is Not Applicable.
 
   Check for the following:
       # grep for 'access_log' and 'error_log' directives in the nginx.conf and 
       any separated include configuration file.
 
-  If the access_log and error_log directives do not exist and the access.log and 
-  error.log files do not exist, this is a finding. 
+  If the 'access_log' and 'error_log' directives cannot be found in NGINX configuration 
+  files, this check is Not Applicable.
+
+  If the access.log and error.log files do not exist, this is a finding. 
   "
   desc  "fix", "Execute the following command on the NGINX web server to link logs 
   to stdout and stderr:

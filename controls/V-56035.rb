@@ -24,11 +24,13 @@ control "V-56035" do
   If there are no websites configured or if NGINX is not configured to serve files, 
   this check is Not Applicable.
 
-  If required directive(s) cannot be found in NGINX configuration files, this check 
-  is Not Applicable. 
+  Check for the following:
 
     # grep for 'root' directive in each http, server, and location context of the 
     nginx.conf and any separated include configuration file.
+
+  If the 'root' directive cannot be found in NGINX configuration files, this check 
+  is Not Applicable. 
 
   Verify that each web document directory contains a default hosted application web 
   page that can be used by the web server in the event a web page cannot be found:

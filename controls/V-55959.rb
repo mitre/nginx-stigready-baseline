@@ -22,12 +22,15 @@ storage dependent on the impact of the web server.
   use record storage capacity in accordance with specifications within NIST SP
   800-92 for log record storage requirements.
 
-  If there are no websites configured for NGINX or if required directive(s) cannot be found 
-  in NGINX configuration files, this check is Not Applicable.
+  If there are no websites configured for NGINX, this check is Not Applicable.
+
 
   Check for the following:
       # grep for 'access_log' and 'error_log' directives in the nginx.conf and 
       any separated include configuration file.
+
+  If the 'access_log' and 'error_log' directives cannot be found in NGINX configuration 
+  files, this check is Not Applicable.
 
   Execute the following commands:
       # file <path to access_log>/access.log
