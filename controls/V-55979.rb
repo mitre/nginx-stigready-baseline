@@ -16,6 +16,9 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   Review the NGINX web server documentation and configuration to determine the time
   stamp format for log data.
 
+  If required directive(s) cannot be found in NGINX configuration files, this check is
+  Not Applicable. 
+
   Check for the following:
       # grep for all 'env' directives in the main context of the nginx.conf.
 

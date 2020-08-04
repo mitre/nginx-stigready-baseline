@@ -16,14 +16,17 @@ control "V-40800" do
   desc  "check", "Review the NGINX web server documentation and configuration to determine the 
   communication methods that are being used.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
   Check for the following:
   
     # grep the 'ssl_prefer_server_cipher' directive in each server context of the 
     nginx.conf and any separated include configuration file.
   
-  Verify that the 'ssl_prefer_server_cipher' directive exists and is set to 'on'. 
+  Verify that the 'ssl_prefer_server_cipher' directive is set to 'on'. 
   
-  If the directive does not exist or is not set to 'on', this is a finding.
+  If the directive is not set to 'on', this is a finding.
   
     # grep the 'ssl_ciphers' directive in each server context of the nginx.conf and 
     any separated include configuration file.
@@ -48,7 +51,7 @@ control "V-40800" do
   tag "cci": ["CCI-000068"]
   tag "nist": ["AC-17 (2)", "Rev_4"]
   
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'

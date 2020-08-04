@@ -21,6 +21,8 @@ roles to make changes to the production system."
   verify that the authenticated entity should be granted access to the requested
   content.
 
+  If NGINX is not configured to serve files, this check is Not Applicable.
+
   Check for the following:
     #grep the 'auth_request' directive in the location context of the nginx.conf 
     and any separated include configuration file.      
@@ -53,10 +55,14 @@ roles to make changes to the production system."
     nginx_conf.locations.entries.each do |location|
       auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
     end
+    describe "The uris collected from the auth_request directives" do
+      it "should not be an empty list." do
+        expect(auth_uris).to_not(be_empty)
+      end 
+    end 
     if auth_uris.empty?
-      impact 0.0
-      describe 'This test is NA because the auth_request directive has not been configured for the location.' do
-        skip 'This test is NA because the auth_request directive has not been configured for the location.'
+      describe 'This test is skipped because the auth_request directive has not been configured for locations.' do
+        skip 'This test is skipped because the auth_request directive has not been configured for locations.'
       end
     else
       auth_uris.flatten!.uniq!

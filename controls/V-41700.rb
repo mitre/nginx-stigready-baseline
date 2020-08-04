@@ -19,6 +19,9 @@ control "V-41700" do
 
   Review the scripts used by the web server and the hosted applications.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot 
+  be found in NGINX configuration files, this check is Not Applicable.
+
   Check the following:
     # grep 'fastcgi_param' directive in the location context of the nginx.conf 
     and any separated include configuration file.
@@ -55,8 +58,9 @@ control "V-41700" do
   else
     nginx_conf.locations.each do |location|
       if location.params["fastcgi_param"].nil?
-        describe 'Test skipped because the fastcgi_param directive does not exist.' do
-          skip 'This test is skipped since the fastcgi_param directive was not found.'
+        impact 0.0
+        describe 'This check is NA because the fastcgi_param directive has not been configured.' do
+          skip 'This check is NA because the fastcgi_param directive has not been configured.'
         end
       else
         location.params["fastcgi_param"].each do |value|

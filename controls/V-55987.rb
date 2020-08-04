@@ -24,12 +24,13 @@ need to have passwords set or changed.
   configuration to determine what non-service/system accounts were installed 
   by the web server installation process.
 
-
   Identify the account that is running the 'nginx' process:
     # ps -ef | grep -i nginx | grep -v grep
 
   root       675     1  0 Jun01 ?        00:00:00 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf
   nginx      677   675  0 Jun01 ?        00:00:00 nginx: worker process
+
+  If no service accounts are found, this check is Not Applicable. 
 
   Check to see if the accounts have a valid login shell:
 

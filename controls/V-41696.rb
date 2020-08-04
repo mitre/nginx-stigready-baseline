@@ -21,14 +21,16 @@ control "V-41696" do
   desc  "check", "Review the NGINX web server documentation to determine the user 
   accounts created when particular features are installed.
 
-  Verify that at least one 'user' directive exists:
+  If required directive(s) cannot be found in NGINX configuration files, 
+  this check is Not Applicable. 
+
+  Verify that user specified is an authorized user:
     #grep the 'user' directive in the main context of the nginx.conf file
 
   Verify the accounts specified in the 'user' directive has an entry in /etc/passwd: 
     # grep -w '<user account>' /etc/passwd' 
 
-  If at least one 'user' directive does not exist or if  any accounts exist that are 
-  not used by the installed features, this is a finding.
+  If any accounts exist that are not used by the installed features, this is a finding.
   "
   desc  "fix", "Ensure at least one 'user' directive exists in the nginx.conf file 
   and remove user accounts not used by the installed NGINX web server features."
@@ -56,7 +58,6 @@ control "V-41696" do
             expect(value).to (eq input('nginx_owner')).or (be_in input('authorized_user_list'))
           end
         end
-          # /etc/passwd should include the runner account.
         describe 'The password file' do
           it 'should include the nginx account.' do
             expect(command("grep -w #{value} /etc/passwd").stdout).to(match /.*?#{value}.*?/)

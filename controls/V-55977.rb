@@ -13,6 +13,8 @@ to a granularity of one second.
   desc  "check", "Review the NGINX web server documentation and configuration to
   determine if log records are time stamped to a minimum granularity of one second.
 
+  If there are no websites configured for NGINX, this check is Not Applicable.
+
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.
 

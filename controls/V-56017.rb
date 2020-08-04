@@ -36,12 +36,15 @@ control "V-56017" do
   identify the encryption modules utilized to protect the compartmentalized 
   data.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
   Check for the followng:
     # grep the 'ssl_prefer_server_cipher' directive in each server context of 
     the nginx.conf and any separated include configuration file.
 
-  Verify that the 'ssl_prefer_server_cipher' directive exists and is set to 'on'. 
-  If the directive does not exist or is not set to 'on', this is a finding.
+  Verify that the 'ssl_prefer_server_cipher' is set to 'on'. 
+  If the directive is not set to 'on', this is a finding.
 
     # grep the 'ssl_ciphers' directive in each server context of the nginx.conf 
     and any separated include configuration file.
@@ -64,7 +67,7 @@ control "V-56017" do
   tag "cci": ["CCI-002450"]
   tag "nist": ["SC-13", "Rev_4"]
 
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'

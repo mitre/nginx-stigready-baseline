@@ -26,6 +26,8 @@ control "V-41614" do
   to determine if the web server is configured to generate sufficient information to resolve 
   in which process within the web server the log event occurred.
 
+  If there are no websites configured for NGINX, this check is Not Applicable.
+
   Check for the following:
     # grep the 'log_format' directive in the http context of the nginx.conf. 
 

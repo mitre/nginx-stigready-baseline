@@ -18,6 +18,8 @@ control "V-41704" do
   to determine where the document root or home directory for each application 
   hosted by the web server is located.
 
+  If NGINX is not configured to serve files, this check is Not Applicable.
+
   Check for the following: 
     # grep for a 'deny' directive in the root directoy location context of the 
     nginx.conf and any separated include configuration file.
@@ -53,16 +55,9 @@ control "V-41704" do
     nginx_conf.locations.each do |location|
       deny_values = []
       deny_values.push(location.params['deny']) unless location.params['deny'].nil?
-      if deny_values.empty?
-        impact 0.0
-        describe 'This check is NA because the deny directive has not been configured in locations.' do
-          skip 'This check is NA because the deny directive has not been configured in locations.'
-        end
-      else
-        describe "Each location context" do
-          it 'should include an deny all directive.' do
-            expect(deny_values.to_s).to(include "all")
-          end
+      describe "Each location context" do
+        it 'should include an deny all directive.' do
+          expect(deny_values.to_s).to(include "all")
         end
       end
     end

@@ -22,6 +22,9 @@ website code revealing business logic, or other user personal information.
   to determine whether the transmission of data between the web server and external 
   devices is encrypted.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
   Check if SSL is enabled on the server:
   #grep the 'listen' directive in the server context of the nginx.conf and any 
   separated include configuration file.
@@ -32,8 +35,7 @@ website code revealing business logic, or other user personal information.
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf and 
     any separated include configuration file.
 
-  If the 'ssl_protocols' directive does not exist in the configuration or is not set 
-  to the approved TLS version, this is a finding. 
+  If the 'ssl_protocols' directive is not set to the approved TLS version, this is a finding. 
   "
   desc  "fix", "Configure the 'listen' directive to the NGINX configuration file(s) 
   to enable the use of SSL to ensure that all information in transmission is being encrypted.
@@ -58,7 +60,7 @@ website code revealing business logic, or other user personal information.
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'
@@ -76,8 +78,6 @@ website code revealing business logic, or other user personal information.
             expect(server.params["listen"].to_s).to(include "ssl")
           end
         end
-      end
-      describe 'The ssl_protocols directive' do
       end
       if server.params["ssl_protocols"].nil?
         impact 0.0

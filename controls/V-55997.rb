@@ -12,6 +12,9 @@ handle the expected traffic for the hosted applications."
   desc  "check", "Review the NGINX web server documentation and deployed configuration 
   to determine what parameters are set to tune the web server.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
   To view the timeout values enter the following commands:
     # grep ''client_body_timeout'' on the nginx.conf file and any separate included 
     configuration files

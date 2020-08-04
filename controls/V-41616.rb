@@ -31,6 +31,8 @@ control "V-41616" do
   information to resolve the source, e.g. source IP, of the logged event and not the 
   proxy server.
 
+  If there are no websites configured for NGINX, this check is Not Applicable.
+
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.
 
@@ -50,22 +52,28 @@ control "V-41616" do
   tag "cci": ["CCI-000133"]
   tag "nist": ["AU-3", "Rev_4"]
 
-  # $realip_remote_addr keeps the original client address
-  if nginx_conf.params['http'].nil?
+  if input('behind_proxy_server') == 'false'
     impact 0.0
-    describe 'This check is NA because no websites have been configured.' do
-      skip 'This check is NA because no websites have been configured.'
+    describe 'This check is NA because the web server is not sitting behind a proxy server.' do
+      skip 'This check is NA because the web server is not sitting behind a proxy server.'
     end
   else
-    nginx_conf.params['http'].each do |http|
-      http["log_format"].each do |log_format|
-        describe "realip_remote_addr" do
-          it 'should be part of every log format in http.' do
-            expect(log_format.to_s).to(match /.*?\$realip_remote_addr.*?/)
+    if nginx_conf.params['http'].nil?
+      impact 0.0
+      describe 'This check is NA because no websites have been configured.' do
+        skip 'This check is NA because no websites have been configured.'
+      end
+    else
+      nginx_conf.params['http'].each do |http|
+        http["log_format"].each do |log_format|
+          describe "realip_remote_addr" do
+            it 'should be part of every log format in http.' do
+              expect(log_format.to_s).to(match /.*?\$realip_remote_addr.*?/)
+            end
           end
         end
       end
     end
-  end
+  end 
 end
 

@@ -18,6 +18,8 @@ capability of stopping the server, whether intentionally or unintentionally.
   configuration to determine where the process ID is stored and which utilities 
   are used to start/stop the web server.
 
+  If the pid directive cannot be found, this check is Not Applicable.
+
   Determine where the 'nginx.pid' file is located by running the following command:
 
     # find / -name 'nginx.pid'
@@ -48,6 +50,9 @@ capability of stopping the server, whether intentionally or unintentionally.
   determine where the process ID is stored and which utilities are used to start/stop 
   the web server.
 
+  If the pid directive cannot be found in the NGINX configuration files, this check is
+  Not Applicable. 
+
   Determine where the 'nginx.pid' file is located by running the following command:
   
     # find / -name 'nginx.pid'
@@ -72,8 +77,8 @@ capability of stopping the server, whether intentionally or unintentionally.
 
   if nginx_conf.params['pid'].nil?
     impact 0.0
-    describe 'This check is NA because NGINX is not currently running.' do
-      skip 'This check is NA because NGINX is not currently running.'
+    describe 'This check is NA because the pid directive has not been configured.' do
+      skip 'This check is NA because the pid directive has not been configured.'
     end
   else 
     describe file(nginx_conf.params['pid'].join) do

@@ -19,7 +19,13 @@ control "V-56035" do
   
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to locate
-  all the web document directories:
+  all the web document directories.
+
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
+  If required directive(s) cannot be found in NGINX configuration files, this check 
+  is Not Applicable. 
 
     # grep for 'root' directive in each http, server, and location context of the 
     nginx.conf and any separated include configuration file.

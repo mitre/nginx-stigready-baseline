@@ -16,6 +16,9 @@ decrypt, and use before the session has expired."
   If it is determined that the web server is not required to perform session 
   management, this check is Not Applicable. 
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
   Check if SSL is enabled on the server:
     #grep the 'listen' directive in the server context of the nginx.conf and 
     any separated include configuration file.
@@ -51,42 +54,47 @@ decrypt, and use before the session has expired."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  if nginx_conf.servers.empty?
+  if input('performs_session_management') == "false"
     impact 0.0
-    describe 'This check is NA because NGINX has not been configured to serve files.' do
-      skip 'This check is NA because NGINX has not been configured to serve files.'
+    describe 'This check is NA because session management is not required.' do
+      skip 'This check is NA because session management is not required.'
     end
   else
-    nginx_conf.servers.each do |server|
-      describe 'The listen directive' do
-        if server.params["listen"].nil?
-          impact 0.0
-          describe 'This test is NA because the listen directive has not been configured.' do
-            skip 'This test is NA because the listen directive has not been configured.'
-          end
-        else
-          it 'should be configured with SSL enabled.' do
-            expect(server.params["listen"].to_s).to(include "ssl")
-          end
-        end
+    if nginx_conf.servers.nil?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
       end
-      describe 'The ssl_protocols directive' do
-      end
-      if server.params["ssl_protocols"].nil?
-        impact 0.0
-        describe 'This test is NA because the ssl_protocols directive has not been configured.' do
-          skip 'This test is NA because the ssl_protocols directive has not been configured.'
-        end
-      else
-        server.params["ssl_protocols"].each do |protocol|
-          describe 'Each protocol' do
-            it 'should be included in the list of protocols approved to encrypt data' do
-              expect(protocol).to(be_in input('approved_ssl_protocols'))
+    else
+      nginx_conf.servers.each do |server|
+        describe 'The listen directive' do
+          if server.params["listen"].nil?
+            impact 0.0
+            describe 'This test is NA because the listen directive has not been configured.' do
+              skip 'This test is NA because the listen directive has not been configured.'
+            end
+          else
+            it 'should be configured with SSL enabled.' do
+              expect(server.params["listen"].to_s).to(include "ssl")
             end
           end
         end
-      end 
-    end
-  end 
+        if server.params["ssl_protocols"].nil?
+          impact 0.0
+          describe 'This test is NA because the ssl_protocols directive has not been configured.' do
+            skip 'This test is NA because the ssl_protocols directive has not been configured.'
+          end
+        else
+          server.params["ssl_protocols"].each do |protocol|
+            describe 'Each protocol' do
+              it 'should be included in the list of protocols approved to encrypt data' do
+                expect(protocol).to(be_in input('approved_ssl_protocols'))
+              end
+            end
+          end
+        end 
+      end
+    end 
+  end
 end
 

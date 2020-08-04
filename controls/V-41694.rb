@@ -13,6 +13,8 @@ control "V-41694" do
 
   If the NGINX server is a proxy server and not a web server, this check is Not Applicable.
 
+  If NGINX is not configured to serve files, this check is Not Applicable.
+
   Execute the following command: 
 
   # nginx -V

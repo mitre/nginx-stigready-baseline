@@ -24,6 +24,9 @@ to not aid in the blueprinting of the web server.
   the identity of the web server, patches, loaded modules, and directory paths
   given to clients on error conditions.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
   Check for the following:
       # grep the 'server_tokens' directive in the http, server, and location context 
       of the nginx.conf and any separated include configuration file.

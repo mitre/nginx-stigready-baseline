@@ -16,14 +16,16 @@ control "V-41738" do
   desc  "check", "Review the NGINX web server documentation and deployed 
   configuration to determine whether passwords are being passed to or from the 
   web server.
+  
+  If NGINX is not configured to serve files or if required directive(s) cannot be found 
+  in NGINX configuration files, this check is Not Applicable.
 
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
 
   If TLS is not enabled, then passwords are not encrypted. If the 'ssl_protocols' 
-  directive does not exist in the configuration or is not set to the approved TLS 
-  versions, this is a finding. 
+  directive is not set to the approved TLS versions, this is a finding. 
   "
   desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
   and configure it to use the approved TLS protocols to encrypt the transmission passwords.
@@ -43,7 +45,7 @@ control "V-41738" do
   tag "cci": ["CCI-000197"]
   tag "nist": ["IA-5 (1) (c)", "Rev_4"]
 
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'

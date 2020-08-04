@@ -11,6 +11,11 @@ control "V-41611" do
   desc  "check", "Review the NGINX web server documentation and deployed configuration to determine 
   if the NGINX web server captures log data as soon as the NGINX web server is started.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
+  If required directive(s) cannot be found in NGINX configuration files, this check is Not Applicable. 
+
   Check for the following:
       # grep for 'access_log' and 'error_log' directives in the nginx.conf and any separated include configuration file.
   
@@ -18,7 +23,7 @@ control "V-41611" do
       # file <path to access_log>/access.log
       # file <path to error_log>/error.log
   
-  If the access_log and error_log directives do not exist and the access.log and error.log files do not exist, this is a finding.  
+  If the access.log and error.log files do not exist, this is a finding.  
   "
   desc  "fix", "Enable loggin on the NGINX web server by configuring the 'access_log' and 'error_log' directives in the NGINX configuration 
   file(s) to generate log records for system startup."

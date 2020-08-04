@@ -66,9 +66,8 @@ control "V-41695" do
 
 
   if input('nginx_disallowed_file_list').empty?
-    impact 0.0
-    describe 'This check is NA because the disallowed files list should not be empty.' do
-      skip 'This check is NA because the disallowed files list should not be empty.'
+    describe 'This check is skipped because the disallowed files list should not be empty.' do
+      skip 'This check is skipped because the disallowed files list should not be empty.'
     end
   else
     input('nginx_disallowed_file_list').each do |file|

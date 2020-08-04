@@ -22,7 +22,10 @@ control "V-41612" do
   
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to determine 
-  if the NGINX web server contains sufficient information to establish what type of event occurred
+  if the NGINX web server contains sufficient information to establish what type of
+  event occurred.
+
+  If there are no websites configured for NGINX, this check is Not Applicable.
 
   Check for the following:
     # grep the 'log_format' directive in the http context of the nginx.conf. 

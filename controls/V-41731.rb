@@ -19,6 +19,8 @@ control "V-41731" do
   whether only authenticated system administrators and the designated PKI Sponsor
   for the web server can access the web server private key.
 
+  If NGINX is not configured to serve files, this check is Not Applicable.
+
   Check for the following:
     # grep the 'ssl_certificate' and 'ssl_certificate_key' directives in the server 
     context of the nginx.conf and any separated include configuration file.

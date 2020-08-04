@@ -31,7 +31,6 @@ control "V-41699" do
 
   If there are any MIME types enabled for  .exe, .dll, .com, .bat, and .csh 
   programs, this is a finding.
-
   "
   desc  "fix", "Edit the 'mime.types' file and disable all MIME types for .exe, 
   .dll, .com, .bat, and .csh programs.
@@ -49,9 +48,8 @@ control "V-41699" do
 
   # Checks for enabled mime types against the disallowed list
   if input('nginx_disallowed_mime_type').empty?
-    impact 0.0
-    describe 'This check is NA because the disallowed mime list should not be empty.' do
-      skip 'This check is NA because the disallowed mime list should not be empty.'
+    describe 'This check is skipped because the disallowed mime list should not be empty.' do
+      skip 'This check is skipped because the disallowed mime list should not be empty.'
     end
   else
     input('nginx_disallowed_mime_type').each do |mime_type|

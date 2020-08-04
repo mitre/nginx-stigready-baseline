@@ -23,6 +23,8 @@ content and web server configuration files."
   Verify with the system administrator or the ISSO that all non-administrator access 
   to shell scripts and operating system functions are mission essential and documented.
 
+  If there are no valid login shells, this check is Not Applicable. 
+  
   If undocumented privileged accounts are found, this is a finding.
 
   If undocumented access to shell scripts or operating system functions is found, 

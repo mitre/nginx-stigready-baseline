@@ -17,6 +17,8 @@ does not need to cause an error condition to gain this information."
   Review the NGINX web server documentation and deployed configuration to determine
   if debugging and trace information are enabled.
 
+  If required directive(s) cannot be found in NGINX configuration files, this check is Not Applicable. 
+
   Check for the following:
   # grep the 'error_log' directive the nginx.conf
 

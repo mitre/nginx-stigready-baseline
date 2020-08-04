@@ -14,6 +14,9 @@ server being used in a DoS attack is bandwidth throttling.
   desc  "check", "Review the NGINX web server documentation and deployed configuration 
   to determine whether the web server has been configured to limit the ability of the web
   server to be used in a DoS attack.
+  
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
 
   Check if there's a limit on the number of connections allowed and the bandwith allowed:
     #grep the 'limit_conn_zone' directive in the http context of the nginx.conf and any 
@@ -25,8 +28,8 @@ server being used in a DoS attack is bandwidth throttling.
     #grep the 'limit_rate' directive in the location context of the nginx.conf and any 
     separated include configuration file.
 
-  If the 'limit_conn_zone', 'limit_conn', 'limit_rate' directives do not exist, are not 
-  configured, or is unlimited, this is a finding. 
+  If the 'limit_conn_zone', 'limit_conn', 'limit_rate' directives are not configured to limit 
+  the number of simultanous sessions and bandwidth, or is unlimited, this is a finding.
   "
   desc  "fix", "Configure the NGINX web server to include the 'limit_conn_zone', 'limit_conn', 
   'limit_rate' directives to limit the number of concurrent sessions and the bandwidth allowed."

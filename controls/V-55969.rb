@@ -14,6 +14,9 @@ be capable of writing logs to centralized audit log servers."
   determine if the web server can write log data to, or if log data can be
   transferred to, a separate audit server.
 
+  If there are no websites configured for NGINX or if required directive(s) cannot 
+  be found in the NGINX configuration files, this check is Not Applicable.
+
   Check for the following:
       # grep for 'access_log' and 'error_log' directives in the nginx.conf and 
       any separated include configuration file.
@@ -22,8 +25,7 @@ be capable of writing logs to centralized audit log servers."
       # file <path to access_log>/access.log
       # file <path to error_log>/error.log
 
-  If the access_log and error_log directives do not exist and the access.log and 
-  error.log files do not exist, this is a finding. 
+  If the access.log and error.log files do not exist, this is a finding. 
 
   Work with SIEM administrator to determine audit configurations.
 

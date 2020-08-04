@@ -22,6 +22,9 @@ storage dependent on the impact of the web server.
   use record storage capacity in accordance with specifications within NIST SP
   800-92 for log record storage requirements.
 
+  If there are no websites configured for NGINX or if required directive(s) cannot be found 
+  in NGINX configuration files, this check is Not Applicable.
+
   Check for the following:
       # grep for 'access_log' and 'error_log' directives in the nginx.conf and 
       any separated include configuration file.
@@ -30,8 +33,7 @@ storage dependent on the impact of the web server.
       # file <path to access_log>/access.log
       # file <path to error_log>/error.log
 
-  If the access_log and error_log directives do not exist and the access.log and 
-  error.log files do not exist, this is a finding. 
+  If the access.log and error.log files do not exist, this is a finding. 
 
   Work with SIEM administrator to determine log storage capacity.
   If there is no setting within a SIEM to accommodate enough a large logging 

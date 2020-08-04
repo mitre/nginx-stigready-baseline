@@ -20,6 +20,9 @@ trap efforts to bypass security checks or to compromise an application.
   desc  "check", "Review the NGINX web server documentation and deployed configuration 
   to determine what the data set is for data entry.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
   Check for the following:
       # grep the 'charset' directive in the http, server, and location context of 
       the nginx.conf and any separated include configuration file.

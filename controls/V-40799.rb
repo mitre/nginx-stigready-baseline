@@ -17,29 +17,39 @@ control "V-40799" do
   be audit log monitoring systems, dynamic firewalls, or infrastructure
   monitoring systems.
   "
-  desc  "check", "Review the NGINX web server documentation and configuration to determine if the
-  web server is configured to generate information for external applications
-  monitoring remote access.
+  desc  "check", "Review the NGINX web server documentation and configuration to 
+  determine if the web server is configured to generate information for external 
+  applications monitoring remote access.
+
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
+  If required directive(s) cannot be found in NGINX configuration files, 
+  this check is Not Applicable. 
 
   Check for the following: 
-   # grep for 'access_log' and 'error_log' directives in the nginx.conf and any separated include configuration file.
+   # grep for 'access_log' and 'error_log' directives in the nginx.conf and any 
+   separated include configuration file.
 
   Execute the following commands:
    # file <path to access_log>/access.log
    # file <path to error_log>/error.log
 
-  If the access_log and error_log directives do not exist and the access.log and error.log files do not exist, this is a finding.
+  If the access.log and error.log files do not exist, this is a finding.
 
   Verify the following only if in Docker environment - 
 
-    Execute the following commands to verify that the NGINX web server is producing logs and linking them to stdout and stderr:
+    Execute the following commands to verify that the NGINX web server is producing logs 
+    and linking them to stdout and stderr:
 
       # readlink <access_log_path>/access.log
       # readlink <error_log_path>/error.log
 
-    If the access.log and error.log files are not linked to stdout and stderr, this is a finding.
+    If the access.log and error.log files are not linked to stdout and stderr, 
+    this is a finding.
   "
-  desc  "fix", "Enable loggin on the NGINX web server by configuring the 'access_log' and 'error_log' directives in the NGINX configuration file(s).
+  desc  "fix", "Enable loggin on the NGINX web server by configuring the 'access_log' 
+  and 'error_log' directives in the NGINX configuration file(s).
 
   Execute the following command on the NGINX web server to link logs to stdout and stderr:
   # ln -sf /dev/stdout <access_log_path>/access.log

@@ -19,6 +19,9 @@ control "V-41730" do
 
   If PKI is not being used, this is check is Not Applicable.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
   Check for the following:
     # grep the 'ssl_verify_client' and 'ssl_verify_depth' directives in the server 
     context of the nginx.conf and any separated include configuration file.
@@ -48,41 +51,48 @@ control "V-41730" do
   tag "cci": ["CCI-000185"]
   tag "nist": ["IA-5 (2) (a)", "Rev_4"]
 
-  if nginx_conf.servers.nil?
+  if input('uses_pki') == 'false'
     impact 0.0
-    describe 'This check is NA because NGINX has not been configured to serve files.' do
-      skip 'This check is NA because NGINX has not been configured to serve files.'
+    describe 'This check is NA because NGINX does not use PKI.' do
+      skip 'This check is NA because NGINX does not use PKI.'
     end
   else
-    nginx_conf.servers.each do |server|
-      if server.params["ssl_verify_client"].nil?
-        impact 0.0
-        describe 'This check is NA because the ssl_verify_client directive has not been configured.' do
-          skip 'This check is NA because the ssl_verify_client directive has not been configured.'
-        end
-      else
-        server.params["ssl_verify_client"].each do |ssl_verify_client|
-          describe "The ssl_verify_client directive" do
-            it "should be set to 'on'." do
-              expect(ssl_verify_client).to(cmp 'on')
-            end
-          end 
-        end
+    if nginx_conf.servers.nil?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
       end
-      if server.params["ssl_verify_depth"].nil?
-        impact 0.0
-        describe 'This check is NA because the ssl_verify_depth directive has not been configured.' do
-          skip 'This check is NA because the ssl_verify_depth directive has not been configured.'
+    else
+      nginx_conf.servers.each do |server|
+        if server.params["ssl_verify_client"].nil?
+          impact 0.0
+          describe 'This check is NA because the ssl_verify_client directive has not been configured.' do
+            skip 'This check is NA because the ssl_verify_client directive has not been configured.'
+          end
+        else
+          server.params["ssl_verify_client"].each do |ssl_verify_client|
+            describe "The ssl_verify_client directive" do
+              it "should be set to 'on'." do
+                expect(ssl_verify_client).to(cmp 'on')
+              end
+            end 
+          end
         end
-      else
-        server.params["ssl_verify_depth"].each do |ssl_verify_depth|
-          describe "The ssl_verify_depth directive" do
-            it "should not equal '0'." do
-              expect(ssl_verify_depth).not_to(cmp '0')
+        if server.params["ssl_verify_depth"].nil?
+          impact 0.0
+          describe 'This check is NA because the ssl_verify_depth directive has not been configured.' do
+            skip 'This check is NA because the ssl_verify_depth directive has not been configured.'
+          end
+        else
+          server.params["ssl_verify_depth"].each do |ssl_verify_depth|
+            describe "The ssl_verify_depth directive" do
+              it "should not equal '0'." do
+                expect(ssl_verify_depth).not_to(cmp '0')
+              end
             end
           end
         end
-      end
-    end 
+      end 
+    end
   end
 end

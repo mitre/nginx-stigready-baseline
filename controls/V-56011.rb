@@ -16,6 +16,9 @@ control "V-56011" do
   desc  "check", "Review the NGINX web server documentation and deployed configuration 
   to determine which version of TLS is being used.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf and any 
     separated include configuration file.
@@ -41,7 +44,7 @@ control "V-56011" do
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
   
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'
@@ -49,7 +52,7 @@ control "V-56011" do
   else
     nginx_conf.servers.each do |server|
       if server.params["ssl_protocols"].nil?
-        impact 0.0
+        impact 0.0 
         describe 'This test is NA because the ssl_protocols directive has not been configured.' do
           skip 'This test is NA because the ssl_protocols directive has not been configured.'
         end

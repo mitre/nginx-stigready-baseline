@@ -17,6 +17,9 @@ control "V-56009" do
   If it is determined that the web server is not required to perform session 
   management, this check is Not Applicable. 
 
+  If NGINX is not configured to serve files or if the required directive(s)
+  cannot be found in the NGINX configuration files, this check is Not Applicable.
+
   Check for the following: 
     # grep the 'proxy_cookie_path' directive in the location context of the 
     nginx.conf and any separated include configuration file.
@@ -45,7 +48,7 @@ control "V-56009" do
       skip 'This check is NA because session management is not required.'
     end
   else
-    if nginx_conf.servers.empty?
+    if nginx_conf.servers.nil?
       impact 0.0
       describe 'This check is NA because NGINX has not been configured to serve files.' do
         skip 'This check is NA because NGINX has not been configured to serve files.'

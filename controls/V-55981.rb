@@ -18,6 +18,12 @@ properly to only allow privileged users access.
   to determine if the web server provides unique account roles specifically for 
   the purposes of segmenting the responsibilities for managing the web server.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
+  If required directive(s) cannot be found in NGINX configuration files, this check 
+  is Not Applicable. 
+
   This check verifies that the SA or Web Manager controlled account owns the key 
   web server files. These same files, which control the configuration of the web 
   server, and thus its behavior, must also be accessible by the account that runs 
@@ -78,9 +84,8 @@ properly to only allow privileged users access.
   tag "nist": ["CM-5 (1)", "Rev_4"]
 
   if input('access_control_files').empty?
-    impact 0.0
-    describe 'This check is NA because no configuration files have been specified.' do
-      skip 'This check is NA because no configuration files have been specified.'
+    describe 'This check is skipped because no configuration files have been specified.' do
+      skip 'This check is skipped because no configuration files have been specified.'
     end
   else
     input('access_control_files').each do |file|

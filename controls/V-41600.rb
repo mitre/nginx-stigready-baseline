@@ -18,6 +18,8 @@ control "V-41600" do
   desc  "check", "
   Review the NGINX web server documentation and the deployed system configuration to determine 
   if, at a minimum, system startup and shutdown, system access, and system authentication events are logged.
+
+  If there are no websites configured for NGINX, this check is Not Applicable.
     
   Check for the following:
   # grep the 'log_format' directive in the http context of the nginx.conf. 

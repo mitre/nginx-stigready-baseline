@@ -15,6 +15,9 @@ session becomes easy for the attacker to break, often within minutes to hours."
   Review the web server documentation and deployed configuration to determine
   if export ciphers are removed.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
     Check for the following:
 
     # grep the 'ssl_prefer_server_cipher' directive in each server context of 
@@ -43,7 +46,7 @@ session becomes easy for the attacker to break, often within minutes to hours."
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
 
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'

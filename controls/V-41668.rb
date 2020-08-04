@@ -26,6 +26,8 @@ control "V-41668" do
   for the current time. A reasonable match between the two times will suffice as
   evidence that the system is using the internal clock for date and time stamps.
 
+  If there are no websites configured for NGINX, this check is Not Applicable.
+
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.
 

@@ -144,6 +144,7 @@ nginx_disallowed_file_list: [
 #description: File list of allowed documentation, sample code, example applications, and tutorials.
 nginx_allowed_file_list:
   [
+    ''
   ]
 
 #description: List of allowed cgi scripts.
@@ -185,7 +186,7 @@ nginx_disallowed_mime_type: [
 #description: true/false - NGINX performs session management
 performs_session_management: 'true'
 
-#description: true/false - NGINX performs session management
+#description: true/false - NGINX performs user management
 manages_auth: 'false'
 
 #description: true/false - NGINX implements mobile code
@@ -193,6 +194,9 @@ implements_mobile_code: 'false'
 
 #description: true/false - NGINX is a proxy server
 proxy_server: 'false'
+
+#description: true/false - NGINX is behind a proxy server
+behind_proxy_server: 'false'
 
 #description: true/false - NGINX is a high-availability server
 high_availability: 'false'
@@ -203,6 +207,15 @@ is_cluster: 'false'
 #description: true/false - NGINX is the cluster master
 is_cluster_master: 'false'
 
+#description: true/false - NGINX uses Enterprise Tool for enforcing policy on remote sessions
+uses_enterprise_tool: 'false'
+
 #description: Minimum size of log file
 minimum_log_file_size: '25G'
+
+#description: NGINX uses PKI
+uses_pki: 'true'
+
+
+
 

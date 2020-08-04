@@ -22,13 +22,16 @@ control "V-41746" do
   whether the encryption modules utilized for authentication are FIPS 140-2
   compliant.  Reference the following NIST site to identify validated encryption
   modules: http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm
+  
+  If NGINX is not configured to serve files or if required directive(s) cannot be found 
+  in NGINX configuration files, this check is Not Applicable.
 
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
 
-  If the 'ssl_protocols' directive does not exist in the configuration or is not 
-  set to the FIPS comliant TLS versions, this is a finding. 
+  If the 'ssl_protocols' directive is not set to the FIPS comliant TLS versions, 
+  this is a finding. 
   "
   desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
   and configure it to use the FIPS compliant TLS protocols.
@@ -48,7 +51,7 @@ control "V-41746" do
   tag "cci": ["CCI-000803"]
   tag "nist": ["IA-7", "Rev_4"]
 
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'

@@ -21,6 +21,8 @@ control "V-41620" do
   desc  "check", "Review the NGINX web server documentation and deployment 
   configuration to determine if the web server can generate log data containing 
   the user/subject identity.
+  
+  If there are no websites configured for NGINX, this check is Not Applicable.
 
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.

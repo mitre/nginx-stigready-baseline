@@ -17,7 +17,7 @@ forcing a user to authenticate before the changes can be made.
   
   desc  "check", "Review the NGINX web server documentation and configuration 
   to determine if anonymous users can make changes to the web server or any 
-  applications hosted by the web server.
+  applications hosted by the web server. 
   
   Obtain a list of the user accounts for the system, noting the privileges for each account.
 
@@ -26,6 +26,8 @@ forcing a user to authenticate before the changes can be made.
 
   Verify with the SA or the ISSO that all non-administrator access to shell scripts and operating 
   system functions are mission essential and documented.
+  
+  If there are no valid login shells, this check is Not Applicable. 
 
   If undocumented privileged accounts are present, this is a finding.
 

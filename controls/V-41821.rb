@@ -17,6 +17,11 @@ exhaustion."
   desc  "check", "Review the NGINX web server documentation and deployed configuration 
   to determine where the document directory is located for each hosted application.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
+  If required directive(s) cannot be found in NGINX configuration files, this check is Not Applicable. 
+
   Check for the following:
 
     #grep the 'root' directive in the http, server, and location context of the nginx.conf and any separated include configuration file.

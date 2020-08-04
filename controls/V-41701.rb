@@ -42,9 +42,8 @@ control "V-41701" do
 
   # Checks for enabled mime types against the disallowed list
   if input('nginx_disallowed_mime_type').empty?
-    impact 0.0
-    describe 'This check is NA because the disallowed mime list should not be empty.' do
-      skip 'This check is NA because the disallowed mime list should not be empty.'
+    describe 'This check is skipped because the disallowed mime list should not be empty.' do
+      skip 'This check is skipped because the disallowed mime list should not be empty.'
     end
   else
     input('nginx_disallowed_mime_type').each do |mime_type|

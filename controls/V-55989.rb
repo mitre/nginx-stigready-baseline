@@ -19,6 +19,9 @@ control "V-55989" do
   desc  "check", " Review the NGINX web server documentation and configuration 
   to determine if the web server is being used as a user management application.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
   Check for the following:
   # grep 'auth_basic' and 'auth_basic_user_file' directive in the http, server, 
   and location context of the nginx.conf and any separated include configuration file.

@@ -14,12 +14,16 @@ control "V-40819" do
   make certain that the NGINX web server is configured to use cryptography to protect 
   the integrity of remote access sessions.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
+  If required directive(s) cannot be found in NGINX configuration files, this check is Not Applicable. 
+
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
   
-  If the 'ssl_protocols' directive does not exist in the configuration or is not set to 
-  the approved TLS version, this is a finding. 
+  If the 'ssl_protocols' directive is not set to the approved TLS version, this is a finding. 
   "
   desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
   and configure it to use the approved TLS protocols to utilize encryption during 
@@ -40,7 +44,7 @@ control "V-40819" do
   tag "cci": ["CCI-001453"]
   tag "nist": ["AC-17 (2)", "Rev_4"]
 
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'

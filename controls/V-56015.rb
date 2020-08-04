@@ -22,13 +22,16 @@ control "V-56015" do
   desc  "check", "Review web server configuration to determine if the server 
   is using a transmission method that maintains the confidentiality and integrity of
   information during reception.
+  
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
 
   Check for the following:
     #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
     and any separated include configuration file.
 
-  If the 'ssl_protocols' directive does not exist in the configuration or is not 
-  set to the approved TLS version, this is a finding. 
+  If the 'ssl_protocols' directive is not set to the approved TLS version, 
+  this is a finding. 
   "
   desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration 
   file(s) and configure it to use only the approved TLS protocols to maintain 
@@ -48,7 +51,7 @@ control "V-56015" do
   tag "cci": ["CCI-002422"]
   tag "nist": ["SC-8 (2)", "Rev_4"]
 
-  if nginx_conf.servers.empty?
+  if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
       skip 'This check is NA because NGINX has not been configured to serve files.'
@@ -56,7 +59,7 @@ control "V-56015" do
   else
     nginx_conf.servers.each do |server|
       if server.params["ssl_protocols"].nil?
-        impact 0.0
+        impact 0.0 
         describe 'This test is NA because the ssl_protocols directive has not been configured.' do
           skip 'This test is NA because the ssl_protocols directive has not been configured.'
         end

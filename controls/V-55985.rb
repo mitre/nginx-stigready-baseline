@@ -28,6 +28,9 @@ control requirements.
 
   Verify that any variation in PPS is documented, registered, and approved by the PPSM.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
   Check for the following:
     # grep for all 'listen' directives in the server context of the nginx.conf and 
     any separated include configuration file.

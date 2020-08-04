@@ -21,6 +21,9 @@ assessments.
   the operation of the web server and the hosted applications and are secure for
   a production system.
 
+  If NGINX is not configured to serve files or if required directive(s) cannot be found in 
+  NGINX configuration files, this check is Not Applicable.
+
   Check for the following:
   # grep for all 'listen' directives in the server context of the nginx.conf and 
   any separated include configuration file.

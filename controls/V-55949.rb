@@ -17,6 +17,9 @@ medium-value applications, and 20 minutes for low-value applications.
   and deployed configuration to verify that the web server will close an open session 
   after a configurable time of inactivity.
 
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
   To view the timeout values enter the following commands:
 
     # grep ''client_body_timeout'' on the nginx.conf file and any separate included 
@@ -64,7 +67,7 @@ medium-value applications, and 20 minutes for low-value applications.
       describe 'The http context client_header_timeout value' do
         it 'should exist and should be set to 10 (seconds) or less.' do
           expect(http).to(include "client_header_timeout")
-            expect(http["client_header_timeout"].join.to_i).to(be <= 10)
+          expect(http["client_header_timeout"].join.to_i).to(be <= 10)
         end
       end
       describe 'The http context client_body_timeout value' do

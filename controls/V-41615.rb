@@ -27,6 +27,7 @@ control "V-41615" do
   configuration to determine if the NGINX web server is configured to generate 
   sufficient information to resolve the source, e.g. source IP, of the log event.
 
+  If there are no websites configured for NGINX, this check is Not Applicable.
 
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.

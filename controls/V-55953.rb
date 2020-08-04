@@ -19,9 +19,11 @@ implementing secure tokens, and validating users.
   desc  "check", "Review the NGINX web server product documentation and deployed 
   configuration to determine if the server or an enterprise tool is enforcing the 
   organization's requirements for remote connections.
+  
+  If NGINX is not configured to serve files, this check is Not Applicable.
 
   If the an enterprise tools is enforcing the organization's requirements for remote 
-  connections, this control must be reviewed Manually.
+  connections, this control must be reviewed manually.
 
   If NGINX is enforcing the requirements for remote connections, check for the following:
       # grep for a 'deny' directive in the location context of the nginx.conf and any 
@@ -48,21 +50,22 @@ implementing secure tokens, and validating users.
   tag "cci": ["CCI-002314"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-  if nginx_conf.locations.empty?
-    impact 0.0
-    describe 'This check is NA because NGINX has not been configured to serve files.' do
-      skip 'This check is NA because NGINX has not been configured to serve files.'
+  if input('uses_enterprise_tool') == 'true'
+    describe "This test requires a Manual Review: Determine if the enterprise tool is enforcing 
+    the organization's requirements for remote connections." do
+      skip "This test requires a Manual Review: Determine if the enterprise tool is enforcing 
+      the organization's requirements for remote connections."
     end
   else
-    nginx_conf.locations.each do |location|
-      deny_values = []
-      deny_values.push(location.params['deny']) unless location.params['deny'].nil?
-      if deny_values.empty?
-        impact 0.0
-        describe 'This check is NA because the deny directive has not been configured in locations.' do
-          skip 'This check is NA because the deny directive has not been configured in locations.'
-        end
-      else
+    if nginx_conf.locations.empty?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
+      end
+    else
+      nginx_conf.locations.each do |location|
+        deny_values = []
+        deny_values.push(location.params['deny']) unless location.params['deny'].nil?
         describe "Each location context" do
           it 'should include an deny all directive.' do
             expect(deny_values.to_s).to(include "all")

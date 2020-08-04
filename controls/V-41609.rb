@@ -16,6 +16,8 @@ control "V-41609" do
   desc  "check", "
   Review the NGINX web server documentation and deployed configuration to determine 
   if the NGINX web server captures and logs all content related to a user session.
+  
+  If there are no websites configured for NGINX, this check is Not Applicable.
 
   Check for the following:
     #grep the 'log_format' directive in the http context of the nginx.conf. 

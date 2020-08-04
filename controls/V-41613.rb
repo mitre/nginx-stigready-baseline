@@ -25,6 +25,8 @@ control "V-41613" do
   to determine if the NGINX web server is configured to generate a date and time for each 
   logged event.
 
+  If there are no websites configured for NGINX, this check is Not Applicable.
+
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.
   

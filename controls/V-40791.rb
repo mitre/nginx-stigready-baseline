@@ -14,16 +14,28 @@ control "V-40791" do
   recommended values, the values can be adjusted to accommodate the operational
   requirement of a given system.
   "
-  desc  "check", "Review the NGINX web server documentation and configuration to determine if the number of simultaneous sessions is limited.
+  desc  "check", "Review the NGINX web server documentation and configuration to 
+  determine if the number of simultaneous sessions is limited.
+
+  If there are no websites configured or if NGINX is not configured to serve files, 
+  this check is Not Applicable.
+
+  If required directive(s) cannot be found in NGINX configuration files, 
+  this check is Not Applicable. 
 
   Check for the following:
-    # grep the 'limit_conn_zone' directive in the http context of the nginx.conf and any separated include configuration file.
+    # grep the 'limit_conn_zone' directive in the http context of the nginx.conf 
+    and any separated include configuration file.
   
-    # grep the 'limit_conn' directive in the location context of the nginx.conf and any separated include configuration file.
+    # grep the 'limit_conn' directive in the location context of the nginx.conf 
+    and any separated include configuration file.
   
-  If the 'limit_conn_zone' and 'limit_conn' directives do not exist, are not configured, or is unlimited, this is a finding. 
+  If the 'limit_conn_zone' and 'limit_conn' directives are not configured to limit 
+  the number of simultanous sessions or is unlimited, this is a finding. 
   "
-  desc  "fix", "Configure the NGINX web server to include the 'limit_conn_zone' and 'limit_conn' directives in the NGINX configuration file(s) to limit the number of concurrent sessions."
+  desc  "fix", "Configure the NGINX web server to include the 'limit_conn_zone' and 
+  'limit_conn' directives in the NGINX configuration file(s) to limit the number of 
+  concurrent sessions."
   impact 0.5
   tag "severity": "medium"
   tag "gtitle": "SRG-APP-000001-WSR-000001"

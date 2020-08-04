@@ -20,8 +20,8 @@ service (DoS) attacks on the web server.
   Review the NGINX web server configuration to verify that the web server is
   restricting access from nonsecure zones.
 
-  If external controls such as host-based firewalls are used to restrict 
-  this access, this check is Not Applicable.
+  If the an enterprise tools is enforcing the organization's requirements for remote 
+  connections, this control must be reviewed manually.
 
   Check for the following:
       # grep for a 'deny' directive in the location context of the nginx.conf 
@@ -48,21 +48,22 @@ service (DoS) attacks on the web server.
   tag "cci": ["CCI-002314"]
   tag "nist": ["AC-17 (1)", "Rev_4"]
 
-  if nginx_conf.locations.empty?
-    impact 0.0
-    describe 'This check is NA because NGINX has not been configured to serve files.' do
-      skip 'This check is NA because NGINX has not been configured to serve files.'
+  if input('uses_enterprise_tool') == 'true'
+    describe "This test requires a Manual Review: Determine if the enterprise tool is enforcing 
+    the organization's requirements for remote connections." do
+      skip "This test requires a Manual Review: Determine if the enterprise tool is enforcing 
+      the organization's requirements for remote connections."
     end
   else
-    nginx_conf.locations.each do |location|
-      deny_values = []
-      deny_values.push(location.params['deny']) unless location.params['deny'].nil?
-      if deny_values.empty?
-        impact 0.0
-        describe 'This check is NA because the deny directive has not been configured in locations.' do
-          skip 'This check is NA because the deny directive has not been configured in locations.'
-        end
-      else
+    if nginx_conf.locations.empty?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
+      end
+    else
+      nginx_conf.locations.each do |location|
+        deny_values = []
+        deny_values.push(location.params['deny']) unless location.params['deny'].nil?
         describe "Each location context" do
           it 'should include an deny all directive.' do
             expect(deny_values.to_s).to(include "all")

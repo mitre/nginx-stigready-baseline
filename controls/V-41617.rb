@@ -28,6 +28,8 @@ control "V-41617" do
   configuration to determine if the web server is configured to generate the 
   outcome (success or failure) of the event.
 
+  If there are no websites configured for NGINX, this check is Not Applicable.
+
   Check for the following:
       # grep for a 'log_format' directive in the http context of the nginx.conf.
 
