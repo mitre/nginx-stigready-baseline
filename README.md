@@ -1,11 +1,11 @@
-# Web Server SRG InSpec profile for nginx 1.15
+# Web Server SRG Verson 2 Release 3 InSpec profile for nginx 1.19
 
-InSpec profile testing secure configuration of nginx 1.15
+InSpec profile testing secure configuration of nginx 1.19
 
 ## Description
 
 This InSpec compliance profile is a collection of automated tests for
-secure configuration of nginx 1.15.
+secure configuration of nginx 1.19.
 
 InSpec is an open-source run-time framework and rule language used to
 specify compliance, security, and policy requirements for testing any
@@ -29,8 +29,8 @@ any time.
 
 ## Requirements
 
-- [ruby](https://www.ruby-lang.org/en/) version 2.4  or greater
-- [InSpec](http://inspec.io/) version 2.1  or greater
+- [ruby](https://www.ruby-lang.org/en/) version 2.6  or greater
+- [InSpec](http://inspec.io/) version 4.x  or greater
 - Install via ruby gem: `gem install inspec`
     
 ## Usage
@@ -58,13 +58,40 @@ $ git clone https://github.com/mitre/nginx-srg-baseline.git
 # for export called output.json
 $ inspec exec nginx-srg-baseline --reporter cli json:output.json
 
-# Run profile with custom settings defined in attributes.yml against the target 
+# Run profile with custom settings defined in inputs.yml against the target 
 # server example.com. 
-$ inspec exec nginx-srg-baseline -t example.com --user root --password=Pa55w0rd --attrs attributes.yml --reporter cli json:output.json
+$ inspec exec nginx-srg-baseline -t example.com --user root --password=Pa55w0rd --input-file=inputs.yml --reporter cli json:output.json
 
 # Run profile with: custom attributes, ssh keyed into a custom target, and sudo.
-$ inspec exec nginx-srg-baseline -t ssh://user@hostname -i /path/to/key --sudo --attrs attributes.yml --reporter cli json:output.json
+$ inspec exec nginx-srg-baseline -t ssh://user@hostname -i /path/to/key --sudo --input-file=inputs.yml --reporter cli json:output.json
+
+# Run profile with: custom attributes and a Docker container target.
+$ inspec exec nginx-srg-baseline -t docker://52a949b41213 --input-file=inputs.yml --reporter cli json:output.json
 ```
+## Testing with Kitchen
+### Dependencies
+
+- Ruby 2.6.0 or later
+- [Virtualbox](https://www.virtualbox.org)
+- [Vagrant](https://www.vagrantup.com)
+- [Docker](https://docs.docker.com)
+
+### Setup Environment
+1. Clone the repo via `git clone git@github.com:mitre/nginx-srg-baseline.git`
+2. cd to `nginx-srg-baseline`
+3. Run `gem install bundler`
+4. Run `bundle install`
+5. Run `export KITCHEN_YAML=kitchen.vagrant.yml` - Docker and EC2 Kitchen Yaml files are available for testing
+
+### Execute Tests
+1. Run `bundle exec kitchen create` - create host based on two suites, vanilla and hardened
+2. Run `bundle exec kitchen list` - you should see the following choices:
+   - `vanilla-ubuntu-1804`
+   - `hardened-ubuntu-1804`
+3. Run `bundle exec kitchen converge`
+4. Run `bundle exec kitchen list` - your should see your hosts with status "converged"
+5. Run `bundle exec kitchen verify` - Once finished, the results should be in the 'results' directory.
+
 ## Contributors
 
 - Timothy J. Miller

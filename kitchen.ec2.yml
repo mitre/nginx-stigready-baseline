@@ -1,0 +1,73 @@
+---
+  driver:
+    name: ec2
+    associate_public_ip: true
+    instance_type: c5.large
+    ebs_optimized: true
+    block_device_mappings:
+      - device_name: /dev/sda1
+        ebs:
+          delete_on_termination: true
+          volume_size: 30
+          volume_type: gp2
+    interface: public
+    require_chef_for_busser: false
+    privileged: true
+  
+  provisioner:
+    name: ansible_playbook
+    hosts: all
+    require_ansible_repo: false
+    require_ansible_omnibus: true
+    require_chef_for_busser: false
+    require_ruby_for_busser: false
+    ansible_verbose: true
+    roles_path: ./spec/ansible/nginx-hardening
+    requirements_path: ./spec/ansible/nginx-hardening/requirements.yml
+    galaxy_ignore_certs: true
+  
+  transport:
+    name: ssh
+    # username: ec2-user
+    ssh_key: ~/.ssh/<%= ENV[('AWS_SSH_KEY_ID')] %>.pem
+  
+  verifier:
+    name: inspec
+    sudo: true
+    load_plugins: true
+    inspec_tests:
+      - path: ./
+    input_files:
+      - ./srg-inputs.yml
+
+  platforms:
+    - name: ubuntu-18.04
+      lifecycle:
+        post_create:
+          - remote: sudo touch /etc/apt/sources.list.d/nginx.list
+          - remote: echo 'deb [arch=amd64] http://nginx.org/packages/mainline/ubuntu/ bionic nginx' | sudo tee -a /etc/apt/sources.list.d/nginx.list
+          - remote: echo 'deb-src http://nginx.org/packages/mainline/ubuntu/ bionic nginx' |  sudo tee -a /etc/apt/sources.list.d/nginx.list
+          - remote: sudo wget http://nginx.org/keys/nginx_signing.key
+          - remote: sudo apt-key add nginx_signing.key
+          - remote: sudo apt update
+          - remote: sudo apt install nginx
+          - remote: sudo systemctl start nginx
+  suites:
+    - name: hardened
+      provisioner:
+        playbook: spec/ansible/nginx-hardening/hardening-playbook.yml
+      verifier:
+        reporter:
+          - cli
+          - json:spec/results/hardened-test-result.json
+    - name: vanilla
+      provisioner:
+        playbook: spec/ansible/nginx-hardening/vanilla-playbook.yml
+      verifier:
+        reporter:
+          - cli
+          - json:spec/results/vanilla-test-result.json
+  
+  
+  
+  

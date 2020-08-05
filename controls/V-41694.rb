@@ -1,11 +1,40 @@
+# encoding: UTF-8
+
 control "V-41694" do
-  title "The web server must not be a proxy server."
+  title "The NGINX web server must not be a proxy server."
   desc  "A web server should be primarily a web server or a proxy server but
-not both, for the same reasons that other multi-use servers are not
-recommended.  Scanning for web servers that will also proxy requests into an
-otherwise protected network is a very common attack making the attack
-anonymous."
+  not both, for the same reasons that other multi-use servers are not
+  recommended.  Scanning for web servers that will also proxy requests into an
+  otherwise protected network is a very common attack making the attack
+  anonymous."
+  
+  desc  "check", "Review the NGINX web server documentation and deployed 
+  configuration to determine if the web server is also a proxy server.
+
+  If the NGINX server is a proxy server and not a web server, this check is Not Applicable.
+
+  If NGINX is not configured to serve files, this check is Not Applicable.
+
+  Execute the following command: 
+
+  # nginx -V
+
+  Verify the ‘nginx_http_proxy_module’ module is not installed.
+
+    # grep the 'proxy_pass' directive in the location context of the nginx.conf and any 
+    separated include configuration file.
+
+  If the 'nginx_http_proxy_module' module is installed and the 'proxy_pass' directive exists, 
+  this is a finding. 
+  "
+  desc  "fix", "
+  Use the configure script (available in the nginx download package) to exclude the 
+  'nginx_http_proxy_module' module by using the --without {module_name} option. 
+
+  Ensure the 'proxy_pass' directive is not enabled in the NGINX configuration file(s).   
+  "
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000141-WSR-000076"
   tag "gid": "V-41694"
   tag "rid": "SV-54271r3_rule"
@@ -13,24 +42,30 @@ anonymous."
   tag "fix_id": "F-47153r3_fix"
   tag "cci": ["CCI-000381"]
   tag "nist": ["CM-7 a", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine if the web server is also a proxy server.
 
-If the web server is also acting as a proxy server, this is a finding."
-  tag "fix": "Uninstall any proxy services, modules, and libraries that are
-used by the web server to act as a proxy server.
-
-Verify all configuration changes are made to assure the web server is no longer
-acting as a proxy server in any manner."
+  if input('proxy_server') == 'true'
+    impact 0.0
+    describe 'This check is NA because NGINX server is a proxy server and not a web server' do
+      skip 'This check is NA because NGINX server is a proxy server and not a web server'
+    end
+  else 
+    if nginx_conf.locations.nil?
+      impact 0.0
+      describe 'This check is NA because NGINX has not been configured to serve files.' do
+        skip 'This check is NA because NGINX has not been configured to serve files.'
+      end
+    else
+      describe nginx do
+        its('modules') { should_not include 'http_proxy' }
+      end
+      nginx_conf.locations.each do |location|
+        describe 'proxy_pass' do
+          it 'should not exist in the location context.' do
+            expect(location.params).to_not(include "proxy_pass")
+          end
+        end
+      end
+    end
+  end
 end
 

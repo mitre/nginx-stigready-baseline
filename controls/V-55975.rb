@@ -1,5 +1,7 @@
+# encoding: UTF-8
+
 control "V-55975" do
-  title "The web server must use a logging mechanism that is configured to
+  title "The NGINX web server must use a logging mechanism that is configured to
 provide a warning to the ISSO and SA when allocated record storage volume
 reaches 75% of maximum log record storage capacity."
   desc  "It is critical for the appropriate personnel to be aware if a system
@@ -17,7 +19,21 @@ warning to the ISSO and SA at a minimum.
     This requirement can be met by configuring the web server to utilize a
 dedicated log tool that meets this requirement.
   "
+  
+  desc  "check", "Review the NGINX web server documentation and deployment 
+  configuration settings to determine if the web server log system provides a 
+  warning to the ISSO and SA when allocated record storage volume reaches 75% of 
+  maximum record storage capacity.
+
+  Work with the SIEM administrator to determine if an alert is configured when 
+  allocated record storage volume reaches 75% of maximum log record storage capacity.
+
+  If there is no alert configured, this is a finding.
+  "
+  desc  "fix", "Work with the SIEM administrator to configure an alert when allocated 
+  record storage volume reaches 75% of maximum log record storage capacity."
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000359-WSR-000065"
   tag "gid": "V-55975"
   tag "rid": "SV-70229r2_rule"
@@ -25,25 +41,13 @@ dedicated log tool that meets this requirement.
   tag "fix_id": "F-60853r1_fix"
   tag "cci": ["CCI-001855"]
   tag "nist": ["AU-5 (1)", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployment
-configuration settings to determine if the web server log system provides a
-warning to the ISSO and SA when allocated record storage volume reaches 75% of
-maximum record storage capacity.
 
-If designated alerts are not sent or the web server is not configured to use a
-dedicated log tool that meets this requirement, this is a finding."
-  tag "fix": "Configure the web server to provide a warning to the ISSO and SA
-when allocated log record storage volume reaches 75% of maximum record storage
-capacity."
+  describe "This test requires a Manual Review: Work with the SIEM admin to determine 
+  if an alert is configured when allocated record storage volume reaches 75% of 
+  maximum log record storage capacity." do
+    skip "This test requires a Manual Review: Work with the SIEM admin to determine 
+    if an alert is configured when allocated record storage volume reaches 75% of 
+    maximum log record storage capacity."
+  end
 end
 

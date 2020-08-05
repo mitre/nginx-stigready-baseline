@@ -1,5 +1,7 @@
+# encoding: UTF-8
+
 control "V-56001" do
-  title "The web server must employ cryptographic mechanisms (TLS/DTLS/SSL)
+  title "The NGINX web server must employ cryptographic mechanisms (TLS/DTLS/SSL)
 preventing the unauthorized disclosure of information during transmission."
   desc  "Preventing the disclosure of transmitted information requires that the
 web server take measures to employ some form of cryptographic mechanism in
@@ -15,7 +17,43 @@ servers in a web cluster.
 disclosure. The disclosure may reveal user identifier/password combinations,
 website code revealing business logic, or other user personal information.
   "
+  
+  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+  to determine whether the transmission of data between the web server and external 
+  devices is encrypted.
+
+  If NGINX is not configured to serve files, this check is Not Applicable.
+
+  Check if SSL is enabled on the server:
+  #grep the 'listen' directive in the server context of the nginx.conf and any 
+  separated include configuration file.
+
+  If the 'listen' directive is not configured to use ssl, this is a finding.
+
+  Check for if 'ssl_protocols' is configured:
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf and 
+    any separated include configuration file.
+
+  If the 'ssl_protocols' directive is not set to the approved TLS version, this is a finding.
+  
+  If the 'listen' and 'ssl_protocols' directives cannot be found in NGINX configuration files, 
+  this check is Not Applicable.
+  "
+  desc  "fix", "Configure the 'listen' directive to the NGINX configuration file(s) 
+  to enable the use of SSL to ensure that all information in transmission is being encrypted.
+
+  Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
+  and configure it to use the approved TLS protocols to ensure that all information 
+  in transmission is being encrypted.
+
+  Example:
+    server {
+            listen 443 ssl;
+            ssl_protocols TLSv1.2;
+    }
+  "
   impact 0.5
+  tag "severity": "medium"
   tag "gtitle": "SRG-APP-000439-WSR-000151"
   tag "gid": "V-56001"
   tag "rid": "SV-70255r2_rule"
@@ -23,22 +61,44 @@ website code revealing business logic, or other user personal information.
   tag "fix_id": "F-60879r1_fix"
   tag "cci": ["CCI-002418"]
   tag "nist": ["SC-8", "Rev_4"]
-  tag "false_negatives": nil
-  tag "false_positives": nil
-  tag "documentable": false
-  tag "mitigations": nil
-  tag "severity_override_guidance": false
-  tag "potential_impacts": nil
-  tag "third_party_tools": nil
-  tag "mitigation_controls": nil
-  tag "responsibility": nil
-  tag "ia_controls": nil
-  tag "check": "Review the web server documentation and deployed configuration
-to determine whether the transmission of data between the web server and
-external devices is encrypted.
 
-If the web server does not encrypt the transmission, this is a finding."
-  tag "fix": "Configure the web server to encrypt the transmission of data
-between the web server and external devices."
+  if nginx_conf.servers.nil?
+    impact 0.0
+    describe 'This check is NA because NGINX has not been configured to serve files.' do
+      skip 'This check is NA because NGINX has not been configured to serve files.'
+    end
+  else
+    nginx_conf.servers.each do |server|
+      describe 'The listen directive' do
+        if server.params["listen"].nil?
+          impact 0.0
+          describe 'This test is NA because the listen directive has not been configured.' do
+            skip 'This test is NA because the listen directive has not been configured.'
+          end
+        else
+          it 'should be configured with SSL enabled.' do
+            expect(server.params["listen"].to_s).to(include "ssl")
+          end
+        end
+      end
+      if server.params["ssl_protocols"].nil?
+        impact 0.0
+        describe 'This test is NA because the ssl_protocols directive has not been configured.' do
+          skip 'This test is NA because the ssl_protocols directive has not been configured.'
+        end
+      else
+        server.params["ssl_protocols"].each do |protocol|
+          describe 'Each protocol' do
+            it 'should be included in the list of protocols approved to encrypt data' do
+              expect(protocol).to(be_in input('approved_ssl_protocols'))
+            end
+          end
+        end
+      end 
+    end
+  end 
 end
+
+
+
 

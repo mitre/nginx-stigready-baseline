@@ -1,0 +1,63 @@
+name: Verify the Baseline using Docker
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  release:
+    types:
+      - published
+
+jobs:
+  my-job:
+    defaults:
+      run:
+        shell: bash -l {0}
+    name: Validate my profile
+    runs-on: ubuntu-latest
+    env:
+      CHEF_LICENSE: accept-silent
+      KITCHEN_YAML: kitchen.docker.yml
+    strategy:
+      matrix:
+        suite: ['vanilla', 'hardened']
+      fail-fast: false
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Setup Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+    - name: Setup caching
+      uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+    - name: Bundle install
+      run: |
+        gem install bundler
+        bundle config path vendor/bundle
+        bundle install
+    - name: Regenerate current `profile.json`
+      run: |
+        bundle exec inspec json . | jq . > profile.json
+    - name: Lint the Inspec profile
+      run: bundle exec inspec check .
+    - name: Test-Kitchen
+      run: |
+        mkdir results
+        bundle exec kitchen test --destroy=always ${{ matrix.suite }}-debian10-nginx-latest || true
+    - name: Display our ${{ matrix.suite }} results summary
+      run: bundle exec inspec_tools summary -j spec/results/${{ matrix.suite }}-test-result.json --json-counts | jq .
+    - name: Ensure the scan meets our ${{ matrix.suite }} results threshold
+      run: bundle exec inspec_tools compliance -j spec/results/${{ matrix.suite }}-test-result.json -f ${{ matrix.suite }}.threshold.yml
+    - name: Save Test Result JSON
+      uses: actions/upload-artifact@v2
+      with:
+        path: spec/results
+
+      

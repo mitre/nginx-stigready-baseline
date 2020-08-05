@@ -1,0 +1,221 @@
+---
+benchmark.title: Web Server Security Requirements Guide
+benchmark.id: Web_Server_SRG
+benchmark.description: 'The Web Server SRG is published as a tool to improve the security
+  of Department of Defense (DoD) information systems. The requirements are derived
+  from the NIST 800-53 and related documents. Comments or proposed revisions to this
+  document should be sent via e-mail to the following address: disa.letterkenny.FSO.mbx.stig-customer-support-mailbox@mail.mil.'
+benchmark.version: '2'
+benchmark.status: accepted
+benchmark.status.date: '2015-08-28'
+benchmark.notice.id: terms-of-use
+benchmark.plaintext: 'Release: 2 Benchmark Date: 23 Oct 2015'
+benchmark.plaintext.id: release-info
+reference.href: http://iase.disa.mil
+reference.dc.publisher: DISA
+reference.dc.source: STIG.DOD.MIL
+reference.dc.title: DPMS Target SRG-APP-WSR
+reference.dc.subject: SRG-APP-WSR
+reference.dc.type: DPMS Target
+reference.dc.identifier: '2557'
+content_ref.name: M
+content_ref.href: DPMS_XCCDF_Benchmark_Web_Server_SRG.xml
+
+#description: Path for the nginx configuration file
+conf_path: '/etc/nginx/nginx.conf'
+
+#description: Path for the nginx log directory
+nginx_log_path: '/var/log/nginx'
+
+#description: Path for the nginx access log
+access_log_path: '/var/log/nginx/access.log'
+
+#description: Path for the nginx error log
+error_log_path: '/var/log/nginx/error.log'
+
+#description: Path for the private key
+key_file_path: '/etc/ssl/key.pem'
+
+#description: Latest supported Nginx version
+nginx_latest_version: '1.19.1'
+
+#description: Nginx owner
+nginx_owner: 'nginx'
+
+#description: The Nginx group
+nginx_group: 'nginx'
+
+#description: The system adminstrator
+sys_admin : ['root', 'adm', 'ubuntu', 'kitchen']
+
+#description: The system adminstrator group
+sys_admin_group: ['root', 'adm', 'ubuntu', 'kitchen']
+
+
+#description: List of non admin user accounts
+authorized_user_list: [
+  'user'
+]
+
+#description: List of authorized ports that are IANA compliant
+authorized_ports: [
+  '80',
+  '443'
+]
+
+#description: List of the access control files
+access_control_files: [
+  'nginx.conf'
+]
+
+#description: Charset required
+charset_required: 'utf-8'
+
+#description: DoD-approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners.
+dod_approved_pkis:
+  ['DoD',
+   'ECA'
+  ]
+
+#description: List of approved and FIPS compliant SSL Ciphers
+# NOTE: Some sites show +'s in the cipher names, while others use -'s. 
+approved_ssl_ciphers: [
+  'EECDH+ECDSA+AESGCM', 
+  'EECDH+aRSA+AESGCM', 
+  'EECDH+ECDSA+SHA384', 
+  'EECDH+ECDSA+SHA256',
+  'EECDH+aRSA+SHA384', 
+  'EECDH+aRSA+SHA256',
+  'EECDH+aRSA+RC4', 
+  'EECDH', 
+  'EDH+aRSA', 
+  'HIGH',
+  '!RC4',
+  '!aNULL',
+  '!eNULL',
+  '!LOW',
+  '!3DES',
+  '!MD5',
+  '!EXP',
+  '!PSK',
+  '!SRP',
+  '!DSS'
+]
+
+#description: List of approved and FIPS compliant TSL protocols. 
+approved_ssl_protocols: [
+  'TLSv1.2'
+]
+
+#description: List of authorized NGINX modules
+nginx_authorized_modules: [
+  'http_addition',
+  'http_auth_request',
+  'http_dav',
+  'http_flv',
+  'http_gunzip',
+  'http_gzip_static',
+  'http_mp4',
+  'http_random_index',
+  'http_realip',
+  'http_secure_link',
+  'http_slice',
+  'http_ssl',
+  'http_stub_status',
+  'http_sub',
+  'http_v2',
+  'mail_ssl',
+  'stream_realip',
+  'stream_ssl',
+  'stream_ssl_preread'
+]
+
+#description: List of unauthorized NGINX modules
+nginx_unauthorized_modules: [
+  'http_proxy'
+]
+
+#description: File list of disallowed documentation, sample code, example applications, and tutorials.
+nginx_disallowed_file_list: [
+  '/usr/share/man/man8/nginx.8.gz'
+]
+
+
+#description: File list of allowed documentation, sample code, example applications, and tutorials.
+nginx_allowed_file_list:
+  [
+    ''
+  ]
+
+#description: List of allowed cgi scripts.
+nginx_allowed_script_list:
+  [
+    ''
+  ]
+
+#description: Path for the MIME types file
+mime_type_path: '/etc/nginx/mime.types'
+
+#description: List of disallowed MIME types.
+nginx_disallowed_mime_type: [
+  'text/mathml', 
+  'text/vnd.sun.j2me.app-descriptor', 
+  'text/vnd.wap.wml', 
+  'application/java-archive', 
+  'application/mac-binhex40',
+  'application/postscript',
+  'application/vnd.wap.wmlc',
+  'application/vnd.google-earth.kml+xml',
+  'application/vnd.google-earth.kmz',
+  'application/x-7z-compressed',
+  'application/x-cocoa',
+  'application/x-java-archive-diff',
+  'application/x-java-jnlp-file',  
+  'application/x-makeself',
+  'application/x-perl',
+  'application/x-pilot',  
+  'application/x-redhat-package-manager',
+  'application/x-sea',
+  'application/x-shockwave-flash',  
+  'application/x-stuffit',
+  'application/x-sit',
+  'application/x-xpinstall',  
+  'application/octet-stream'
+]
+
+#description: true/false - NGINX performs session management
+performs_session_management: 'true'
+
+#description: true/false - NGINX performs user management
+manages_auth: 'false'
+
+#description: true/false - NGINX implements mobile code
+implements_mobile_code: 'false'
+
+#description: true/false - NGINX is a proxy server
+proxy_server: 'false'
+
+#description: true/false - NGINX is behind a proxy server
+behind_proxy_server: 'false'
+
+#description: true/false - NGINX is a high-availability server
+high_availability: 'false'
+
+#description: true/false - NGINX is part of a cluster
+is_cluster: 'false'
+
+#description: true/false - NGINX is the cluster master
+is_cluster_master: 'false'
+
+#description: true/false - NGINX uses Enterprise Tool for enforcing policy on remote sessions
+uses_enterprise_tool: 'false'
+
+#description: Minimum size of log file
+minimum_log_file_size: '25G'
+
+#description: NGINX uses PKI
+uses_pki: 'true'
+
+
+
+

@@ -1,0 +1,70 @@
+---
+nginx_root: '/usr/share/nginx/html'
+nginx_client_body_buffer_size: '1k'
+nginx_remove_default_site: true
+nginx_client_max_body_size: '1k'
+nginx_keepalive_timeout: '5 5'
+nginx_server_tokens: 'off'
+nginx_client_header_buffer_size: "1k"
+nginx_large_client_header_buffers: "2 1k"
+nginx_client_body_timeout: "10"
+nginx_client_header_timeout: "10"
+nginx_send_timeout: "10"
+nginx_limit_conn_zone: "$binary_remote_addr zone=default:10m"
+nginx_limit_conn: "default 5"
+nginx_limit_rate: "50k"
+nginx_time_stamp_format: "UTC"
+nginx_listen: "127.0.0.1:443 ssl"
+nginx_add_header: [
+# vvoid clickjacking
+"X-Frame-Options SAMEORIGIN",
+# disable content-type sniffing
+"X-Content-Type-Options nosniff",
+# XSS filter
+"X-XSS-Protection \"1; mode=block\"",
+"Strict-Transport-Security max-age=15768000",
+"Content-Security-Policy \"script-src 'self'; object-src 'self'\"" ]
+
+nginx_set_cookie_flag: "* HttpOnly secure"
+nginx_ssl_prefer_server_ciphers: "on"
+nginx_ssl_protocols: "TLSv1.2"
+nginx_ssl_ciphers: "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:HIGH:!RC4:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS"
+nginx_ssl_session_tickets: "off"
+nginx_ssl_verify_client: "on"
+nginx_ssl_verify_depth: "1"
+nginx_dh_size: "2048"
+nginx_ssl_cert: "/etc/ssl/nginx-selfsigned.crt"
+nginx_ssl_cert_key: "/etc/ssl/nginx-selfsigned.key"
+nginx_ssl_client_cert: "/etc/ssl/nginx-selfsigned.pem"
+
+nginx_disallowed_mime_type: [
+  'text/mathml', 
+  'text/vnd.sun.j2me.app-descriptor', 
+  'text/vnd.wap.wml', 
+  'application/java-archive', 
+  'application/mac-binhex40',
+  'application/postscript',
+  'application/vnd.wap.wmlc',
+  'application/vnd.google-earth.kml+xml',
+  'application/vnd.google-earth.kmz',
+  'application/x-7z-compressed',
+  'application/x-cocoa',
+  'application/x-java-archive-diff',
+  'application/x-java-jnlp-file',  
+  'application/x-makeself',
+  'application/x-perl',
+  'application/x-pilot',  
+  'application/x-redhat-package-manager',
+  'application/x-sea',
+  'application/x-shockwave-flash',  
+  'application/x-stuffit',
+  'application/x-sit',
+  'application/x-xpinstall',  
+  'application/octet-stream'
+]
+
+nginx_disallowed_file_list: [
+  '/usr/share/man/man8/nginx.8.gz'
+]
+
+charset_required: "utf-8"
