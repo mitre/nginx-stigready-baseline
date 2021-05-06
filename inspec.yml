@@ -1,9 +1,9 @@
-name: NGINX InSpec Baseline Based on the Web Server SRG Version 2 Release 3
-title: NGINX InSpec Baseline Based on the Web Server SRG Version 2 Release 3
+name: nginx-srg-baseline
+title: nginx-srg-baseline
 maintainer: The Authors
 copyright: The Authors
 copyright_email: you@example.com
 license: Apache-2.0
-summary: "The NGINX InSpec Baseline is published as a tool to improve the security of Department of Defense (DoD) information systems. The requirements are derived from the NIST 800-53 and related documents. Comments or proposed revisions to this document should be sent via e-mail to the following address: disa.letterkenny.FSO.mbx.stig-customer-support-mailbox@mail.mil."
-version: 0.1.0
+summary: "Inspec Validation Profile for NGINX SRG"
+version: 2.3.1
 inspec_version: ">= 4.0"
