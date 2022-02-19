@@ -7,14 +7,14 @@ driver:
 provisioner:
   name: ansible_playbook
   hosts: all
-  require_ansible_repo: false
-  require_ansible_omnibus: true
+  require_ansible_repo: true
   require_chef_for_busser: false
   require_ruby_for_busser: false
   ansible_verbose: true
+  ansible_diff: true
+  galaxy_ignore_certs: true
   roles_path: spec/ansible/nginx-hardening
   requirements_path: spec/ansible/nginx-hardening/requirements.yml
-  galaxy_ignore_certs: true
 
 verifier:
   name: inspec
