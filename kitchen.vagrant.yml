@@ -30,10 +30,6 @@ platforms:
         - remote: sudo apt-get -y update
         - remote: sudo apt-get -y install nginx apt-utils
         - remote: sudo systemctl start nginx
-        - remote: sudo ufw app list
-        - remote: sudo ufw allow 'Nginx HTTP'
-        - remote: sudo ufw status
-        - remote: systemctl status nginx
 suites:
   - name: hardened
     provisioner:
