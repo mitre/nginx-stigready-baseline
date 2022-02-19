@@ -41,7 +41,7 @@ platforms:
     lifecycle:
       post_create:
         - remote: sudo apt-get -y update
-        - remote: sudo apt-get -y install nginx apt-utils
+        - remote: sudo apt-get -y install nginx
         - remote: sudo systemctl start nginx
 suites:
   - name: hardened
