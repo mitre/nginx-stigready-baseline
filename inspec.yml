@@ -1,9 +1,264 @@
 name: nginx-srg-baseline
-title: nginx-srg-baseline
-maintainer: The Authors
-copyright: The Authors
-copyright_email: you@example.com
+title: The NGINX Web SRG v2.0 STIG-Ready Baseline
+maintainer: The MITRE Security Automation Framework
+copyright: (c) 2021
+copyright_email: saf@groups.mitre.org
 license: Apache-2.0
 summary: "Inspec Validation Profile for NGINX SRG"
-version: 2.3.1
+version: 2.4.0
 inspec_version: ">= 4.0"
+
+inputs:
+  - name: "conf_path"
+    description: Path for the nginx configuration file
+    type: String
+    value: "/etc/nginx/nginx.conf"
+
+  - name: "nginx_log_path"
+    description: "Path for the nginx log directory"
+    type: String
+    value: "/var/log/nginx"
+
+  - name: "access_log_path"
+    description: "Path for the nginx access log"
+    type: String
+    value: "/var/log/nginx/access.log"
+
+  - name: "error_log_path"
+    description: "Path for the nginx error log"
+    type: String
+    value: "/var/log/nginx/error.log"
+
+  - name: "mime_type_path"
+    description: "Path for the MIME types file"
+    type: String
+    value: "/etc/nginx/mime.types"
+
+  - name: "key_file_path"
+    description: "Path for the private key"
+    type: String
+    value: "/etc/ssl/key.pem"
+
+  - name: "minimum_log_file_size"
+    description: "Minimum size of log file"
+    type: String
+    value: "25G"
+
+  - name: "nginx_latest_version"
+    description: "Latest supported Nginx version"
+    type: String
+    value: '1.19.1'
+
+  - name: "nginx_owner"
+    description: "The NGINX process owner"
+    type: String
+    value: "nginx"
+
+  - name: "nginx_gropup"
+    description: "The NGINX process group"
+    type: String
+    value: "nginx"
+
+  - name: "charset_required"
+    description: "The expected character encoding used by the NGINX web-server"
+    type: String
+    value: "utf-8"
+
+  - name: "performs_session_management"
+    description: "true/false - NGINX performs session management"
+    type: Boolean
+    value: true
+
+  - name: "manages_auth"
+    description: "true/false - NGINX performs user management"
+    type: Boolean
+    value: false
+
+  - name: "implements_mobile_code"
+    description: "true/false - NGINX implements mobile code"
+    type: Boolean
+    value: false
+
+  - name: "proxy_server"
+    description: "true/false - NGINX is a proxy server"
+    type: Boolean
+    value: false
+
+  - name: "behind_proxy_server"
+    description: "true/false - NGINX is behind a proxy server"
+    type: Boolean
+    value: false
+
+  - name: "high_availability"
+    description: "true/false - NGINX is a high-availability server"
+    type: Boolean
+    value: false
+
+  - name: "is_cluster"
+    description: "true/false - NGINX is part of a cluster"
+    type: Boolean
+    value: false
+
+  - name: "is_cluster_master"
+    description: "true/false - NGINX is the cluster master"
+    type: Boolean
+    value: false
+
+  - name: "uses_enterprise_tool"
+    description: "true/false -NGINX uses Enterprise Tool for enforcing policy on remote sessions"
+    type: Boolean
+    value: false
+
+  - name: "uses_pki"
+    description: "true/false -NGINX uses PKI for Authentication"
+    type: Boolean
+    value: true
+
+  - name: "sys_admin"
+    description: "Allowed NGINX system aministrative users"
+    type: Array
+    value:
+      - "root"
+      - "adm"
+      - "ubuntu"
+      - "kitchen"
+
+  - name: "sys_admin_group"
+    description: "Allowed NGINX system aministrative groups"
+    type: Array
+    value:
+      - "root"
+      - "adm"
+      - "ubuntu"
+      - "kitchen"
+
+  - name: "authorized_user_list"
+    description: "List of non admin user accounts"
+    type: Array
+    value:
+      - "user"
+
+  - name: "authorized_ports"
+    description: "List of authorized ports that are IANA compliant"
+    type: Array
+    value:
+      - "80"
+      - "443"
+
+  - name: "access_control_files"
+    description: "List of the access control files"
+    type: Array
+    value:
+      - "nginx.conf"
+
+  - name: "dod_approved_pkis"
+    description: "DoD-approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners."
+    type: Array
+    value:
+      - "DoD"
+      - "ECA"
+
+  - name: "approved_ssl_ciphers"
+    description: "List of approved and FIPS compliant SSL Ciphers. Some sites show +'s in the cipher names, while others use -'s.'"
+    type: Array
+    value:
+      - "EECDH+ECDSA+AESGCM"
+      - "EECDH+aRSA+AESGCM"
+      - "EECDH+ECDSA+SHA384"
+      - "EECDH+ECDSA+SHA256"
+      - "EECDH+aRSA+SHA384"
+      - "EECDH+aRSA+SHA256"
+      - "EECDH+aRSA+RC4"
+      - "EECDH"
+      - "EDH+aRSA"
+      - "HIGH"
+      - "!RC4"
+      - "!aNULL"
+      - "!eNULL"
+      - "!LOW"
+      - "!3DES"
+      - "!MD5"
+      - "!EXP"
+      - "!PSK"
+      - "!SRP"
+      - "!DSS"
+
+  - name: "approved_ssl_protocols"
+    description: "List of approved and FIPS compliant TSL protocols."
+    type: Array
+    value:
+      - "TLSv1.2"
+
+  - name: "nginx_authorized_modules"
+    description: "List of authorized NGINX modules"
+    type: Array
+    value:
+      - "http_addition"
+      - "http_auth_request"
+      - "http_dav"
+      - "http_flv"
+      - "http_gunzip"
+      - "http_gzip_static"
+      - "http_mp4"
+      - "http_random_index"
+      - "http_realip"
+      - "http_secure_link"
+      - "http_slice"
+      - "http_ssl"
+      - "http_stub_status"
+      - "http_sub"
+      - "http_v2"
+      - "mail_ssl"
+      - "stream_realip"
+      - "stream_ssl"
+      - "stream_ssl_preread"
+
+  - name: "nginx_disallowed_mime_type"
+    description: "List of disallowed MIME types."
+    type: Array
+    value:
+      - "text/mathml"
+      - "text/vnd.sun.j2me.app-descriptor"
+      - "text/vnd.wap.wml"
+      - "application/java-archive"
+      - "application/mac-binhex40"
+      - "application/postscript"
+      - "application/vnd.wap.wmlc"
+      - "application/vnd.google-earth.kml+xml"
+      - "application/vnd.google-earth.kmz"
+      - "application/x-7z-compressed"
+      - "application/x-cocoa"
+      - "application/x-java-archive-diff"
+      - "application/x-java-jnlp-file"
+      - "application/x-makeself"
+      - "application/x-perl"
+      - "application/x-pilot"
+      - "application/x-redhat-package-manager"
+      - "application/x-sea"
+      - "application/x-shockwave-flash"
+      - "application/x-stuffit"
+      - "application/x-sit"
+      - "application/x-xpinstall"
+      - "application/octet-stream"
+
+  - name: "nginx_unauthorized_modules"
+    description: "List of unauthorized NGINX modules"
+    type: Array
+    value:
+      - "http_proxy"
+
+  - name: "nginx_disallowed_file_list"
+    description: "File list of disallowed documentation, sample code, example applications, and tutorials."
+    type: Array
+    value:
+      - "/usr/share/man/man8/nginx.8.gz"
+
+  - name: "nginx_allowed_file_list"
+    description: "File list of allowed documentation, sample code, example applications, and tutorials."
+    type: Array
+    value: []
+
+  - name: "nginx_allowed_script_list"
+    description: "List of allowed cgi scripts."
+    type: Array
+    value: []

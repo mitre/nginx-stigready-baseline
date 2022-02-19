@@ -25,20 +25,18 @@ verifier:
   sudo: true
   load_plugins: true
   inspec_tests:
-    - path: ./
-  input_files:
-    - ./srg-inputs.yml
+    - path: .
 
 platforms:
-- name: debian10-nginx-latest
-  driver:
-    image: nginx:latest
-    platform: debian
-    provision_command:
-      - apt update
-      - apt install -y systemd-sysv
-      - systemctl enable ssh.service
-      
+  - name: debian10-nginx-latest
+    driver:
+      image: nginx:latest
+      platform: debian
+      provision_command:
+        - apt update
+        - apt install -y systemd-sysv
+        - systemctl enable ssh.service
+
 suites:
   - name: hardened
     provisioner:
@@ -54,7 +52,3 @@ suites:
       reporter:
         - cli
         - json:spec/results/vanilla-test-result.json
-
-    
-
-

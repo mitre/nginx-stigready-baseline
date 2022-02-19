@@ -1,6 +1,4 @@
-# encoding: UTF-8
-
-control "V-56005" do
+control 'V-56005' do
   title "Web server cookies, such as session cookies, sent to the client using
 SSL/TLS must not be compressed."
   desc  "A cookie is used when a web server needs to share data with the
@@ -21,36 +19,36 @@ Ratio Info-leak Made Easy (CRIME).
     Cookies shared between the web server and the client when encrypted should
 not also be compressed.
   "
-  
-  desc  "check", "Review the web server documentation and deployed configuration 
+
+  desc 'check', "Review the web server documentation and deployed configuration
   to determine whether cookies are being sent to the client using SSL/TLS.
 
   If the transmission is through a SSL/TLS connection, but the cookie is not
   being compressed, this finding is Not Applicable.
 
-  If it is determined that the web server is not required to perform session 
-  management, this check is Not Applicable. 
+  If it is determined that the web server is not required to perform session
+  management, this check is Not Applicable.
 
   SSL/TLS compression has been disabled by default since NGINX version 1.3.2.
   Execute the following command to get the current version of NGINX running:
     # nginx -v
 
-    If the current version of NGINX running is older than 1.3.2, this is a finding. 
+    If the current version of NGINX running is older than 1.3.2, this is a finding.
   "
-  desc  "fix", "Upgrade to the lastest stable version of NGINX web server to 
+  desc 'fix', "Upgrade to the lastest stable version of NGINX web server to
   ensure Web server cookies, such as session cookies, are not compressed."
 
   impact 0.5
-  tag "severity": "medium"
-  tag "gtitle": "SRG-APP-000439-WSR-000153"
-  tag "gid": "V-56005"
-  tag "rid": "SV-70259r2_rule"
-  tag "stig_id": "SRG-APP-000439-WSR-000153"
-  tag "fix_id": "F-60883r1_fix"
-  tag "cci": ["CCI-002418"]
-  tag "nist": ["SC-8", "Rev_4"]
+  tag "severity": 'medium'
+  tag "gtitle": 'SRG-APP-000439-WSR-000153'
+  tag "gid": 'V-56005'
+  tag "rid": 'SV-70259r2_rule'
+  tag "stig_id": 'SRG-APP-000439-WSR-000153'
+  tag "fix_id": 'F-60883r1_fix'
+  tag "cci": ['CCI-002418']
+  tag "nist": %w(SC-8 Rev_4)
 
-  if input('performs_session_management') == "false"
+  if input('performs_session_management') == 'false'
     impact 0.0
     describe 'This check is NA because session management is not required.' do
       skip 'This check is NA because session management is not required.'
@@ -61,4 +59,3 @@ not also be compressed.
     end
   end
 end
-

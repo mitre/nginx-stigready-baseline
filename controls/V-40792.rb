@@ -1,7 +1,5 @@
-# encoding: UTF-8
-
-control "V-40792" do
-  title "The NGINX  web server must perform server-side session management."
+control 'V-40792' do
+  title 'The NGINX  web server must perform server-side session management.'
   desc  "Session management is the practice of protecting the bulk of the user
   authorization and identity information. Storing of this data can occur on the
   client system or on the server.
@@ -20,37 +18,36 @@ control "V-40792" do
   transmission, the session were to be hijacked, the user's credentials would not
   be compromised.
   "
-  desc  "check", "Review the NGINX web server documentation and configuration to determine if
+  desc 'check', "Review the NGINX web server documentation and configuration to determine if
   server-side session management is configured.
 
-  If it is determined that the web server is not required to perform session management, 
-  this check is Not Applicable. 
+  If it is determined that the web server is not required to perform session management,
+  this check is Not Applicable.
 
   If it is not configured, this is a finding.
   "
-  desc  "fix", "Configure the NGINX web server to perform server-side session
+  desc 'fix', "Configure the NGINX web server to perform server-side session
   management."
   impact 0.5
-  tag "severity": "medium"
-  tag "gtitle": "SRG-APP-000001-WSR-000002"
-  tag "gid": "V-40792"
-  tag "rid": "SV-53023r3_rule"
-  tag "stig_id": "SRG-APP-000001-WSR-000002"
-  tag "fix_id": "F-45949r2_fix"
-  tag "cci": ["CCI-000054"]
-  tag "nist": ["AC-10", "Rev_4"]
+  tag "severity": 'medium'
+  tag "gtitle": 'SRG-APP-000001-WSR-000002'
+  tag "gid": 'V-40792'
+  tag "rid": 'SV-53023r3_rule'
+  tag "stig_id": 'SRG-APP-000001-WSR-000002'
+  tag "fix_id": 'F-45949r2_fix'
+  tag "cci": ['CCI-000054']
+  tag "nist": %w(AC-10 Rev_4)
 
-  if input('performs_session_management') == "false"
-   impact 0.0
-   describe 'This check is NA because session management is not required.' do
-     skip 'This check is NA because session management is not required.'
-   end
+  if input('performs_session_management') == 'false'
+    impact 0.0
+    describe 'This check is NA because session management is not required.' do
+      skip 'This check is NA because session management is not required.'
+    end
   else
-    describe "This test requires a Manual Review: Determine if server-side session management 
+    describe "This test requires a Manual Review: Determine if server-side session management
     is required. If it is required, verify that it is configured." do
-      skip "This test requires a Manual Review: Determine if server-side session management 
+      skip "This test requires a Manual Review: Determine if server-side session management
       is required. If it is required, verify that it is configured."
     end
   end
 end
-

@@ -1,6 +1,4 @@
-# encoding: UTF-8
-
-control "V-55945" do
+control 'V-55945' do
   title "The NGINX web server must enforce approved authorizations for logical access
 to hosted applications and resources in accordance with applicable access
 control policies."
@@ -15,8 +13,8 @@ certificate to an account with an associated set of permissions on the system.
 If the web server relied only on the possession of the certificate and did not
 map to system roles and privileges, each user would have the same abilities and
 roles to make changes to the production system."
-  
-  desc  "check", "
+
+  desc  'check', "
   The NGINX web server must be configured to perform an authorization check to
   verify that the authenticated entity should be granted access to the requested
   content.
@@ -24,24 +22,24 @@ roles to make changes to the production system."
   If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
-    #grep the 'auth_request' directive in the location context of the nginx.conf 
-    and any separated include configuration file.      
+    #grep the 'auth_request' directive in the location context of the nginx.conf
+    and any separated include configuration file.
 
-  If the 'auth_request' directive does not exist inside the location context, 
+  If the 'auth_request' directive does not exist inside the location context,
   this is a finding.
   "
-  desc  "fix", "Configure server to use the 'auth_request' directive in the 
+  desc  'fix', "Configure server to use the 'auth_request' directive in the
   NGINX configuration file(s) to implement client authorization."
 
   impact 0.5
-  tag "severity": "medium"
-  tag "gtitle": "SRG-APP-000033-WSR-000169"
-  tag "gid": "V-55945"
-  tag "rid": "SV-70199r2_rule"
-  tag "stig_id": "SRG-APP-000033-WSR-000169"
-  tag "fix_id": "F-60823r1_fix"
-  tag "cci": ["CCI-000213"]
-  tag "nist": ["AC-3", "Rev_4"]
+  tag "severity": 'medium'
+  tag "gtitle": 'SRG-APP-000033-WSR-000169'
+  tag "gid": 'V-55945'
+  tag "rid": 'SV-70199r2_rule'
+  tag "stig_id": 'SRG-APP-000033-WSR-000169'
+  tag "fix_id": 'F-60823r1_fix'
+  tag "cci": ['CCI-000213']
+  tag "nist": %w(AC-3 Rev_4)
 
   # List of all auth_request uris in the configuration files
   auth_uris = []
@@ -55,11 +53,11 @@ roles to make changes to the production system."
     nginx_conf.locations.entries.each do |location|
       auth_uris.push(location.params['auth_request']) unless location.params['auth_request'].nil?
     end
-    describe "The uris collected from the auth_request directives" do
-      it "should not be an empty list." do
+    describe 'The uris collected from the auth_request directives' do
+      it 'should not be an empty list.' do
         expect(auth_uris).to_not(be_empty)
-      end 
-    end 
+      end
+    end
     if auth_uris.empty?
       describe 'This test is skipped because the auth_request directive has not been configured for locations.' do
         skip 'This test is skipped because the auth_request directive has not been configured for locations.'
@@ -68,11 +66,11 @@ roles to make changes to the production system."
       auth_uris.flatten!.uniq!
       nginx_conf.locations.each do |location|
         auth_uris.each do |uri|
-          describe "Each location context" do
+          describe 'Each location context' do
             it 'should include an auth_request directive.' do
-              expect(location.params).to(include "auth_request")
+              expect(location.params).to(include 'auth_request')
             end
-          end unless location.params["_"].flatten.include?(uri)  
+          end unless location.params['_'].flatten.include?(uri)
         end
       end
     end
