@@ -16,6 +16,10 @@ jobs:
     env:
       CHEF_LICENSE: accept-silent
       KITCHEN_YAML: kitchen.ec2.yml
+    strategy:
+      matrix:
+        suite: ["vanilla", "hardened"]
+      fail-fast: false
     steps:
       - name: add needed packages
         run: sudo apt-get install -y jq
