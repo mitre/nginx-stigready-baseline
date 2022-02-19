@@ -28,8 +28,6 @@ provisioner:
 
 transport:
   name: ssh
-  # username: ec2-user
-  ssh_key: ~/.ssh/<%= ENV[('AWS_SSH_KEY_ID')] %>.pem
 
 verifier:
   name: inspec
@@ -42,14 +40,13 @@ platforms:
   - name: ubuntu-18.04
     lifecycle:
       post_create:
-        - remote: sudo touch /etc/apt/sources.list.d/nginx.list
-        - remote: echo 'deb [arch=amd64] http://nginx.org/packages/mainline/ubuntu/ bionic nginx' | sudo tee -a /etc/apt/sources.list.d/nginx.list
-        - remote: echo 'deb-src http://nginx.org/packages/mainline/ubuntu/ bionic nginx' |  sudo tee -a /etc/apt/sources.list.d/nginx.list
-        - remote: sudo wget http://nginx.org/keys/nginx_signing.key
-        - remote: sudo apt-key add nginx_signing.key
-        - remote: sudo apt update
-        - remote: sudo apt install nginx
+        - remote: sudo apt-get -y update
+        - remote: sudo apt-get -y install nginx apt-utils
         - remote: sudo systemctl start nginx
+        - remote: sudo ufw app list
+        - remote: sudo ufw allow 'Nginx HTTP'
+        - remote: sudo ufw status
+        - remote: systemctl status nginx
 suites:
   - name: hardened
     provisioner:
