@@ -1,6 +1,4 @@
-# encoding: UTF-8
-
-control "V-56011" do
+control 'V-56011' do
   title "A web server must maintain the confidentiality of controlled
   information during transmission through the use of an approved TLS version."
   desc  "Transport Layer Security (TLS) is a required transmission protocol for
@@ -12,23 +10,23 @@ control "V-56011" do
   NIST SP 800-52 defines the approved TLS versions for government
   applications.
   "
-  
-  desc  "check", "Review the NGINX web server documentation and deployed configuration 
+
+  desc 'check', "Review the NGINX web server documentation and deployed configuration
   to determine which version of TLS is being used.
 
   If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
-    #grep the 'ssl_protocols' directive in the server context of the nginx.conf and any 
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf and any
     separated include configuration file.
 
-  If the 'ssl_protocols' directive cannot be found in NGINX configuration files, 
+  If the 'ssl_protocols' directive cannot be found in NGINX configuration files,
   this check is Not Applicable.
 
-  If the 'ssl_protocols' directive not set to the approved TLS version, this is a finding. 
+  If the 'ssl_protocols' directive not set to the approved TLS version, this is a finding.
   "
-  desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) and 
-  configure it to use only the approved TLS protocols. 
+  desc 'fix', "Add the 'ssl_protocols' directive to the NGINX configuration file(s) and
+  configure it to use only the approved TLS protocols.
 
   Example:
     server {
@@ -36,15 +34,15 @@ control "V-56011" do
     }
   "
   impact 0.5
-  tag "severity": "medium"
-  tag "gtitle": "SRG-APP-000439-WSR-000156"
-  tag "gid": "V-56011"
-  tag "rid": "SV-70265r2_rule"
-  tag "stig_id": "SRG-APP-000439-WSR-000156"
-  tag "fix_id": "F-60889r1_fix"
-  tag "cci": ["CCI-002418"]
-  tag "nist": ["SC-8", "Rev_4"]
-  
+  tag "severity": 'medium'
+  tag "gtitle": 'SRG-APP-000439-WSR-000156'
+  tag "gid": 'V-56011'
+  tag "rid": 'SV-70265r2_rule'
+  tag "stig_id": 'SRG-APP-000439-WSR-000156'
+  tag "fix_id": 'F-60889r1_fix'
+  tag "cci": ['CCI-002418']
+  tag "nist": %w(SC-8 Rev_4)
+
   if nginx_conf.servers.nil?
     impact 0.0
     describe 'This check is NA because NGINX has not been configured to serve files.' do
@@ -52,16 +50,16 @@ control "V-56011" do
     end
   else
     nginx_conf.servers.each do |server|
-      if server.params["ssl_protocols"].nil?
-        impact 0.0 
+      if server.params['ssl_protocols'].nil?
+        impact 0.0
         describe 'This test is NA because the ssl_protocols directive has not been configured.' do
           skip 'This test is NA because the ssl_protocols directive has not been configured.'
         end
       else
-        server.params["ssl_protocols"].each do |protocol|
+        server.params['ssl_protocols'].each do |protocol|
           describe 'Each protocol' do
             it 'should be included in the list of protocols approved to encrypt data' do
-              expect(protocol).to(be_in input('approved_ssl_protocols'))
+              expect(protocol).to(be_in(input('approved_ssl_protocols')))
             end
           end
         end
@@ -69,4 +67,3 @@ control "V-56011" do
     end
   end
 end
-

@@ -1,10 +1,8 @@
-# encoding: UTF-8
-
-control "V-41746" do
+control 'V-41746' do
   title "The NGINX web server must use cryptographic modules that meet the
   requirements of applicable federal laws, Executive Orders, directives,
   policies, regulations, standards, and guidance for such authentication."
-  desc  "Encryption is only as good as the encryption modules utilized.
+  desc "Encryption is only as good as the encryption modules utilized.
   Unapproved cryptographic module algorithms cannot be verified and cannot be
   relied upon to provide confidentiality or integrity, and DoD data may be
   compromised due to weak algorithms.
@@ -16,26 +14,26 @@ control "V-41746" do
     The web server must provide FIPS-compliant encryption modules when
   authenticating users and processes.
   "
-  
-  desc  "check", "
+
+  desc 'check', "
   Review NGINX web server documentation and deployed configuration to determine
   whether the encryption modules utilized for authentication are FIPS 140-2
   compliant.  Reference the following NIST site to identify validated encryption
   modules: http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm
-  
+
   If NGINX is not configured to serve files, this check is Not Applicable.
 
   Check for the following:
-    #grep the 'ssl_protocols' directive in the server context of the nginx.conf 
+    #grep the 'ssl_protocols' directive in the server context of the nginx.conf
     and any separated include configuration file.
 
-  If the 'ssl_protocols' directive cannot be found in NGINX configuration files, 
+  If the 'ssl_protocols' directive cannot be found in NGINX configuration files,
   this check is Not Applicable.
 
-  If the 'ssl_protocols' directive is not set to the FIPS comliant TLS versions, 
-  this is a finding. 
+  If the 'ssl_protocols' directive is not set to the FIPS comliant TLS versions,
+  this is a finding.
   "
-  desc  "fix", "Add the 'ssl_protocols' directive to the NGINX configuration file(s) 
+  desc 'fix', "Add the 'ssl_protocols' directive to the NGINX configuration file(s)
   and configure it to use the FIPS compliant TLS protocols.
   Example:
   server {
@@ -44,14 +42,14 @@ control "V-41746" do
   "
 
   impact 0.5
-  tag "severity": "medium"
-  tag "gtitle": "SRG-APP-000179-WSR-000111"
-  tag "gid": "V-41746"
-  tag "rid": "SV-54323r3_rule"
-  tag "stig_id": "SRG-APP-000179-WSR-000111"
-  tag "fix_id": "F-47205r2_fix"
-  tag "cci": ["CCI-000803"]
-  tag "nist": ["IA-7", "Rev_4"]
+  tag "severity": 'medium'
+  tag "gtitle": 'SRG-APP-000179-WSR-000111'
+  tag "gid": 'V-41746'
+  tag "rid": 'SV-54323r3_rule'
+  tag "stig_id": 'SRG-APP-000179-WSR-000111'
+  tag "fix_id": 'F-47205r2_fix'
+  tag "cci": ['CCI-000803']
+  tag "nist": %w(IA-7 Rev_4)
 
   if nginx_conf.servers.nil?
     impact 0.0
@@ -60,16 +58,16 @@ control "V-41746" do
     end
   else
     nginx_conf.servers.each do |server|
-      if server.params["ssl_protocols"].nil?
+      if server.params['ssl_protocols'].nil?
         impact 0.0
         describe 'This test is NA because the ssl_protocols directive has not been configured.' do
           skip 'This test is NA because the ssl_protocols directive has not been configured.'
         end
       else
-        server.params["ssl_protocols"].each do |protocol|
+        server.params['ssl_protocols'].each do |protocol|
           describe 'Each protocol' do
             it 'should be included in the list of protocols approved to encrypt data' do
-              expect(protocol).to(be_in input('approved_ssl_protocols'))
+              expect(protocol).to(be_in(input('approved_ssl_protocols')))
             end
           end
         end
@@ -77,4 +75,3 @@ control "V-41746" do
     end
   end
 end
-
