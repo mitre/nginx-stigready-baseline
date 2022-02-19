@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CHEF_LICENSE: accept-silent
-      KITCHEN_LOCAL_YAML: kitchen.ec2.yml
+      KITCHEN_YAML: kitchen.ec2.yml
     steps:
       - name: add needed packages
         run: sudo apt-get install -y jq
