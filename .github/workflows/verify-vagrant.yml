@@ -2,9 +2,9 @@ name: Verify the Baseline using Vagrant
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
   release:
     types:
       - published
@@ -12,13 +12,13 @@ on:
 jobs:
   my-job:
     name: Validate my profile
-    runs-on: macos-latest
+    runs-on: macos-10.15
     env:
       CHEF_LICENSE: accept-silent
       KITCHEN_YAML: kitchen.vagrant.yml
     strategy:
       matrix:
-        suite: ['vanilla', 'hardened']
+        suite: ["vanilla", "hardened"]
       fail-fast: false
     steps:
       - name: Add jq for output formatting
@@ -28,7 +28,7 @@ jobs:
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: "2.7"
       - name: Disable ri and rdoc
         run: 'echo "gem: --no-ri --no-rdoc" >> ~/.gemrc'
       - name: Setup caching
@@ -51,9 +51,13 @@ jobs:
       - name: Run kitchen test
         run: bundle exec kitchen test --destroy=always ${{ matrix.suite }}-ubuntu-1804 || true
       - name: Display our ${{ matrix.suite }} results summary
-        run: bundle exec inspec_tools summary -j spec/results/${{ matrix.suite }}-test-result.json --json-counts | jq .
+        uses: mitre/saf_action@switchToJavascript
+        with:
+          command_string: "view:summary -i spec/results/${{ matrix.suite }}-test-result.json"
       - name: Ensure the scan meets our ${{ matrix.suite }} results threshold
-        run: bundle exec inspec_tools compliance -j spec/results/${{ matrix.suite }}-test-result.json -f ${{ matrix.suite }}.threshold.yml
+        uses: mitre/saf_action@switchToJavascript
+        with:
+          command_string: "validate:threshold -i spec/results/${{ matrix.suite }}-test-result.json -F ${{ matrix.suite }}.threshold.yml"
       - name: Save Test Result JSON
         uses: actions/upload-artifact@v2
         with:

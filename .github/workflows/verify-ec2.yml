@@ -32,7 +32,7 @@ jobs:
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: "2.7"
       - name: Setup caching
         uses: actions/cache@v2
         with:
@@ -51,14 +51,18 @@ jobs:
       - name: Update profile.json in the repository
         uses: stefanzweifel/git-auto-commit-action@v4.1.0
         with:
-          commit_message: 'Updating profile.json in the repository'
+          commit_message: "Updating profile.json in the repository"
           branch: ${{ github.branch }}
       - name: Run kitchen test
         run: bundle exec kitchen test --destroy=always ${{ matrix.suite }}-ubuntu-1804 || true
       - name: Display our ${{ matrix.suite }} results summary
-        run: bundle exec inspec_tools summary -j spec/results/${{ matrix.suite }}-test-result.json --json-counts | jq .
+        uses: mitre/saf_action@switchToJavascript
+        with:
+          command_string: "view:summary -i spec/results/${{ matrix.suite }}-test-result.json"
       - name: Ensure the scan meets our ${{ matrix.suite }} results threshold
-        run: bundle exec inspec_tools compliance -j spec/results/${{ matrix.suite }}-test-result.json -f ${{ matrix.suite }}.threshold.yml
+        uses: mitre/saf_action@switchToJavascript
+        with:
+          command_string: "validate:threshold -i spec/results/${{ matrix.suite }}-test-result.json -F ${{ matrix.suite }}.threshold.yml"
       - name: Save Test Result JSON
         uses: actions/upload-artifact@v2
         with:
