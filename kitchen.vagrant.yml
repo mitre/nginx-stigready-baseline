@@ -23,8 +23,6 @@ verifier:
   load_plugins: true
   inspec_tests:
     - path: .
-  # controls:
-  #   - "<%= ENV['INSPEC_CONTROL'] %>"
 
 platforms:
   - name: ubuntu-18.04

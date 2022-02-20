@@ -27,7 +27,7 @@ provisioner:
   additional_copy_path:
     - spec/ansible/nginx-hardening/vars
   extra_vars_file: /tmp/kitchen/vars/ec2.vars.yml
-  
+
 transport:
   name: ssh
 
@@ -37,8 +37,6 @@ verifier:
   load_plugins: true
   inspec_tests:
     - path: .
-  # controls:
-  #   - "<%= ENV['INSPEC_CONTROL'] %>"
 
 platforms:
   - name: ubuntu-18.04

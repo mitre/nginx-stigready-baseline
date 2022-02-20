@@ -26,8 +26,6 @@ verifier:
   load_plugins: true
   inspec_tests:
     - path: .
-  # controls:
-  #   - "<%= ENV['INSPEC_CONTROL'] %>"
 
 platforms:
   - name: ubuntu-18.04
@@ -35,7 +33,7 @@ platforms:
       image: ubuntu:bionic-20220128
       provision_command:
         - apt-get update
-        - apt-get install -y systemd-sysv vim nginx w3m w3m-img 
+        - apt-get install -y systemd-sysv vim nginx w3m w3m-img
         - update-rc.d ssh defaults
         - service ssh start
         - update-rc.d nginx defaults
