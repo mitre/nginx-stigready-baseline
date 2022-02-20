@@ -15,6 +15,9 @@ provisioner:
   galaxy_ignore_certs: true
   roles_path: spec/ansible/nginx-hardening
   requirements_path: spec/ansible/nginx-hardening/requirements.yml
+  additional_copy_path:
+    - spec/ansible/nginx-hardening/vars
+  extra_vars_file: /tmp/kitchen/vars/vagrant.vars.yml
 
 verifier:
   name: inspec
