@@ -38,8 +38,8 @@ control 'V-56033' do
   tag "rid": 'SV-70287r3_rule'
   tag "stig_id": 'SRG-APP-000456-WSR-000187'
   tag "fix_id": 'F-60911r2_fix'
-  tag "cci": 'CCI-002605'
-  tag "nist": 'SI-2 c'
+  tag "cci": ['CCI-002605']
+  tag "nist": ['SI-2 c']
 
   nginx_changelog = inspec.http('http://nginx.org/en/CHANGES').body.lines.map(&:chomp)
   nginx_changelog_clean = nginx_changelog.select { |line| line.include? 'Changes with nginx' }
