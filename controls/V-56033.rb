@@ -50,9 +50,9 @@ control 'V-56033' do
 
   if (nginx_latest_release.nil? || nginx_latest_release.empty?) && (input_version.nil? || input_version.empty?)
     describe "Your installed NGINX version is: #{nginx_installed_version}. You must review this control Manually. Either set or pass the `nginx_version` input to the profile,
-    or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the lastest release version of NGINX" do
+    or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the lastest released version of NGINX" do
       skip "Your installed NGINX version is: #{nginx_installed_version}. You must review this control Manually. Either set or pass the `nginx_version` input to the profile,
-      or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the lastest release version of NGINX"
+      or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the lastest released version of NGINX"
     end
   else
     describe.one do
