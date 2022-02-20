@@ -40,6 +40,7 @@ control 'V-56033' do
   tag "fix_id": 'F-60911r2_fix'
   tag "cci": ['CCI-002605']
   tag "nist": ['SI-2 c']
+  ref 'http://nginx.org/en/CHANGES'
 
   nginx_changelog = inspec.http('http://nginx.org/en/CHANGES').body.lines.map(&:chomp)
   nginx_changelog_clean = nginx_changelog.select { |line| line.include? 'Changes with nginx' }
@@ -47,15 +48,23 @@ control 'V-56033' do
   input_version = input('nginx_latest_version')
   nginx_installed_version = inspec.nginx.version
 
-  describe.one do
-    describe 'The version of NGINX' do
-      subject { nginx_installed_version }
-      it { should cmp >= nginx_latest_release }
+  if (nginx_latest_release.nil? || nginx_latest_release.empty?) && (input_version.nil? || input_version.empty?)
+    describe "Your installed NGINX version is: #{nginx_installed_version}. You must review this control Manually. Either set or pass the `nginx_version` input to the profile,
+    or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the lastest release version of NGINX" do
+      skip "Your installed NGINX version is: #{nginx_installed_version}. You must review this control Manually. Either set or pass the `nginx_version` input to the profile,
+      or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the lastest release version of NGINX"
     end
-    unless input_version.nil? || input_version.empty?
+  else
+    describe.one do
       describe 'The version of NGINX' do
         subject { nginx_installed_version }
-        it { should cmp >= input_version }
+        it { should cmp >= nginx_latest_release }
+      end
+      unless input_version.nil? || input_version.empty?
+        describe 'The version of NGINX' do
+          subject { nginx_installed_version }
+          it { should cmp >= input_version }
+        end
       end
     end
   end
