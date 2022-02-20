@@ -51,6 +51,10 @@ jobs:
         run: |
           mkdir results
           bundle exec kitchen test --destroy=always ${{ matrix.suite }}-ubuntu-1804 || true
+      - name: Save Test Result JSON
+        uses: actions/upload-artifact@v2
+        with:
+          path: spec/results
       - name: Display our ${{ matrix.suite }} results summary
         uses: mitre/saf_action@v1.1.0
         with:
@@ -59,7 +63,3 @@ jobs:
         uses: mitre/saf_action@v1.1.0
         with:
           command_string: "validate:threshold -i spec/results/${{ matrix.suite }}-test-result.json -F ${{ matrix.suite }}.threshold.yml"
-      - name: Save Test Result JSON
-        uses: actions/upload-artifact@v2
-        with:
-          path: spec/results
