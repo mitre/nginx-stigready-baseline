@@ -59,8 +59,23 @@ jobs:
         with:
           commit_message: "Updating profile.json in the repository"
           branch: ${{ github.branch }}
-      - name: Run kitchen test
-        run: bundle exec kitchen test --destroy=always ${{ matrix.suite }}-ubuntu-1804 || true
+      - name: Run Kitchen Create
+        run: bundle exec kitchen create ${{ matrix.suite }}-ubuntu-1804 || true
+      - name: Pause 3 secs
+        run: sleep 3
+        shell: bash
+      - name: Run Kitchen Converge
+        run: bundle exec kitchen converge ${{ matrix.suite }}-ubuntu-1804 || true
+      - name: Pause 3 secs
+        run: sleep 3
+        shell: bash
+      - name: Run Kitchen Verify
+        run: bundle exec kitchen verify ${{ matrix.suite }}-ubuntu-1804 || true
+      - name: Pause 3 secs
+        run: sleep 3
+        shell: bash
+      - name: Run Kitchen Destroy
+        run: bundle exec kitchen destroy ${{ matrix.suite }}-ubuntu-1804 || true
       - name: Display our ${{ matrix.suite }} results summary
         uses: mitre/saf_action@switchToJavascript
         with:
