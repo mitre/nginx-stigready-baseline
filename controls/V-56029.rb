@@ -38,7 +38,7 @@ control 'V-56029' do
   tag "stig_id": 'SRG-APP-000225-WSR-000074'
   tag "fix_id": 'F-60907r1_fix'
   tag "cci": ['CCI-001190']
-  tag "nist": %w(SC-24 Rev_4)
+  tag "nist": %w(SC-24)
 
   describe "This test requires a Manual Review: Interview the SA and ask for documentation on the
   disaster recovery methods for the NGINX web server in the event of the necessity for rollback." do

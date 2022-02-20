@@ -34,7 +34,7 @@ does not need to cause an error condition to gain this information."
   tag "stig_id": 'SRG-APP-000266-WSR-000160'
   tag "fix_id": 'F-47314r2_fix'
   tag "cci": ['CCI-001312']
-  tag "nist": ['SI-11 a', 'Rev_4']
+  tag "nist": ['SI-11 a', '']
 
   if nginx_conf.params['error_log'].nil?
     impact 0.0

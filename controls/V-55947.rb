@@ -63,7 +63,7 @@ information and limits accidental changes to the web server."
   tag "stig_id": 'SRG-APP-000340-WSR-000029'
   tag "fix_id": 'F-60825r1_fix'
   tag "cci": ['CCI-002235']
-  tag "nist": ['AC-6 (10)', 'Rev_4']
+  tag "nist": ['AC-6 (10)', '']
 
   if input('access_control_files').empty?
     describe 'This check is skipped because no configuration files have been specified.' do

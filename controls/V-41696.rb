@@ -41,7 +41,7 @@ control 'V-41696' do
   tag "stig_id": 'SRG-APP-000141-WSR-000078'
   tag "fix_id": 'F-47155r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   if nginx_conf.params['user'].nil?
     impact 0.0
@@ -58,7 +58,7 @@ control 'V-41696' do
         end
         describe 'The password file' do
           it 'should include the nginx account.' do
-            expect(command("grep -w #{value} /etc/passwd").stdout).to(match /.*?#{value}.*?/)
+            expect(command("grep -w #{value} /etc/passwd").stdout).to(match(/.*?#{value}.*?/))
           end
         end
       end

@@ -52,7 +52,7 @@ control 'V-41703' do
   tag "stig_id": 'SRG-APP-000141-WSR-000086'
   tag "fix_id": 'F-47162r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   describe "This test requires a Manual Review: Interview the SA to determine the
   access to server resources given to hosted applications." do

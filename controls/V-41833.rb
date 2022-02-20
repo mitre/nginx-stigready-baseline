@@ -40,7 +40,7 @@ server being used in a DoS attack is bandwidth throttling.
   tag "stig_id": 'SRG-APP-000246-WSR-000149'
   tag "fix_id": 'F-47292r2_fix'
   tag "cci": ['CCI-001094']
-  tag "nist": ['SC-5 (1)', 'Rev_4']
+  tag "nist": ['SC-5 (1)', '']
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -68,10 +68,11 @@ server being used in a DoS attack is bandwidth throttling.
           end
           limit_conn_zone.each do |value|
             next unless value.start_with?('zone')
+
             zone = value.split(':').last
             describe 'The zone in limit_conn_zone' do
               it 'should match this regex: .*?[0-9]{1,3}.*?' do
-                expect(zone).to(match /.*?[0-9]{1,3}.*?/)
+                expect(zone).to(match(/.*?[0-9]{1,3}.*?/))
               end
             end
           end
@@ -96,7 +97,7 @@ server being used in a DoS attack is bandwidth throttling.
           limit_conn.each do |value|
             describe 'The limit_conn setting' do
               it 'should match this regex: [a-zA-Z0-9]' do
-                expect(value).to(match /^[0-9a-zA-Z]*$/)
+                expect(value).to(match(/^[0-9a-zA-Z]*$/))
               end
             end
           end
@@ -112,7 +113,7 @@ server being used in a DoS attack is bandwidth throttling.
           Array(limit_rate).each do |value|
             describe 'The limit_rate setting' do
               it 'should match this regex: [a-zA-Z0-9]' do
-                expect(value).to(match /^[0-9a-zA-Z]*$/)
+                expect(value).to(match(/^[0-9a-zA-Z]*$/))
               end
             end
           end

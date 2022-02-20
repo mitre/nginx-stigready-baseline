@@ -46,7 +46,7 @@ implementing secure tokens, and validating users.
   tag "stig_id": 'SRG-APP-000315-WSR-000003'
   tag "fix_id": 'F-60831r2_fix'
   tag "cci": ['CCI-002314']
-  tag "nist": ['AC-17 (1)', 'Rev_4']
+  tag "nist": ['AC-17 (1)', '']
 
   if input('uses_enterprise_tool') == 'true'
     describe "This test requires a Manual Review: Determine if the enterprise tool is enforcing

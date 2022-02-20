@@ -29,7 +29,7 @@ files, before installation, are valid.
   tag "stig_id": 'SRG-APP-000131-WSR-000051'
   tag "fix_id": 'F-60861r1_fix'
   tag "cci": ['CCI-001749']
-  tag "nist": ['CM-5 (3)', 'Rev_4']
+  tag "nist": ['CM-5 (3)', '']
 
   describe "This test requires a Manual Review: Determine if the web server or external
   facility validates files before the files are implemented into the running configuration." do

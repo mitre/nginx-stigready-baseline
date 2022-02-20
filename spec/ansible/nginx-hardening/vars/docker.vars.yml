@@ -1,0 +1,8 @@
+---
+nginx_bin: '/usr/sbin/nginx'
+nginx_conf_base: '/etc/nginx'
+nginx_modules_path: '/usr/lib/nginx/modules'
+nginx_site_root: '/var/www/html'
+nginx_prefix: '/usr/share/nginx'
+nginx_log_path: '/var/log/nginx'
+nginx_pid: '/var/run/nginx.pid'

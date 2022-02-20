@@ -42,7 +42,7 @@ control 'V-41704' do
   tag "stig_id": 'SRG-APP-000141-WSR-000087'
   tag "fix_id": 'F-47163r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   if nginx_conf.locations.empty?
     impact 0.0

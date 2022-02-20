@@ -32,16 +32,16 @@ control 'V-41812' do
   tag "stig_id": 'SRG-APP-000225-WSR-000141'
   tag "fix_id": 'F-47271r2_fix'
   tag "cci": ['CCI-001190']
-  tag "nist": %w(SC-24 Rev_4)
+  tag "nist": %w(SC-24)
 
-  if input('high_availability') == 'false'
+  if input('high_availability') == false
     impact 0.0
     describe 'This check is NA because NGINX is not a high-availability web server.' do
       skip 'This check is NA because NGINX is not a high-availability web server.'
     end
-  elsif input('is_cluster_master') == 'false'
+  elsif input('is_cluster_master') == false
     describe nginx do
-      its('modules') { should include 'ngx_stream_zone_sync_module' }
+      its('modules') { should_not include 'ngx_stream_zone_sync_module' }
     end
   else
     describe nginx do

@@ -50,7 +50,7 @@ control requirements.
   tag "stig_id": 'SRG-APP-000516-WSR-000174'
   tag "fix_id": 'F-60863r1_fix'
   tag "cci": ['CCI-000366']
-  tag "nist": ['CM-6 b', 'Rev_4']
+  tag "nist": ['CM-6 b', '']
 
   if nginx_conf.servers.nil?
     impact 0.0
@@ -69,7 +69,7 @@ control requirements.
           describe 'The listen directive' do
             listen_address = listen.join
             it 'should include the specific IP address and port' do
-              expect(listen_address).to(match /[0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+/)
+              expect(listen_address).to(match(/[0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+/))
             end
           end
           describe 'The listening port' do

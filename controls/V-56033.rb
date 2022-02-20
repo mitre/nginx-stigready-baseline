@@ -39,7 +39,7 @@ control 'V-56033' do
   tag "stig_id": 'SRG-APP-000456-WSR-000187'
   tag "fix_id": 'F-60911r2_fix'
   tag "cci": ['CCI-002605']
-  tag "nist": ['SI-2 c', 'Rev_4']
+  tag "nist": ['SI-2 c', '']
 
   # Verify Nginx is up to the latest supported version
   describe nginx do

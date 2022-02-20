@@ -48,7 +48,7 @@ control 'V-56013' do
   tag "stig_id": 'SRG-APP-000441-WSR-000181'
   tag "fix_id": 'F-60891r1_fix'
   tag "cci": ['CCI-002420']
-  tag "nist": ['SC-8 (2)', 'Rev_4']
+  tag "nist": ['SC-8 (2)', '']
 
   if nginx_conf.servers.nil?
     impact 0.0

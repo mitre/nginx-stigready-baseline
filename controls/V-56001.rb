@@ -58,7 +58,7 @@ website code revealing business logic, or other user personal information.
   tag "stig_id": 'SRG-APP-000439-WSR-000151'
   tag "fix_id": 'F-60879r1_fix'
   tag "cci": ['CCI-002418']
-  tag "nist": %w(SC-8 Rev_4)
+  tag "nist": %w(SC-8)
 
   if nginx_conf.servers.nil?
     impact 0.0

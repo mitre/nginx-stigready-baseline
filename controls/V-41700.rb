@@ -48,7 +48,7 @@ control 'V-41700' do
   tag "stig_id": 'SRG-APP-000141-WSR-000082'
   tag "fix_id": 'F-47159r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   if nginx_conf.locations.nil?
     impact 0.0
@@ -65,6 +65,7 @@ control 'V-41700' do
       else
         location.params['fastcgi_param'].each do |value|
           next unless value[0] == 'SCRIPT_FILENAME'
+
           cgi_script_path = command("echo #{value[1]} | cut -d '$' -f 1").stdout
           cgi_scripts = command("ls #{cgi_script_path}").stdout.split("\n")
           cgi_scripts.uniq!

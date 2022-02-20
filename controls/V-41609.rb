@@ -32,7 +32,7 @@ control 'V-41609' do
   tag "stig_id": 'SRG-APP-000093-WSR-000053'
   tag "fix_id": 'F-47068r2_fix'
   tag "cci": ['CCI-001462']
-  tag "nist": ['AU-14 (2)', 'Rev_4']
+  tag "nist": ['AU-14 (2)', '']
 
   # log_format - Context:	http
   if nginx_conf.params['http'].nil?
@@ -45,7 +45,7 @@ control 'V-41609' do
       http['log_format'].each do |log_format|
         describe 'remote_user' do
           it 'should be part of every log format in the http context.' do
-            expect(log_format.to_s).to(match /.*?\$remote_user.*?/)
+            expect(log_format.to_s).to(match(/.*?\$remote_user.*?/))
           end
         end
       end

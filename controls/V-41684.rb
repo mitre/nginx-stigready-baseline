@@ -44,7 +44,7 @@ control 'V-41684' do
   tag "stig_id": 'SRG-APP-000131-WSR-000073'
   tag "fix_id": 'F-47143r2_fix'
   tag "cci": ['CCI-001749']
-  tag "nist": ['CM-5 (3)', 'Rev_4']
+  tag "nist": ['CM-5 (3)', '']
 
   # Only allow a small subset of authorized modules in an attempt to minimize the number of modules active
 

@@ -40,7 +40,7 @@ exhaustion."
   tag "stig_id": 'SRG-APP-000233-WSR-000146'
   tag "fix_id": 'F-47280r2_fix'
   tag "cci": ['CCI-001084']
-  tag "nist": %w(SC-3 Rev_4)
+  tag "nist": %w(SC-3)
 
   webserver_roots = []
 

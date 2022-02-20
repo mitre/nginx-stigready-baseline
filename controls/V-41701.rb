@@ -36,7 +36,7 @@ control 'V-41701' do
   tag "stig_id": 'SRG-APP-000141-WSR-000083'
   tag "fix_id": 'F-47160r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   # Checks for enabled mime types against the disallowed list
   if input('nginx_disallowed_mime_type').empty?

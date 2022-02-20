@@ -37,15 +37,15 @@ control 'V-41807' do
   tag "severity": 'medium'
   tag "gtitle": 'SRG-APP-000224-WSR-000136'
   tag "satisfies": %w(SRG-APP-000224-WSR-000137 SRG-APP-000224-WSR-000138 SRG-APP-000224-WSR-000139
-  SRG-APP-000223-WSR-000145 SRG-APP-000224-WSR-000135)
+                      SRG-APP-000223-WSR-000145 SRG-APP-000224-WSR-000135)
   tag "gid": 'V-41807'
   tag "rid": 'SV-54384r3_rule'
   tag "stig_id": 'SRG-APP-000224-WSR-000136'
   tag "fix_id": 'F-47266r2_fix'
   tag "cci": %w(CCI-001188 CCI-001664)
-  tag "nist": ['SC-23 (3)', 'Rev_4']
+  tag "nist": ['SC-23 (3)', '']
 
-  if input('performs_session_management') == 'false'
+  if input('performs_session_management') == false
     impact 0.0
     describe 'This check is NA because session management is not required.' do
       skip 'This check is NA because session management is not required.'

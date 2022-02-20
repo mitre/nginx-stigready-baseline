@@ -44,7 +44,7 @@ service (DoS) attacks on the web server.
   tag "stig_id": 'SRG-APP-000315-WSR-000004'
   tag "fix_id": 'F-60839r1_fix'
   tag "cci": ['CCI-002314']
-  tag "nist": ['AC-17 (1)', 'Rev_4']
+  tag "nist": ['AC-17 (1)', '']
 
   if input('uses_enterprise_tool') == 'true'
     describe "This test requires a Manual Review: Determine if the enterprise tool is enforcing

@@ -40,7 +40,7 @@ control 'V-41698' do
   tag "stig_id": 'SRG-APP-000141-WSR-000080'
   tag "fix_id": 'F-47157r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   # Only allow a small subset of authorized modules in an attempt to minimize the number of modules active
   describe nginx do

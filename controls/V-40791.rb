@@ -42,7 +42,7 @@ control 'V-40791' do
   tag "stig_id": 'SRG-APP-000001-WSR-000001'
   tag "fix_id": 'F-45918r3_fix'
   tag "cci": ['CCI-000054']
-  tag "nist": %w(AC-10 Rev_4)
+  tag "nist": %w(AC-10)
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -70,10 +70,11 @@ control 'V-40791' do
           end
           limit_conn_zone.each do |value|
             next unless value.start_with?('zone')
+
             zone = value.split(':').last
             describe 'The zone in limit_conn_zone' do
               it 'should match this regex: .*?[0-9]{1,3}.*?' do
-                expect(zone).to(match /.*?[0-9]{1,3}.*?/)
+                expect(zone).to(match(/.*?[0-9]{1,3}.*?/))
               end
             end
           end
@@ -100,7 +101,7 @@ control 'V-40791' do
           limit_conn.each do |value|
             describe 'The limit_conn setting' do
               it 'should match this regex: [a-zA-Z0-9]' do
-                expect(value).to(match /^[0-9a-zA-Z]*$/)
+                expect(value).to(match(/^[0-9a-zA-Z]*$/))
               end
             end
           end

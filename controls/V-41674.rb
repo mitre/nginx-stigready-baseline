@@ -36,7 +36,7 @@ control 'V-41674' do
   tag "stig_id": 'SRG-APP-000125-WSR-000071'
   tag "fix_id": 'F-47133r3_fix'
   tag "cci": ['CCI-001348']
-  tag "nist": ['AU-9 (2)', 'Rev_4']
+  tag "nist": ['AU-9 (2)', '']
 
   describe "This test requires a Manual Review: Interview the ISSO, SA, WM, Webmaster, or developers to
   determine whether a tested and verifiable backup strategy has been implemented for web server software

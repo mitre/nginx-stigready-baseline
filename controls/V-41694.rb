@@ -39,7 +39,7 @@ control 'V-41694' do
   tag "stig_id": 'SRG-APP-000141-WSR-000076'
   tag "fix_id": 'F-47153r3_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   if input('proxy_server') == 'true'
     impact 0.0

@@ -35,7 +35,7 @@ control 'V-41611' do
   tag "stig_id": 'SRG-APP-000092-WSR-000055'
   tag "fix_id": 'F-47070r2_fix'
   tag "cci": ['CCI-001464']
-  tag "nist": ['AU-14 (1)', 'Rev_4']
+  tag "nist": ['AU-14 (1)', '']
 
   # Verify that access_log and error_log is enabled
   if nginx_conf.params['http'].nil?
@@ -54,6 +54,7 @@ control 'V-41611' do
         http['access_log'].each do |access_log|
           access_log.each do |access_value|
             next unless access_value.include? 'access.log'
+
             describe file(access_value) do
               it 'The access log should exist.' do
                 expect(subject).to(exist)
@@ -72,6 +73,7 @@ control 'V-41611' do
       nginx_conf.params['error_log'].each do |error_log|
         error_log.each do |error_value|
           next unless error_value.include? 'error.log'
+
           describe file(error_value) do
             it 'The error log should exist.' do
               expect(subject).to(exist)

@@ -40,7 +40,7 @@ control 'V-41620' do
   tag "stig_id": 'SRG-APP-000100-WSR-000064'
   tag "fix_id": 'F-47079r2_fix'
   tag "cci": ['CCI-001487']
-  tag "nist": %w(AU-3 Rev_4)
+  tag "nist": %w(AU-3)
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -52,7 +52,7 @@ control 'V-41620' do
       http['log_format'].each do |log_format|
         describe 'remote_user' do
           it 'should be part of every log format in http.' do
-            expect(log_format.to_s).to(match /.*?\$remote_user.*?/)
+            expect(log_format.to_s).to(match(/.*?\$remote_user.*?/))
           end
         end
       end

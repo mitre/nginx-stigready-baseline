@@ -71,7 +71,7 @@ capability of stopping the server, whether intentionally or unintentionally.
   tag "stig_id": 'SRG-APP-000435-WSR-000147'
   tag "fix_id": 'F-60877r1_fix'
   tag "cci": ['CCI-002385']
-  tag "nist": %w(SC-5 Rev_4)
+  tag "nist": %w(SC-5)
 
   if nginx_conf.params['pid'].nil?
     impact 0.0

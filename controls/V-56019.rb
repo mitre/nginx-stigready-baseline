@@ -39,9 +39,9 @@ control 'V-56019' do
   tag "stig_id": 'SRG-APP-000206-WSR-000128'
   tag "fix_id": 'F-60897r1_fix'
   tag "cci": ['CCI-001166']
-  tag "nist": ['SC-18 (1)', 'Rev_4']
+  tag "nist": ['SC-18 (1)', '']
 
-  if input('implements_mobile_code') == 'false'
+  if input('implements_mobile_code') == false
     impact 0.0
     describe 'This check is NA because NGINX does not implement mobile code.' do
       skip 'This check is NA because NGINX does not implement mobile code.'

@@ -50,9 +50,9 @@ control 'V-56025' do
   tag "stig_id": 'SRG-APP-000223-WSR-000011'
   tag "fix_id": 'F-60903r1_fix'
   tag "cci": ['CCI-001664']
-  tag "nist": ['SC-23 (3)', 'Rev_4']
+  tag "nist": ['SC-23 (3)', '']
 
-  if input('performs_session_management') == 'false'
+  if input('performs_session_management') == false
     impact 0.0
     describe 'This check is NA because session management is not required.' do
       skip 'This check is NA because session management is not required.'

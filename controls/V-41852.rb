@@ -39,7 +39,7 @@ trap efforts to bypass security checks or to compromise an application.
   tag "stig_id": 'SRG-APP-000251-WSR-000157'
   tag "fix_id": 'F-47311r2_fix'
   tag "cci": ['CCI-001310']
-  tag "nist": %w(SI-10 Rev_4)
+  tag "nist": %w(SI-10)
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -81,7 +81,9 @@ trap efforts to bypass security checks or to compromise an application.
     nginx_conf.locations.each do |location|
       describe 'Charset' do
         it 'should be configured to the expected value if found in the location context.' do
-          expect(location.params['charset'].join).to(cmp(input('charset_required'))) unless location.params['charset'].nil?
+          unless location.params['charset'].nil?
+            expect(location.params['charset'].join).to(cmp(input('charset_required')))
+          end
         end
       end
     end

@@ -21,11 +21,13 @@ provisioner:
   require_chef_for_busser: false
   require_ruby_for_busser: false
   ansible_verbose: true
-  ansible_diff: true
   galaxy_ignore_certs: true
   roles_path: ./spec/ansible/nginx-hardening
   requirements_path: ./spec/ansible/nginx-hardening/requirements.yml
-
+  additional_copy_path:
+    - spec/ansible/nginx-hardening/vars
+  extra_vars_file: /tmp/kitchen/vars/ec2.vars.yml
+  
 transport:
   name: ssh
 
@@ -39,21 +41,21 @@ verifier:
 platforms:
   - name: ubuntu-18.04
     lifecycle:
-      post_create:
+      pre_converge:
         - remote: sudo apt-get -y update
         - remote: sudo apt-get -y install nginx
         - remote: sudo systemctl start nginx
 suites:
   - name: hardened
     provisioner:
-      playbook: spec/ansible/nginx-hardening/hardening-playbook.yml
+      playbook: ./spec/ansible/nginx-hardening/hardening-playbook.yml
     verifier:
       reporter:
         - cli
         - json:spec/results/hardened-test-result.json
   - name: vanilla
     provisioner:
-      playbook: spec/ansible/nginx-hardening/vanilla-playbook.yml
+      playbook: ./spec/ansible/nginx-hardening/vanilla-playbook.yml
     verifier:
       reporter:
         - cli
