@@ -37,7 +37,7 @@ control 'V-55989' do
   tag "stig_id": 'SRG-APP-000141-WSR-000015'
   tag "fix_id": 'F-60867r1_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -89,16 +89,18 @@ control 'V-55989' do
         it 'There should not be an auth_basic_user_file directive.' do
           expect(location.params).to_not(include 'auth_basic_user_file')
         end
-        location.params['limit_except'].each do |limit_except|
-          describe 'limit_except context:' do
-            it 'There should not be an auth_basic directive.' do
-              expect(limit_except).to_not(include 'auth_basic')
-            end
-            it 'There should not be an auth_basic_user_file directive.' do
-              expect(location.params).to_not(include 'auth_basic_user_file')
+        unless location.params['limit_except'].nil?
+          location.params['limit_except'].each do |limit_except|
+            describe 'limit_except context:' do
+              it 'There should not be an auth_basic directive.' do
+                expect(limit_except).to_not(include 'auth_basic')
+              end
+              it 'There should not be an auth_basic_user_file directive.' do
+                expect(location.params).to_not(include 'auth_basic_user_file')
+              end
             end
           end
-        end unless location.params['limit_except'].nil?
+        end
       end
     end
   end

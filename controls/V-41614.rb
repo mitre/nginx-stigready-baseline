@@ -56,7 +56,7 @@ control 'V-41614' do
   tag "stig_id": 'SRG-APP-000097-WSR-000058'
   tag "fix_id": 'F-47073r2_fix'
   tag "cci": ['CCI-000132']
-  tag "nist": %w(AU-3 Rev_4)
+  tag "nist": %w(AU-3)
 
   # Verify that the log_format directive exists
   if nginx_conf.params['http'].nil?

@@ -1,4 +1,6 @@
 - hosts: localhost
+  become: yes
+  become_method: enable
   tasks:
     - name: Start service nginx, if not started
       service:

@@ -13,7 +13,7 @@ server {
     {% endfor %}
         
     location / {
-        root   {{ nginx_root }};
+        root   {{ nginx_site_root }};
         auth_request /auth;
         deny all;
         limit_conn                  {{ nginx_limit_conn }};

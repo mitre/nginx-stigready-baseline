@@ -79,7 +79,7 @@ properly to only allow privileged users access.
   tag "stig_id": 'SRG-APP-000380-WSR-000072'
   tag "fix_id": 'F-60859r2_fix'
   tag "cci": ['CCI-001813']
-  tag "nist": ['CM-5 (1)', 'Rev_4']
+  tag "nist": ['CM-5 (1)', '']
 
   if input('access_control_files').empty?
     describe 'This check is skipped because no configuration files have been specified.' do

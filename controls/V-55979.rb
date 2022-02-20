@@ -38,7 +38,7 @@ of Greenwich Mean Time (GMT), or local time with an offset from UTC.
   tag "stig_id": 'SRG-APP-000374-WSR-000172'
   tag "fix_id": 'F-60857r1_fix'
   tag "cci": ['CCI-001890']
-  tag "nist": ['AU-8 b', 'Rev_4']
+  tag "nist": ['AU-8 b', '']
 
   if nginx_conf.params['env'].nil?
     impact 0.0

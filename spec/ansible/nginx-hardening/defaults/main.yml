@@ -1,5 +1,4 @@
 ---
-nginx_root: '/usr/share/nginx/html'
 nginx_client_body_buffer_size: '1k'
 nginx_remove_default_site: true
 nginx_client_max_body_size: '1k'

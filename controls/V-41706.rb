@@ -47,7 +47,7 @@ control 'V-41706' do
   tag "stig_id": 'SRG-APP-000142-WSR-000089'
   tag "fix_id": 'F-47165r2_fix'
   tag "cci": ['CCI-000382']
-  tag "nist": ['CM-7 b', 'Rev_4']
+  tag "nist": ['CM-7 b', '']
 
   if nginx_conf.servers.nil?
     impact 0.0
@@ -65,7 +65,7 @@ control 'V-41706' do
         else
           server.params['listen'].each do |listen|
             it 'should include both the IP and port number.' do
-              expect(listen.join).to(match /[0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+/)
+              expect(listen.join).to(match(/[0-9]+(?:\.[0-9]+){3}|[a-zA-Z]:[0-9]+/))
             end
             it 'should not be 0.0.0.0:80 or [::ffff:0.0.0.0]:80.' do
               expect(listen.join.split(':').first).not_to(cmp('0.0.0.0'))

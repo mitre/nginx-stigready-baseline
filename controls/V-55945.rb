@@ -39,7 +39,7 @@ roles to make changes to the production system."
   tag "stig_id": 'SRG-APP-000033-WSR-000169'
   tag "fix_id": 'F-60823r1_fix'
   tag "cci": ['CCI-000213']
-  tag "nist": %w(AC-3 Rev_4)
+  tag "nist": %w(AC-3)
 
   # List of all auth_request uris in the configuration files
   auth_uris = []
@@ -66,11 +66,13 @@ roles to make changes to the production system."
       auth_uris.flatten!.uniq!
       nginx_conf.locations.each do |location|
         auth_uris.each do |uri|
+          next if location.params['_'].flatten.include?(uri)
+
           describe 'Each location context' do
             it 'should include an auth_request directive.' do
               expect(location.params).to(include 'auth_request')
             end
-          end unless location.params['_'].flatten.include?(uri)
+          end
         end
       end
     end

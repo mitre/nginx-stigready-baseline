@@ -54,7 +54,7 @@ log data is conserved for later forensic analysis.
   tag "stig_id": 'SRG-APP-000316-WSR-000170'
   tag "fix_id": 'F-60833r1_fix'
   tag "cci": ['CCI-002322']
-  tag "nist": ['AC-17 (9)', 'Rev_4']
+  tag "nist": ['AC-17 (9)', '']
 
   describe "This test requires a Manual Review: Interview the SA and Web Manager and ask
   for documentation.Verify there are documented procedures for shutting down an NGINX website

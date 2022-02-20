@@ -46,7 +46,7 @@ control 'V-41617' do
   tag "stig_id": 'SRG-APP-000099-WSR-000061'
   tag "fix_id": 'F-47076r2_fix'
   tag "cci": ['CCI-000134']
-  tag "nist": %w(AU-3 Rev_4)
+  tag "nist": %w(AU-3)
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -58,7 +58,7 @@ control 'V-41617' do
       http['log_format'].each do |log_format|
         describe 'status' do
           it 'should be part of every log format in http.' do
-            expect(log_format.to_s).to(match /.*?\$status.*?/)
+            expect(log_format.to_s).to(match(/.*?\$status.*?/))
           end
         end
       end

@@ -48,7 +48,7 @@ control 'V-41671' do
   tag "stig_id": 'SRG-APP-000119-WSR-000069'
   tag "fix_id": 'F-47130r3_fix'
   tag "cci": ['CCI-000163']
-  tag "nist": %w(AU-9 Rev_4)
+  tag "nist": %w(AU-9)
 
   # nginx log directory should have 750 permissions
   describe file(input('nginx_log_path')) do

@@ -29,9 +29,9 @@ control 'V-56031' do
   tag "stig_id": 'SRG-APP-000429-WSR-000113'
   tag "fix_id": 'F-60909r1_fix'
   tag "cci": ['CCI-002476']
-  tag "nist": ['SC-28 (1)', 'Rev_4']
+  tag "nist": ['SC-28 (1)', '']
 
-  if input('manages_auth') == 'false'
+  if input('manages_auth') == false
     impact 0.0
     describe 'This check is NA because NGINX does not manage authentication.' do
       skip 'This check is NA because NGINX does not manage authentication.'

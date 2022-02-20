@@ -44,7 +44,7 @@ to not aid in the blueprinting of the web server.
   tag "stig_id": 'SRG-APP-000266-WSR-000159'
   tag "fix_id": 'F-47313r2_fix'
   tag "cci": ['CCI-001312']
-  tag "nist": ['SI-11 a', 'Rev_4']
+  tag "nist": ['SI-11 a', '']
 
   if nginx_conf.params['http'].nil?
     impact 0.0

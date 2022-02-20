@@ -40,9 +40,9 @@ reading cookies better protects the information inside the cookie."
   tag "stig_id": 'SRG-APP-000439-WSR-000154'
   tag "fix_id": 'F-60885r1_fix'
   tag "cci": ['CCI-002418']
-  tag "nist": %w(SC-8 Rev_4)
+  tag "nist": %w(SC-8)
 
-  if input('performs_session_management') == 'false'
+  if input('performs_session_management') == false
     impact 0.0
     describe 'This check is NA because session management is not required.' do
       skip 'This check is NA because session management is not required.'

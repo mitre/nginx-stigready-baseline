@@ -49,7 +49,7 @@ control 'V-41730' do
   tag "stig_id": 'SRG-APP-000175-WSR-000095'
   tag "fix_id": 'F-47189r4_fix'
   tag "cci": ['CCI-000185']
-  tag "nist": ['IA-5 (2) (a)', 'Rev_4']
+  tag "nist": ['IA-5 (2) (a)', '']
 
   if input('uses_pki')
     if nginx_conf.servers.nil?

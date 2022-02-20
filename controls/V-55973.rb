@@ -32,7 +32,7 @@ warning to the ISSO and SA at a minimum.
   tag "stig_id": 'SRG-APP-000108-WSR-000166'
   tag "fix_id": 'F-60851r2_fix'
   tag "cci": ['CCI-000139']
-  tag "nist": ['AU-5 a', 'Rev_4']
+  tag "nist": ['AU-5 a', '']
 
   describe "This test requires a Manual Review: Work with the SIEM administrator to determine
   if an alert is configured when audit data is no longer received as expected." do

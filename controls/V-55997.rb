@@ -38,7 +38,7 @@ handle the expected traffic for the hosted applications."
   tag "stig_id": 'SRG-APP-000435-WSR-000148'
   tag "fix_id": 'F-60875r2_fix'
   tag "cci": ['CCI-002385']
-  tag "nist": %w(SC-5 Rev_4)
+  tag "nist": %w(SC-5)
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -71,12 +71,16 @@ handle the expected traffic for the hosted applications."
     nginx_conf.servers.each do |server|
       describe 'The server context client_header_timeout value' do
         it 'should be set to 10 (seconds) or less, if found.' do
-          expect(server.params['client_header_timeout'].join.to_i).to(be <= 10) unless server.params['client_header_timeout'].nil?
+          unless server.params['client_header_timeout'].nil?
+            expect(server.params['client_header_timeout'].join.to_i).to(be <= 10)
+          end
         end
       end
       describe 'The server context client_body_timeout value' do
         it 'should be set to 10 (seconds) or less, if found' do
-          expect(server.params['client_body_timeout'].join.to_i).to(be <= 10) unless server.params['client_body_timeout'].nil?
+          unless server.params['client_body_timeout'].nil?
+            expect(server.params['client_body_timeout'].join.to_i).to(be <= 10)
+          end
         end
       end
     end

@@ -48,7 +48,7 @@ control 'V-56035' do
   tag "stig_id": 'SRG-APP-000266-WSR-000142'
   tag "fix_id": 'F-60913r1_fix'
   tag "cci": ['CCI-001312']
-  tag "nist": ['SI-11 a', 'Rev_4']
+  tag "nist": ['SI-11 a', '']
 
   webserver_roots = []
 

@@ -61,7 +61,7 @@ control 'V-40799' do
   tag "stig_id": 'SRG-APP-000016-WSR-000005'
   tag "fix_id": 'F-45961r2_fix'
   tag "cci": ['CCI-000067']
-  tag "nist": ['AC-17 (1)', 'Rev_4']
+  tag "nist": ['AC-17 (1)', '']
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -79,6 +79,7 @@ control 'V-40799' do
         http['access_log'].each do |access_log|
           access_log.each do |access_value|
             next unless access_value.include? 'access.log'
+
             describe file(access_value) do
               it 'The access log should exist.' do
                 expect(subject).to(exist)
@@ -98,6 +99,7 @@ control 'V-40799' do
       nginx_conf.params['error_log'].each do |error_log|
         error_log.each do |error_value|
           next unless error_value.include? 'error.log'
+
           describe file(error_value) do
             it 'The error log should exist.' do
               expect(subject).to(exist)

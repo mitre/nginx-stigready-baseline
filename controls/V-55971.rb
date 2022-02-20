@@ -49,7 +49,7 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
   tag "stig_id": 'SRG-APP-000358-WSR-000163'
   tag "fix_id": 'F-60849r1_fix'
   tag "cci": ['CCI-001851']
-  tag "nist": ['AU-4 (1)', 'Rev_4']
+  tag "nist": ['AU-4 (1)', '']
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -67,6 +67,7 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
         http['access_log'].each do |access_log|
           access_log.each do |access_value|
             next unless access_value.include? 'access.log'
+
             describe file(access_value) do
               it 'The access log should exist.' do
                 expect(subject).to(exist)
@@ -85,6 +86,7 @@ events can be viewed, and analysis can be done in a timely and reliable manner.
       nginx_conf.params['error_log'].each do |error_log|
         error_log.each do |error_value|
           next unless error_value.include? 'error.log'
+
           describe file(error_value) do
             it 'The error log should exist.' do
               expect(subject).to(exist)

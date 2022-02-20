@@ -39,7 +39,7 @@ content and web server configuration files."
   tag "stig_id": 'SRG-APP-000211-WSR-000030'
   tag "fix_id": 'F-60873r1_fix'
   tag "cci": ['CCI-001082']
-  tag "nist": %w(SC-2 Rev_4)
+  tag "nist": %w(SC-2)
 
   valid_login_shells = command("grep '^[^#]' /etc/shells").stdout.split("\n")
 

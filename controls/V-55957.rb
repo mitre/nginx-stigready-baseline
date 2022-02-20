@@ -25,14 +25,14 @@ acting as a single access point."
   tag "stig_id": 'SRG-APP-000356-WSR-000007'
   tag "fix_id": 'F-60835r1_fix'
   tag "cci": ['CCI-001844']
-  tag "nist": ['AU-3 (2)', 'Rev_4']
+  tag "nist": ['AU-3 (2)', '']
 
-  if input('is_cluster') == 'false'
+  if input('is_cluster') == false
     impact 0.0
     describe 'This check is NA because NGINX is not part of a cluster.' do
       skip 'This check is NA because NGINX is not part of a cluster.'
     end
-  elsif input('is_cluster_master') == 'false'
+  elsif input('is_cluster_master') == false
     describe nginx do
       its('modules') { should include 'ngx_stream_zone_sync_module' }
     end

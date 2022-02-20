@@ -62,7 +62,7 @@ need to have passwords set or changed.
   tag "stig_id": 'SRG-APP-000516-WSR-000079'
   tag "fix_id": 'F-60865r1_fix'
   tag "cci": ['CCI-000366']
-  tag "nist": ['CM-6 b', 'Rev_4']
+  tag "nist": ['CM-6 b', '']
 
   service_accounts = []
 
@@ -70,7 +70,7 @@ need to have passwords set or changed.
     ps_output = command('ps -ef | grep -i nginx | grep -v grep').stdout.split("\n")
 
     ps_output.each do |output|
-      account = command("echo '#{output}' | awk '{print $1}'").stdout.split()
+      account = command("echo '#{output}' | awk '{print $1}'").stdout.split
       service_accounts.push(account)
     end
   else

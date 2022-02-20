@@ -44,7 +44,7 @@ session becomes easy for the attacker to break, often within minutes to hours."
   tag "stig_id": 'SRG-APP-000439-WSR-000188'
   tag "fix_id": 'F-67255r1_fix'
   tag "cci": ['CCI-002418']
-  tag "nist": %w(SC-8 Rev_4)
+  tag "nist": %w(SC-8)
 
   if nginx_conf.servers.nil?
     impact 0.0

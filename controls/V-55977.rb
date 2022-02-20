@@ -31,7 +31,7 @@ to a granularity of one second.
   tag "stig_id": 'SRG-APP-000375-WSR-000171'
   tag "fix_id": 'F-60855r1_fix'
   tag "cci": ['CCI-001889']
-  tag "nist": ['AU-8 b', 'Rev_4']
+  tag "nist": ['AU-8 b', '']
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -43,7 +43,7 @@ to a granularity of one second.
       http['log_format'].each do |log_format|
         describe 'time_local' do
           it 'should be part of every log format in the http context.' do
-            expect(log_format.to_s).to(match /.*?\$time_local.*?/)
+            expect(log_format.to_s).to(match(/.*?\$time_local.*?/))
           end
         end
       end

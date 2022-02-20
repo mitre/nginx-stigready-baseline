@@ -38,7 +38,7 @@ dedicated log tool that meets this requirement.
   tag "stig_id": 'SRG-APP-000359-WSR-000065'
   tag "fix_id": 'F-60853r1_fix'
   tag "cci": ['CCI-001855']
-  tag "nist": ['AU-5 (1)', 'Rev_4']
+  tag "nist": ['AU-5 (1)', '']
 
   describe "This test requires a Manual Review: Work with the SIEM admin to determine
   if an alert is configured when allocated record storage volume reaches 75% of

@@ -55,7 +55,7 @@ storage dependent on the impact of the web server.
   tag "stig_id": 'SRG-APP-000357-WSR-000150'
   tag "fix_id": 'F-60837r1_fix'
   tag "cci": ['CCI-001849']
-  tag "nist": %w(AU-4 Rev_4)
+  tag "nist": %w(AU-4)
 
   # Verify that access_log and error_log is enabled
   if nginx_conf.params['http'].nil?
@@ -74,6 +74,7 @@ storage dependent on the impact of the web server.
         http['access_log'].each do |access_log|
           access_log.each do |access_value|
             next unless access_value.include? 'access.log'
+
             describe file(access_value) do
               it 'The access log should exist.' do
                 expect(subject).to(exist)
@@ -92,6 +93,7 @@ storage dependent on the impact of the web server.
       nginx_conf.params['error_log'].each do |error_log|
         error_log.each do |error_value|
           next unless error_value.include? 'error.log'
+
           describe file(error_value) do
             it 'The error log should exist.' do
               expect(subject).to(exist)

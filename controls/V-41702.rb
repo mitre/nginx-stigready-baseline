@@ -31,7 +31,7 @@ control 'V-41702' do
   tag "stig_id": 'SRG-APP-000141-WSR-000085'
   tag "fix_id": 'F-47161r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   describe nginx do
     its('modules') { should_not include 'ngx_http_dav' }

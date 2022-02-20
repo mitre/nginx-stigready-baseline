@@ -60,7 +60,7 @@ control 'V-41695' do
   tag "stig_id": 'SRG-APP-000141-WSR-000077'
   tag "fix_id": 'F-47154r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   if input('nginx_disallowed_file_list').empty?
     describe 'This check is skipped because the disallowed files list should not be empty.' do

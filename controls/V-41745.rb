@@ -43,7 +43,7 @@ control 'V-41745' do
   tag "stig_id": 'SRG-APP-000179-WSR-000110'
   tag "fix_id": 'F-47204r2_fix'
   tag "cci": ['CCI-000803']
-  tag "nist": %w(IA-7 Rev_4)
+  tag "nist": %w(IA-7)
 
   describe command('sysctl –a | grep fips') do
     its('stdout') { should eq "crypto.fips_enabled = 1\n" }
@@ -51,6 +51,6 @@ control 'V-41745' do
   end
 
   describe command('nginx -V 2>&1').stdout do
-    it { should match /-fips/ }
+    it { should match(/-fips/) }
   end
 end

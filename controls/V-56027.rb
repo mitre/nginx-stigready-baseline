@@ -39,7 +39,7 @@ legitimate users."
   tag "stig_id": 'SRG-APP-000427-WSR-000186'
   tag "fix_id": 'F-60905r1_fix'
   tag "cci": ['CCI-002470']
-  tag "nist": ['SC-23 (5)', 'Rev_4']
+  tag "nist": ['SC-23 (5)', '']
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -77,6 +77,8 @@ legitimate users."
     end
   else
     nginx_conf.servers.each do |server|
+      next if server.params['ssl_client_certificate'].nil?
+
       server.params['ssl_client_certificate'].each do |cert|
         describe x509_certificate(cert.join) do
           it { should_not be_nil }
@@ -86,7 +88,7 @@ legitimate users."
         describe x509_certificate(cert.join).subject.CN[0..2] do
           it { should be_in input('dod_approved_pkis') }
         end
-      end unless server.params['ssl_client_certificate'].nil?
+      end
     end
   end
 end

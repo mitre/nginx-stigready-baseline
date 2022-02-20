@@ -44,7 +44,7 @@ control 'V-41668' do
   tag "stig_id": 'SRG-APP-000116-WSR-000066'
   tag "fix_id": 'F-47127r2_fix'
   tag "cci": ['CCI-000159']
-  tag "nist": ['AU-8 a', 'Rev_4']
+  tag "nist": ['AU-8 a', '']
 
   if nginx_conf.params['http'].nil?
     impact 0.0
@@ -56,7 +56,7 @@ control 'V-41668' do
       http['log_format'].each do |log_format|
         describe 'time_local' do
           it 'should be part of every log format in http.' do
-            expect(log_format.to_s).to(match /.*?\$time_local.*?/)
+            expect(log_format.to_s).to(match(/.*?\$time_local.*?/))
           end
         end
       end

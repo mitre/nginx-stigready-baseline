@@ -48,9 +48,9 @@ control 'V-41616' do
   tag "stig_id": 'SRG-APP-000098-WSR-000060'
   tag "fix_id": 'F-47075r2_fix'
   tag "cci": ['CCI-000133']
-  tag "nist": %w(AU-3 Rev_4)
+  tag "nist": %w(AU-3)
 
-  if input('behind_proxy_server') == 'false'
+  if input('behind_proxy_server') == false
     impact 0.0
     describe 'This check is NA because the web server is not sitting behind a proxy server.' do
       skip 'This check is NA because the web server is not sitting behind a proxy server.'
@@ -65,7 +65,7 @@ control 'V-41616' do
       http['log_format'].each do |log_format|
         describe 'realip_remote_addr' do
           it 'should be part of every log format in http.' do
-            expect(log_format.to_s).to(match /.*?\$realip_remote_addr.*?/)
+            expect(log_format.to_s).to(match(/.*?\$realip_remote_addr.*?/))
           end
         end
       end

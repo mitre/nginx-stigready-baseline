@@ -48,7 +48,7 @@ needed by the NGINX web server for operation."
   tag "stig_id": 'SRG-APP-000141-WSR-000075'
   tag "fix_id": 'F-47152r2_fix'
   tag "cci": ['CCI-000381']
-  tag "nist": ['CM-7 a', 'Rev_4']
+  tag "nist": ['CM-7 a', '']
 
   describe "This test requires a Manual Review: Check the directory structure of the server and
   ensure that additional, unintended, or unneeded applications are not loaded on the system." do
