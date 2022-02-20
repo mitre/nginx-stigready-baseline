@@ -50,7 +50,7 @@ jobs:
       - name: Test-Kitchen
         run: |
           mkdir results
-          bundle exec kitchen test --destroy=always ${{ matrix.suite }}-debian10-nginx-latest || true
+          bundle exec kitchen test --destroy=always ${{ matrix.suite }}-ubuntu-1804 || true
       - name: Display our ${{ matrix.suite }} results summary
         uses: mitre/saf_action@switchToJavascript
         with:
