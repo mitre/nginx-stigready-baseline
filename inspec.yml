@@ -47,8 +47,7 @@ inputs:
   - name: "nginx_latest_version"
     description: "Latest supported Nginx version"
     type: String
-    value: '1.19.1'
-
+    
   - name: "nginx_owner"
     description: "The NGINX process owner"
     type: String

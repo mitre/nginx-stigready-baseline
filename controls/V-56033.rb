@@ -39,10 +39,24 @@ control 'V-56033' do
   tag "stig_id": 'SRG-APP-000456-WSR-000187'
   tag "fix_id": 'F-60911r2_fix'
   tag "cci": ['CCI-002605']
-  tag "nist": ['SI-2 c', '']
+  tag "nist": ['SI-2 c']
 
-  # Verify Nginx is up to the latest supported version
-  describe nginx do
-    its('version') { should cmp == input('nginx_latest_version') }
+  nginx_changelog = inspec.http('http://nginx.org/en/CHANGES').body.lines.map(&:chomp)
+  nginx_changelog_clean = nginx_changelog.select { |line| line.include? 'Changes with nginx' }
+  nginx_latest_release = nginx_changelog_clean.first.split[3]
+  input_version = input('nginx_latest_version')
+  nginx_installed_version = inspec.nginx.version
+
+  describe.one do
+    describe 'The version of NGINX' do
+      subject { nginx_installed_version }
+      it { should cmp >= nginx_latest_release }
+    end
+    unless input_version.nil? || input_version.empty?
+      describe 'The version of NGINX' do
+        subject { nginx_installed_version }
+        it { should cmp >= input_version }
+      end
+    end
   end
 end
