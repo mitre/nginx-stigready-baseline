@@ -54,7 +54,7 @@ inputs:
     type: String
     value: "nginx"
 
-  - name: "nginx_gropup"
+  - name: "nginx_group"
     description: "The NGINX process group"
     type: String
     value: "nginx"
