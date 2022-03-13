@@ -59,11 +59,13 @@ control 'V-56033' do
   else
     describe.one do
       describe "NGINX version v#{nginx_installed_version} installed is" do
-        describe "not more then one patch level behind v#{nginx_previous_release}" do
-          subject { nginx_installed_version }
-          it { should cmp >= nginx_previous_release }
+        unless nginx_latest_release.nil? || nginx_previous_release.nil?
+          describe "not more then one patch level behind v#{nginx_previous_release}" do
+            subject { nginx_installed_version }
+            it { should cmp >= nginx_previous_release }
+          end
         end
-        unless allowed_nginx_version.nil? || allowed_nginx_version.empty?
+        unless allowed_nginx_version.empty?
           describe "greater then or equal to the organization approved version v#{allowed_nginx_version}" do
             subject { nginx_installed_version }
             it { should cmp >= allowed_nginx_version }
