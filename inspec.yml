@@ -44,8 +44,8 @@ inputs:
     type: String
     value: "25G"
 
-  - name: "nginx_latest_version"
-    description: "Latest supported Nginx version"
+  - name: "org_allowed_nginx_version"
+    description: "Latest allowed Nginx version"
     type: String
     value: "1.21.5"
 

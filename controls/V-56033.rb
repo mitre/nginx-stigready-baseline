@@ -44,26 +44,30 @@ control 'V-56033' do
 
   nginx_changelog = inspec.http('http://nginx.org/en/CHANGES').body.lines.map(&:chomp)
   nginx_changelog_clean = nginx_changelog.select { |line| line.include? 'Changes with nginx' }
+  
   nginx_latest_release = nginx_changelog_clean.first.split[3]
-  input_version = input('nginx_latest_version')
+  nginx_previous_release = nginx_changelog_clean[1].split[3]
+  allowed_nginx_version = input('org_allowed_nginx_version')
   nginx_installed_version = inspec.nginx.version
 
-  if (nginx_latest_release.nil? || nginx_latest_release.empty?) && (input_version.nil? || input_version.empty?)
+  if (nginx_latest_release.nil? || nginx_latest_release.empty?) && (allowed_nginx_version.nil? || allowed_nginx_version.empty?)
     describe "Your installed NGINX version is: #{nginx_installed_version}. You must review this control Manually. Either set or pass the `nginx_version` input to the profile,
-    or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the lastest released version of NGINX" do
+    or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the latest released version of NGINX" do
       skip "Your installed NGINX version is: #{nginx_installed_version}. You must review this control Manually. Either set or pass the `nginx_version` input to the profile,
-      or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the lastest released version of NGINX"
+      or ensure your system can reach 'http://nginx.org/en/CHANGES' to get the latest released version of NGINX"
     end
   else
     describe.one do
-      describe 'The version of NGINX' do
-        subject { nginx_installed_version }
-        it { should cmp >= nginx_latest_release }
-      end
-      unless input_version.nil? || input_version.empty?
-        describe 'The version of NGINX' do
+      describe "NGINX version v#{nginx_installed_version} installed is" do
+        describe "not more then one patch level behind v#{nginx_previous_release}" do
           subject { nginx_installed_version }
-          it { should cmp >= input_version }
+          it { should cmp >= nginx_previous_release }
+        end
+        unless allowed_nginx_version.nil? || allowed_nginx_version.empty?
+          describe "greater then or equal to the organization approved version v#{allowed_nginx_version}" do
+            subject { nginx_installed_version }
+            it { should cmp >= allowed_nginx_version }
+          end
         end
       end
     end
