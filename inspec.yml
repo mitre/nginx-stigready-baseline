@@ -184,7 +184,7 @@ inputs:
       - "!DSS"
 
   - name: "approved_ssl_protocols"
-    description: "List of approved and FIPS compliant TSL protocols."
+    description: "List of approved and FIPS compliant TLS protocols."
     type: Array
     value:
       - "TLSv1.2"
