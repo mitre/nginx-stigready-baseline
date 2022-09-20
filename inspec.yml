@@ -135,8 +135,7 @@ inputs:
   - name: "authorized_user_list"
     description: "List of non admin user accounts"
     type: Array
-    value:
-      - "user"
+    value: []
 
   - name: "authorized_ports"
     description: "List of authorized ports that are IANA compliant"
