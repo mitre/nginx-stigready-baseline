@@ -77,7 +77,7 @@ need to have passwords set or changed.
     service_accounts = input('sys_admin').clone << input('nginx_owner')
   end
 
-  if service_accounts.empty?
+  if service_accounts.empty? || service_accounts.nil?
     impact 0.0
     describe 'This test is NA because the no service accounts were found.' do
       skip 'This test is NA because the service accounts were found.'
