@@ -1,5 +1,8 @@
-- hosts: localhost
+---
+- hosts: all
   become: yes
   become_method: enable
-  roles:
-    - nginx-hardening
+  vars_files:
+    - "../vars/docker.vars.yml"
+  roles: 
+    - role: "../nginx-hardening"

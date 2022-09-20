@@ -1,0 +1,10 @@
+---
+# in nginx.conf in container uner ssl_client_certificate
+key_file_path: /etc/ssl/nginx-selfsigned.pem
+# inspec shell -t docker://nginx nginx.params
+org_allowed_nginx_version: 1.23.1
+# in /etc/nginx/nginx.conf Docker container itself
+nginx_owner: "nginx"
+uses_pki: false
+sys_admin: ["root"]
+sys_admin_group: ["root"]

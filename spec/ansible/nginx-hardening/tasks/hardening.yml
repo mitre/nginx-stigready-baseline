@@ -1,0 +1,272 @@
+---
+- name: Ensure the "{{ nginx_bin }}" binary is not worldwide read- or writeable
+  file:
+    path: "{{ nginx_bin }}"
+    mode: "550"
+    owner: "root"
+    group: "root"
+
+- name: Ensure the "{{ nginx_conf_base }} directory is not worldwide read- or writeable
+  file:
+    path: "{{ nginx_conf_base }}"
+    mode: "770"
+    owner: "root"
+    group: "root"
+
+- name: Ensure the "{{ nginx_conf_base }}/nginx.conf" file is not  worldwide read- or writeable
+  file:
+    path: "{{ nginx_conf_base }}/nginx.conf"
+    mode: "660"
+    owner: "root"
+    group: "root"
+
+- name: Ensure the "{{ nginx_conf_base }}/conf.d" directory is not worldwide read- or writeable
+  file:
+    path: "{{ nginx_conf_base }}/conf.d"
+    mode: "770"
+    owner: "root"
+    group: "root"
+
+- name: Ensure the "{{ nginx_modules_path }}" directory is not worldwide read- or writeable
+  file:
+    path: "{{ nginx_modules_path }}"
+    mode: "770"
+    owner: "root"
+    group: "root"
+    follow: "yes"
+
+- name: Ensure the "{{ nginx_log_path }}" log directory is not worldwide read- or writeable
+  file:
+    path: "{{ nginx_log_path }}"
+    mode: "0750"
+    owner: "root"
+    group: "root"
+
+- name: Create the "{{ nginx_conf_base }}/conf.d/90.hardening.conf" file
+  template:
+    src: "hardening.conf.j2"
+    dest: "{{ nginx_conf_base }}/conf.d/90.hardening.conf"
+    mode: "0660"
+    owner: "root"
+    group: "root"
+  # notify: restart nginx
+
+- name: Set the permissions on the "{{ nginx_site_root }}" directory
+  file:
+    path: "{{ nginx_site_root }}"
+    mode: "1660"
+    owner: "root"
+    group: "root"
+  # notify: restart nginx
+
+- name: Add the limit_cone_zone to the "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*limit_conn_zone'
+    line: "    limit_conn_zone {{ nginx_limit_conn_zone }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Add the limit_cone_zone to the "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*limit_conn_zone'
+    line: "    limit_conn_zone {{ nginx_limit_conn_zone }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Register if the "{{ nginx_conf_base }}/nginx.conf" file has $realip_remote_addr in the log_format directive
+  shell: grep "log_format  main  '$realip_remote_addr $remote_addr" "{{ nginx_conf_base }}/nginx.conf" | wc -l
+  register: grep_result
+
+- name: Append the $realip_remote_addr to the log_format in "{{ nginx_conf_base }}/nginx.conf" file
+  shell: sed -i 's/\$remote_addr/\$realip_remote_addr \$remote_addr/g' "{{ nginx_conf_base }}"/nginx.conf
+  when: grep_result.stdout == "0"
+  # notify: restart nginx
+
+- name: Remove disallowed mime types from "{{ nginx_conf_base }}/mime.types" file
+  lineinfile:
+    path: "{{ nginx_conf_base }}/mime.types"
+    state: absent
+    regexp: "{{ item | regex_replace('\\W', '\\\\\\g<0>') }}"
+  with_items: "{{ nginx_disallowed_mime_type }}"
+
+- name: Remove disallowed files "{{ nginx_disallowed_file_list }}"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ nginx_disallowed_file_list }}"
+
+- name: Add the charset to "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*charset'
+    line: "    charset {{ charset_required }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Add the client_header_timeout to "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*client_header_timeout'
+    line: "    client_header_timeout {{ nginx_client_header_timeout }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Add the client_body_timeout to "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*client_body_timeout'
+    line: "    client_body_timeout {{ nginx_client_body_timeout }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Set the time stamp format in "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*env'
+    line: "env TZ={{ nginx_time_stamp_format }};"
+    insertafter: "pid"
+  # notify: restart nginx
+
+- name: Add the server_tokens to "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*server_tokens'
+    line: "    server_tokens {{ nginx_server_tokens }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Add the ssl_client_certificate to "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*ssl_client_certificate'
+    line: "    ssl_client_certificate {{ nginx_ssl_client_cert }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Add the client_max_body_size to "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*client_max_body_size'
+    line: "    client_max_body_size {{ nginx_client_max_body_size }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Add the client_body_buffer_size to "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*client_body_buffer_size'
+    line: "    client_body_buffer_size {{ nginx_client_body_buffer_size }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Update the keepalive_timeout in "{{ nginx_conf_base }}/nginx.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/nginx.conf"
+    regexp: '^\s*keepalive_timeout'
+    line: "    keepalive_timeout {{ nginx_keepalive_timeout }};"
+    insertafter: "http {"
+  # notify: restart nginx
+
+- name: Add the ssl_protocols to the "{{ nginx_conf_base }}/conf.d/90.hardening.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_protocols'
+    line: "    ssl_protocols {{ nginx_ssl_protocols }};"
+    insertafter: "server {"
+  # notify: restart nginx
+
+- name: Add the ssl_prefer_server_ciphers to the "{{ nginx_conf_base }}/conf.d/90.hardening.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_prefer_server_ciphers'
+    line: "    ssl_prefer_server_ciphers {{ nginx_ssl_prefer_server_ciphers }};"
+    insertafter: "server {"
+  # notify: restart nginx
+
+- name: Add the ssl_certificate to the "{{ nginx_conf_base }}/conf.d/90.hardening.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_certificate'
+    line: "    ssl_certificate {{ nginx_ssl_cert }};"
+    insertafter: "server {"
+  # notify: restart nginx
+
+- name: Add the ssl_certificate_key to the "{{ nginx_conf_base }}/conf.d/90.hardening.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_certificate_key'
+    line: "    ssl_certificate_key {{ nginx_ssl_cert_key }};"
+    insertafter: "server {"
+  # notify: restart nginx
+
+- name: Add the ssl_verify_client directive to "{{ nginx_conf_base }}/conf.d/90.hardening.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_verify_client'
+    line: "    ssl_verify_client {{ nginx_ssl_verify_client }};"
+    insertafter: "server {"
+  # notify: restart nginx
+
+- name: Add the ssl_verify_depth directive to the "{{ nginx_conf_base }}/conf.d/90.hardening.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/conf.d/90.hardening.conf"
+    regexp: '^\s*ssl_verify_depth'
+    line: "    ssl_verify_depth {{ nginx_ssl_verify_depth }};"
+    insertafter: "server {"
+  # notify: restart nginx
+
+- name: Add listen to the "{{ nginx_conf_base }}/conf.d/90.hardening.conf" file
+  lineinfile:
+    dest: "{{ nginx_conf_base }}/conf.d/90.hardening.conf"
+    regexp: '^\s*listen'
+    line: "    listen {{ nginx_listen }};"
+    insertafter: "server {"
+  # notify: restart nginx
+
+- name: Remove Default configs from the standard installation
+  file:
+    path: "{{ item }}"
+    state: absent
+  when: nginx_remove_default_site
+  # notify: restart nginx
+  loop:
+    - "{{ nginx_conf_base }}/conf.d/default.conf"
+    - "{{ nginx_conf_base }}/sites-enabled/default"
+
+- name: Generate a DH Group via the  {{ nginx_conf_base }}/dh{{ nginx_dh_size }}.pem file
+  command: "openssl dhparam -out {{ nginx_conf_base }}/dh{{ nginx_dh_size }}.pem {{ nginx_dh_size }}"
+  args:
+    creates: "{{ nginx_conf_base }}/dh{{ nginx_dh_size }}.pem"
+  # notify: restart nginx
+
+- name: Generate a self-signed client ssl certificate with the '/C=US/O=U.S. Government/OU=DoD/CN=DoD' OU and CN
+  command:
+    "openssl req -nodes -x509 -subj '/C=US/O=U.S. Government/OU=DoD/CN=DoD' \
+    -newkey rsa:4096 -keyout /etc/ssl/nginx-selfsigned-key.pem -out /etc/ssl/nginx-selfsigned.pem -days 365"
+  args:
+    creates: "/etc/ssl/nginx-selfsigned.pem"
+  # notify: restart nginx
+
+- name: Generate a '/C=US/O=U.S. Government/OU=DoD/CN=DoD' self-signed ssl certificate and key
+  command:
+    "openssl req -nodes -x509 -subj '/C=US/O=U.S. Government/OU=DoD/CN=DoD' \
+    -newkey rsa:4096 -keyout /etc/ssl/nginx-selfsigned.key -out /etc/ssl/nginx-selfsigned.crt -days 365"
+  args:
+    creates: "/etc/ssl/nginx-selfsigned.crt"
+  # notify: restart nginx
+
+- name: Ensure the private key is only readable by 'root'
+  file:
+    path: "/etc/ssl/nginx-selfsigned.key"
+    mode: "0400"
+    owner: "root"
+    group: "root"
+
+- name: Ensure the crt should only be readable by 'root'
+  file:
+    path: "/etc/ssl/nginx-selfsigned.crt"
+    mode: "0400"
+    owner: "root"
+    group: "root"
