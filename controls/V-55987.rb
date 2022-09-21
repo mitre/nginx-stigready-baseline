@@ -66,6 +66,8 @@ need to have passwords set or changed.
 
   service_accounts = []
 
+  login_shells = file('/etc/shells').content.lines.collect(&:strip)
+
   if command('ps').exist?
     ps_output = command('ps -ef | grep -i nginx | grep -v grep').stdout.split("\n")
 
@@ -74,7 +76,7 @@ need to have passwords set or changed.
       service_accounts.push(account)
     end
   else
-    service_accounts = input('sys_admin').clone << input('nginx_owner')
+    service_accounts << input('nginx_owner')
   end
 
   if service_accounts.empty? || service_accounts.nil?
@@ -83,23 +85,14 @@ need to have passwords set or changed.
       skip 'This test is NA because the service accounts were found.'
     end
   else
-    service_accounts.flatten!.uniq!
+    service_accounts.flatten.uniq
     service_accounts.each do |account|
       describe.one do
-        describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
-          its('stdout') { should match %r{/sbin/nologin} }
+        describe user(account.to_s) do
+          its('shell') { should_not be_in login_shells }
         end
-        describe command("cut -d: -f1,7 /etc/passwd | grep -i #{account}") do
-          its('stdout') { should match %r{/bin/false} }
-        end
-      end
-      describe.one do
-        describe command("cut -d: -f1,2 /etc/shadow | grep -i '#{account}'") do
-          its('stdout') { should match "#{account}:!" }
-        end
-
-        describe command("cut -d: -f1,2 /etc/shadow | grep -i '#{account}'") do
-          its('stdout') { should match "#{account}:\\*" }
+        describe passwd do
+          its('users') { should_not include account.to_s }
         end
       end
     end
