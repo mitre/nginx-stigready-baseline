@@ -119,7 +119,6 @@ properly to only allow privileged users access.
     end
 
     webserver_roots = []
-
     if nginx_conf.params['http'].nil?
       impact 0.0
       describe 'This check is NA because no websites have been configured.' do
@@ -152,19 +151,18 @@ properly to only allow privileged users access.
         webserver_roots.push(location.params['root']) unless location.params['root'].nil?
       end
     end
-
     if webserver_roots.empty?
       impact 0.0
       describe 'This check is NA because no root directories have been set.' do
         skip 'This test is NA because no root directories have been set.'
       end
     else
-      webserver_roots.flatten!.uniq!
-      webserver_roots.each do |directory|
+      uniq_webserver_roots = webserver_roots.flatten.uniq
+      uniq_webserver_roots.each do |directory|
         describe file(directory) do
           its('owner') { should be_in input('sys_admin').clone << input('nginx_owner') }
           its('group') { should be_in input('sys_admin_group').clone << input('nginx_group') }
-          its('sticky') { should be true }
+          it { should be_sticky }
         end
       end
     end
