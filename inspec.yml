@@ -115,22 +115,21 @@ inputs:
     value: true
 
   - name: "sys_admin"
-    description: "Allowed NGINX system aministrative users"
+    description: "Allowed NGINX system administrative users"
     type: Array
     value:
       - "root"
-      - "adm"
-      - "ubuntu"
-      - "kitchen"
 
   - name: "sys_admin_group"
-    description: "Allowed NGINX system aministrative groups"
+    description: "Allowed NGINX system administrative groups"
     type: Array
     value:
       - "root"
-      - "adm"
-      - "ubuntu"
-      - "kitchen"
+
+  - name: excluded_users
+    description: "Users excluded from review"
+    type: Array
+    value: []
 
   - name: "authorized_user_list"
     description: "List of non admin user accounts"
