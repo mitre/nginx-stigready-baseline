@@ -45,12 +45,19 @@ control 'V-41745' do
   tag "cci": ['CCI-000803']
   tag "nist": %w(IA-7)
 
-  describe command('sysctl –a | grep fips') do
-    its('stdout') { should eq "crypto.fips_enabled = 1\n" }
-    its('exit_status') { should eq 0 }
-  end
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable - Kernel config for FIPS capability must be done on the host" do
+      skip "Control not applicable - Kernel config for FIPS capability must be done on the host"
+    end
+  else
+    describe command('sysctl –a | grep fips') do
+      its('stdout') { should eq "crypto.fips_enabled = 1\n" }
+      its('exit_status') { should eq 0 }
+    end
 
-  describe command('nginx -V 2>&1').stdout do
-    it { should match(/-fips/) }
+    describe command('nginx -V 2>&1').stdout do
+      it { should match(/-fips/) }
+    end
   end
 end
