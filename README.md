@@ -1,6 +1,6 @@
-# nginx-srg-baseline
+# nginx-stigready-baseline
 
-InSpec Profile to validate the secure configuration of nginx-srg-baseline, against Web Server SRG Verson 2 Release 3 InSpec profile for nginx 1.19
+InSpec Profile to validate the secure configuration of nginx-stigready-baseline, against Web Server SRG Verson 2 Release 3 InSpec profile for nginx 1.19
 
 ## Getting Started  
 It is intended and recommended that InSpec run this profile from a __"runner"__ host (such as a DevOps orchestration server, an administrative management system, or a developer's workstation/laptop) against the target remotely over __ssh__.
@@ -11,7 +11,7 @@ The latest versions and installation options are available at the [InSpec](http:
 
 ```
 # How to run
-inspec exec https://github.com/mitre/nginx-srg-baseline/archive/master.tar.gz -t ssh:// --input-file=<path_to_your_inputs_file/name_of_your_inputs_file.yml> --reporter=cli json:<path_to_your_output_file/name_of_your_output_file.json>
+inspec exec https://github.com/mitre/nginx-stigready-baseline/archive/master.tar.gz -t ssh:// --input-file=<path_to_your_inputs_file/name_of_your_inputs_file.yml> --reporter=cli json:<path_to_your_output_file/name_of_your_output_file.json>
 ```
 
 ### Different Run Options
@@ -29,17 +29,17 @@ When the __"runner"__ host uses this profile baseline for the first time, follow
 ```
 mkdir profiles
 cd profiles
-git clone https://github.com/mitre/nginx-srg-baseline
-inspec archive nginx-srg-baseline
+git clone https://github.com/mitre/nginx-stigready-baseline
+inspec archive nginx-stigready-baseline
 inspec exec <name of generated archive> -t ssh:// --input-file=<path_to_your_inputs_file/name_of_your_inputs_file.yml> --reporter=cli json:<path_to_your_output_file/name_of_your_output_file.json>
 ```
 For every successive run, follow these steps to always have the latest version of this baseline:
 
 ```
-cd nginx-srg-baseline
+cd nginx-stigready-baseline
 git pull
 cd ..
-inspec archive nginx-srg-baseline --overwrite
+inspec archive nginx-stigready-baseline --overwrite
 inspec exec <name of generated archive> -t ssh:// --input-file=<path_to_your_inputs_file/name_of_your_inputs_file.yml> --reporter=cli json:<path_to_your_output_file/name_of_your_output_file.json>
 ```
 
@@ -58,8 +58,8 @@ The JSON InSpec results file may also be loaded into a __[full heimdall server](
 - [Docker](https://docs.docker.com)
 
 ### Setup Environment
-1. Clone the repo via `git clone git@github.com:mitre/nginx-srg-baseline.git`
-2. cd to `nginx-srg-baseline`
+1. Clone the repo via `git clone git@github.com:mitre/nginx-stigready-baseline.git`
+2. cd to `nginx-stigready-baseline`
 3. Run `gem install bundler`
 4. Run `bundle install`
 5. Run `export KITCHEN_YAML=kitchen.vagrant.yml` - Docker and EC2 Kitchen Yaml files are available for testing
@@ -82,7 +82,7 @@ The JSON InSpec results file may also be loaded into a __[full heimdall server](
 * Shivani Karikar - [karikarshivani](https://github.com/karikarshivani)
 
 ## Contributing and Getting Help
-To report a bug or feature request, please open an [issue](https://github.com/mitre/nginx-srg-baseline/issues/new).
+To report a bug or feature request, please open an [issue](https://github.com/mitre/nginx-stigready-baseline/issues/new).
 
 ### NOTICE
 
