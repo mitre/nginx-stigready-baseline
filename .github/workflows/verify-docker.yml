@@ -25,13 +25,13 @@ jobs:
       fail-fast: false
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: "2.7"
       - name: Setup caching
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
@@ -60,6 +60,6 @@ jobs:
         with:
           command_string: "validate:threshold -i spec/results/${{ matrix.suite }}-test-result.json -F ${{ matrix.suite }}.threshold.yml"
       - name: Save Test Result JSON
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: spec/results
