@@ -78,4 +78,5 @@ jobs:
       - name: Save Test Result JSON
         uses: actions/upload-artifact@v4
         with:
+          name: ${{ matrix.suite }}-results
           path: spec/results
