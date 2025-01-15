@@ -18,30 +18,30 @@ jobs:
       KITCHEN_YAML: kitchen.ec2.yml
     strategy:
       matrix:
-        suite: ["vanilla", "hardened"]
+        suite: ['vanilla', 'hardened']
       fail-fast: false
     steps:
       - name: add needed packages
         run: sudo apt-get install -y jq
       - name: Configure AWS credentials
         env:
-          AWS_SUBNET_ID: ${{ secrets.AWS_SUBNET_ID }}
-          AWS_SSH_KEY_ID: ${{ secrets.AWS_SSH_KEY_ID }}
+          AWS_SUBNET_ID: ${{ secrets.SAF_AWS_SUBNET_ID }}
+          AWS_SSH_KEY_ID: ${{ secrets.SAF_AWS_SSH_KEY_ID }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.SAF_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SAF_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.SAF_AWS_REGION }}
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Clone full repository so we can push
         run: git fetch --prune --unshallow
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "2.7"
+          ruby-version: '3.1'
       # - name: Setup caching
-      #   uses: actions/cache@v2
+      #   uses: actions/cache@v4
       #   with:
       #     path: vendor/bundle
       #     key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
@@ -58,7 +58,7 @@ jobs:
       - name: Update profile.json in the repository
         uses: stefanzweifel/git-auto-commit-action@v4.1.0
         with:
-          commit_message: "Updating profile.json in the repository"
+          commit_message: 'Updating profile.json in the repository'
           branch: ${{ github.branch }}
       - name: Run Kitchen Create
         run: bundle exec kitchen create ${{ matrix.suite }}-ubuntu-1804 || true
@@ -71,12 +71,13 @@ jobs:
       - name: Display our ${{ matrix.suite }} results summary
         uses: mitre/saf_action@v1
         with:
-          command_string: "view:summary -i spec/results/${{ matrix.suite }}-test-result.json"
+          command_string: 'view:summary -i spec/results/${{ matrix.suite }}-test-result.json'
       - name: Ensure the scan meets our ${{ matrix.suite }} results threshold
         uses: mitre/saf_action@v1
         with:
-          command_string: "validate:threshold -i spec/results/${{ matrix.suite }}-test-result.json -F ${{ matrix.suite }}.threshold.yml"
+          command_string: 'validate:threshold -i spec/results/${{ matrix.suite }}-test-result.json -T ${{ matrix.suite }}.threshold.yml'
       - name: Save Test Result JSON
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
+          name: ${{ matrix.suite }}-results
           path: spec/results
