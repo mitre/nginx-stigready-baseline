@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CHEF_LICENSE: accept-silent
+      CHEF_LICENSE_KEY: ${{ secrets.SAF_CHEF_LICENSE_KEY }}
       KITCHEN_YAML: kitchen.ec2.yml
     strategy:
       matrix:
